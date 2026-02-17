@@ -20,14 +20,14 @@ const inter = Inter({
   subsets: ['latin', 'cyrillic'],
   weight: ['400', '600'],
   variable: '--font-inter',
-  display: 'swap',
+  display: 'optional',
 })
 
 const manrope = Manrope({
   subsets: ['latin', 'cyrillic'],
   weight: ['600', '700'],
   variable: '--font-manrope',
-  display: 'swap',
+  display: 'optional',
 })
 
 const messages: Record<Locale, { pages: { home: { metaTitle: string; metaDescription: string } } }> = { en, uk }

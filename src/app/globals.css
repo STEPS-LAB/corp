@@ -1175,6 +1175,10 @@
 }
 
 @media (max-width: 500px) {
+  .case-text-content p {
+    min-height: 4em;
+  }
+
   .case-hero {
     min-height: 350px;
   }
@@ -1284,13 +1288,18 @@
 
 /* Scroll Indicator Responsive */
 @media (max-width: 500px) {
-  .hero-alt {
-    padding-bottom: 100px;
+  .hero-alt-description {
+    min-height: 4.2em;
   }
-  
+
   .hero-alt-stats {
     margin-top: 32px;
     gap: 16px;
+    min-height: 100px;
+  }
+
+  .hero-alt {
+    padding-bottom: 100px;
   }
   
   .stat-item {
@@ -2653,6 +2662,13 @@
   opacity: 0.8;
 }
 
+/* CLS: reserve space for case text paragraphs (font load, hydration) */
+@media (max-width: 768px) {
+  .case-text-content p {
+    min-height: 4.5em;
+  }
+}
+
 .case-features {
   display: flex;
   flex-direction: column;
@@ -3445,6 +3461,16 @@
 
 /* Responsive - Tablet (<768px) */
 @media (max-width: 768px) {
+  /* CLS: reserve space for hero description (font load, hydration) */
+  .hero-alt-description {
+    min-height: 4.8em;
+  }
+
+  /* CLS: reserve space for hero stats grid */
+  .hero-alt-stats {
+    min-height: 110px;
+  }
+
   .hero-alt {
     padding-top: 72px;
     min-height: auto;

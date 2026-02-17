@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
+import { getAlternateLanguages } from '@/lib/hreflang'
 import { Inter, Manrope } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
@@ -46,6 +47,9 @@ export async function generateMetadata(): Promise<Metadata> {
       title: m.metaTitle,
       description: m.metaDescription,
       type: 'website',
+    },
+    alternates: {
+      languages: (await getAlternateLanguages('/')).languages,
     },
   }
 }

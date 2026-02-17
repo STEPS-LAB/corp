@@ -1,10 +1,12 @@
 'use client'
 
 import { useState } from 'react'
+import { useLocale } from '@/context/LocaleContext'
 import ScrollIndicator from '@/components/ScrollIndicator'
 import HeroBackground from '@/components/HeroBackground'
 
 export default function ContactPage() {
+  const { t } = useLocale()
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -29,14 +31,14 @@ export default function ContactPage() {
       const json = await res.json()
 
       if (!res.ok) {
-        throw new Error(json.error || 'Помилка відправки')
+        throw new Error(json.error || t('contactPage.errorDefault'))
       }
 
       setStatus('success')
       setFormData({ name: '', email: '', company: '', message: '' })
     } catch (err) {
       setStatus('error')
-      setErrorMessage(err instanceof Error ? err.message : 'Щось пішло не так. Спробуйте ще раз.')
+      setErrorMessage(err instanceof Error ? err.message : t('contactPage.errorDefault'))
     }
   }
 
@@ -54,14 +56,14 @@ export default function ContactPage() {
         <div className="container-custom">
           <div className="max-w-[1200px]">
             <div className="text-sm tracking-wide text-accent mb-10 opacity-70 px-3 py-1.5 rounded-lg inline-block bg-accent/10">
-              Contact
+              {t('contactPage.badge')}
             </div>
             <h1 className="hero-alt-title">
-              <span className="hero-alt-title-line">Зв'яжіться</span>
-              <span className="hero-alt-title-line">зі студією</span>
+              <span className="hero-alt-title-line">{t('contactPage.title1')}</span>
+              <span className="hero-alt-title-line">{t('contactPage.title2')}</span>
             </h1>
             <p className="hero-alt-description">
-              Обговоримо ваш проєкт розробки сайту або веб-додатку. Консультація безкоштовно.
+              {t('contactPage.description')}
             </p>
           </div>
         </div>
@@ -71,7 +73,7 @@ export default function ContactPage() {
       <section className="bg-bg-light py-section-spacing">
         <div className="container-custom">
           <div className="max-w-[800px] mx-auto text-center">
-            <h2 className="text-4xl sm:text-5xl md:text-[64px] font-semibold mb-6 text-text-dark tracking-[-2px] font-manrope">Напишіть нам</h2>
+            <h2 className="text-4xl sm:text-5xl md:text-[64px] font-semibold mb-6 text-text-dark tracking-[-2px] font-manrope">{t('contactPage.writeUs')}</h2>
             
             <div className="flex flex-col gap-12 mt-12 md:mt-20">
               <div className="flex flex-col gap-16 bg-[rgba(14,14,17,0.02)] p-6 sm:p-8 md:p-12 rounded-[20px] border border-[rgba(14,14,17,0.05)]">
@@ -95,7 +97,7 @@ export default function ContactPage() {
                 <div className="absolute top-1/2 left-0 w-[calc(50%-40px)] h-px bg-[rgba(14,14,17,0.1)]" />
                 <div className="absolute top-1/2 right-0 w-[calc(50%-40px)] h-px bg-[rgba(14,14,17,0.1)]" />
                 <span className="text-sm tracking-wide uppercase text-text-dark opacity-40 font-semibold font-inter bg-bg-light px-4 relative z-10">
-                  OR
+                  {t('contactPage.or')}
                 </span>
               </div>
               
@@ -108,22 +110,22 @@ export default function ContactPage() {
                       </svg>
                     </div>
                     <h3 className="text-2xl font-semibold text-text-dark mb-3 font-manrope tracking-[-0.5px]">
-                      Дякуємо!
+                      {t('contactPage.successTitle')}
                     </h3>
                     <p className="text-base text-text-dark opacity-70 max-w-[400px] leading-relaxed">
-                      Ми отримали ваше повідомлення та зв'яжемося з вами найближчим часом.
+                      {t('contactPage.successText')}
                     </p>
                     <button
                       type="button"
                       onClick={() => setStatus('idle')}
                       className="mt-8 px-9 py-5 text-base font-medium rounded-xl transition-all duration-500 font-inter border-none cursor-pointer bg-accent text-text-light shadow-[0_4px_16px_rgba(58,91,255,0.3)] hover:bg-[#2d4ae6] hover:shadow-[0_6px_24px_rgba(58,91,255,0.4)] hover:-translate-y-0.5"
                     >
-                      Написати ще
+                      {t('contactPage.writeAgain')}
                     </button>
                   </div>
                 ) : (
                   <>
-                    <h3 className="text-2xl font-semibold text-text-dark font-manrope mb-8 tracking-[-0.5px]">Залиште заявку</h3>
+                    <h3 className="text-2xl font-semibold text-text-dark font-manrope mb-8 tracking-[-0.5px]">{t('contactPage.leaveRequest')}</h3>
                     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                       {status === 'error' && (
                         <div className="px-5 py-4 rounded-xl bg-red-500/10 text-red-600 text-sm">
@@ -138,7 +140,7 @@ export default function ContactPage() {
                           onChange={handleChange}
                           required
                           disabled={status === 'submitting'}
-                          placeholder="Ім'я"
+                          placeholder={t('contactPage.namePlaceholder')}
                           className="px-5 py-4 border border-[rgba(14,14,17,0.1)] rounded-xl text-base font-inter text-text-dark bg-bg-light transition-all duration-500 outline-none w-full focus:border-accent focus:shadow-[0_0_0_3px_rgba(58,91,255,0.1)] focus:bg-white disabled:opacity-60 disabled:cursor-not-allowed"
                         />
                       </div>
@@ -161,7 +163,7 @@ export default function ContactPage() {
                           value={formData.company}
                           onChange={handleChange}
                           disabled={status === 'submitting'}
-                          placeholder="Компанія (опціонально)"
+                          placeholder={t('contactPage.companyPlaceholder')}
                           className="px-5 py-4 border border-[rgba(14,14,17,0.1)] rounded-xl text-base font-inter text-text-dark bg-bg-light transition-all duration-500 outline-none w-full focus:border-accent focus:shadow-[0_0_0_3px_rgba(58,91,255,0.1)] focus:bg-white disabled:opacity-60 disabled:cursor-not-allowed"
                         />
                       </div>
@@ -173,7 +175,7 @@ export default function ContactPage() {
                           required
                           rows={6}
                           disabled={status === 'submitting'}
-                          placeholder="Повідомлення"
+                          placeholder={t('contactPage.messagePlaceholder')}
                           className="px-5 py-4 border border-[rgba(14,14,17,0.1)] rounded-xl text-base font-inter text-text-dark bg-bg-light transition-all duration-500 outline-none resize-none min-h-[160px] w-full focus:border-accent focus:shadow-[0_0_0_3px_rgba(58,91,255,0.1)] focus:bg-white disabled:opacity-60 disabled:cursor-not-allowed"
                         />
                       </div>
@@ -182,7 +184,7 @@ export default function ContactPage() {
                         disabled={status === 'submitting'}
                         className="mt-2 w-full px-9 py-5 text-base font-medium rounded-xl transition-all duration-500 font-inter border-none cursor-pointer bg-accent text-text-light shadow-[0_4px_16px_rgba(58,91,255,0.3)] hover:bg-[#2d4ae6] hover:shadow-[0_6px_24px_rgba(58,91,255,0.4)] hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                       >
-                        {status === 'submitting' ? 'Відправка...' : 'Відправити'}
+                        {status === 'submitting' ? t('contactPage.submitting') : t('contactPage.submit')}
                       </button>
                     </form>
                   </>

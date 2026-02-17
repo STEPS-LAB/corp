@@ -1,6 +1,9 @@
-import Link from 'next/link'
+'use client'
+
+import { useLocale } from '@/context/LocaleContext'
 
 export default function Footer() {
+  const { t } = useLocale()
   return (
     <footer className="footer-alt">
       <div className="container-custom">
@@ -13,7 +16,7 @@ export default function Footer() {
               <a href="#" className="footer-alt-link">GitHub</a>
             </div>
           </div>
-          <div className="footer-alt-copyright">© {new Date().getFullYear()} STEPS LAB</div>
+          <div className="footer-alt-copyright">{t('footer.copyright', { year: new Date().getFullYear() })}</div>
         </div>
       </div>
     </footer>

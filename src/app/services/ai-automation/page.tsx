@@ -1,101 +1,17 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
-import ScrollIndicator from '@/components/ScrollIndicator'
-import HeroBackground from '@/components/HeroBackground'
+import { getServerLocale } from '@/lib/server-locale'
+import en from '@/messages/en.json'
+import uk from '@/messages/uk.json'
+import AIAutomationContent from './AIAutomationContent'
 
-export const metadata: Metadata = {
-  title: 'AI-розробка та автоматизація | STEPS LAB — веб-студія',
-  description: 'AI-розробка для бізнесу: автоматизація процесів, CRM-інтеграції, форми, контент-процеси. Веб-студія з досвідом.',
+const messages = { en, uk } as const
+
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getServerLocale()
+  const m = (messages[locale] as { servicePages: { aiAutomation: { metaTitle: string; metaDescription: string } } }).servicePages.aiAutomation
+  return { title: m.metaTitle, description: m.metaDescription }
 }
 
 export default function AIAutomationPage() {
-  return (
-    <>
-      <section className="min-h-screen bg-bg-dark text-text-light flex items-center pt-20 pb-20 md:pb-[120px] relative overflow-hidden">
-        <HeroBackground />
-        <div className="container-custom">
-          <div className="max-w-[900px]">
-            <Link href="/services" className="text-sm tracking-wide text-accent mb-10 opacity-70 px-3 py-1.5 rounded-lg inline-block bg-accent/10 transition-all duration-500 hover:opacity-100 hover:bg-accent/20 no-underline">
-              ← Послуги
-            </Link>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[72px] font-semibold leading-[1.1] mb-6 tracking-[-2px] font-manrope">AI-розробка та автоматизація</h1>
-            <p className="text-base sm:text-lg md:text-xl leading-relaxed opacity-80">
-              AI-розробка для бізнесу: форми, CRM-інтеграції, контент-процеси. Студія автоматизує рутину, щоб ви фокусувались на стратегії.
-            </p>
-          </div>
-        </div>
-        <ScrollIndicator />
-      </section>
-
-      <section className="bg-bg-light py-section-spacing">
-        <div className="container-custom">
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-12 lg:gap-20">
-            <div>
-              <h2 className="text-3xl md:text-4xl lg:text-[48px] font-semibold mb-6 md:mb-8 text-text-dark tracking-[-1.5px] font-manrope">Що ми робимо</h2>
-              <div className="flex flex-col gap-6 text-base leading-relaxed text-text-dark opacity-70 mb-16">
-                <p>AI-розробка та автоматизація бізнес-процесів. Веб-студія інтегрує розумні рішення в сайти та веб-додатки, які економлять час і ресурси.</p>
-                <p>Наш підхід до AI-розробки — контрольований та прозорий. Ми використовуємо технології як інструмент для веб-розробки, а не як чорну скриньку.</p>
-              </div>
-
-              <h2 className="text-3xl md:text-4xl lg:text-[48px] font-semibold mb-6 md:mb-8 text-text-dark tracking-[-1.5px] font-manrope">Типи проєктів</h2>
-              <div className="flex flex-col gap-8 mb-16">
-                <div className="p-6 rounded-2xl transition-all duration-500 hover:bg-[rgba(14,14,17,0.02)] hover:-translate-y-1">
-                  <h3 className="text-2xl font-semibold text-text-dark mb-3 font-manrope">CRM-інтеграції</h3>
-                  <p className="text-base leading-relaxed text-text-dark opacity-70">Автоматизація обробки заявок, лідогенерації та комунікацій з клієнтами.</p>
-                </div>
-                <div className="p-6 rounded-2xl transition-all duration-500 hover:bg-[rgba(14,14,17,0.02)] hover:-translate-y-1">
-                  <h3 className="text-2xl font-semibold text-text-dark mb-3 font-manrope">Контент-процеси</h3>
-                  <p className="text-base leading-relaxed text-text-dark opacity-70">AI-асистоване створення та обробка контенту з контролем якості.</p>
-                </div>
-                <div className="p-6 rounded-2xl transition-all duration-500 hover:bg-[rgba(14,14,17,0.02)] hover:-translate-y-1">
-                  <h3 className="text-2xl font-semibold text-text-dark mb-3 font-manrope">Форми та обробка даних</h3>
-                  <p className="text-base leading-relaxed text-text-dark opacity-70">Розумні форми з автоматичною валідацією та обробкою даних.</p>
-                </div>
-              </div>
-
-              <h2 className="text-3xl md:text-4xl lg:text-[48px] font-semibold mb-6 md:mb-8 text-text-dark tracking-[-1.5px] font-manrope">Процес роботи</h2>
-              <div className="flex flex-col gap-8">
-                {[
-                  { number: '01', title: 'Аналіз процесів', text: 'Виявляємо рутинні завдання та можливості для автоматизації.' },
-                  { number: '02', title: 'Проектування рішення', text: 'Розробляємо архітектуру автоматизації з урахуванням бізнес-логіки.' },
-                  { number: '03', title: 'Інтеграція та налаштування', text: 'Впроваджуємо AI-інструменти та налаштовуємо процеси.' },
-                  { number: '04', title: 'Тестування та оптимізація', text: 'Перевіряємо роботу системи та оптимізуємо для максимальної ефективності.' },
-                ].map((item, index) => (
-                  <div key={index} className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start">
-                    <div className="text-sm tracking-wide text-accent min-w-[60px] opacity-70 px-3 py-1.5 rounded-lg bg-accent/10 text-center">
-                      {item.number}
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-semibold text-text-dark mb-2 font-manrope">{item.title}</h3>
-                      <p className="text-base leading-relaxed text-text-dark opacity-70">{item.text}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-8">
-              <div className="bg-[rgba(14,14,17,0.02)] p-8 rounded-2xl border border-[rgba(14,14,17,0.05)]">
-                <h3 className="text-xl font-semibold text-text-dark mb-6 font-manrope">Технології</h3>
-                <ul className="flex flex-col gap-3 list-none">
-                  {['OpenAI API', 'LangChain', 'Zapier / Make', 'Custom Integrations', 'Webhooks', 'Data Processing'].map((tech, index) => (
-                    <li key={index} className="text-base text-text-dark opacity-70 relative pl-6 before:content-[''] before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-accent">
-                      {tech}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="bg-[rgba(14,14,17,0.02)] p-8 rounded-2xl border border-[rgba(14,14,17,0.05)]">
-                <h3 className="text-xl font-semibold text-text-dark mb-6 font-manrope">Результати</h3>
-                <p className="text-base leading-relaxed text-text-dark opacity-70">
-                  Економія часу на 60-80% завдяки автоматизації рутинних процесів.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </>
-  )
+  return <AIAutomationContent />
 }
-

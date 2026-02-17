@@ -2,25 +2,27 @@
 
 import Link from 'next/link'
 import { useModal } from '@/hooks/useModal'
+import { useLocale } from '@/context/LocaleContext'
 
 export default function CorporateCasePage() {
   const { openModal } = useModal()
+  const { t } = useLocale()
+  const c = (k: string) => t(`casePages.corporate.${k}`)
+  const g = (k: string) => t(`casePages.${k}`)
 
   return (
     <>
-      {/* Case Hero */}
       <section className="case-hero">
         <div className="case-hero-image"></div>
         <div className="container-custom">
           <div className="case-hero-content">
-            <Link href="/cases" className="service-breadcrumb">← Кейси</Link>
-            <h1 className="case-hero-title">Корпоративний сайт</h1>
-            <p className="case-hero-subtitle">Розробка корпоративного сайту з CRM-інтеграцією та автоматизацією лідогенерації</p>
+            <Link href="/cases" className="service-breadcrumb">{c('breadcrumb')}</Link>
+            <h1 className="case-hero-title">{c('title')}</h1>
+            <p className="case-hero-subtitle">{c('subtitle')}</p>
           </div>
         </div>
       </section>
 
-      {/* Case Hero Image */}
       <section className="case-hero-image-section">
         <div className="container-custom">
           <div className="case-hero-image-wrapper">
@@ -29,94 +31,91 @@ export default function CorporateCasePage() {
         </div>
       </section>
 
-      {/* Case Overview */}
       <section className="case-overview">
         <div className="container-custom">
           <div className="case-overview-grid">
             <div className="case-overview-main">
-              <h2 className="case-section-title">Про проєкт</h2>
+              <h2 className="case-section-title">{g('aboutProject')}</h2>
               <div className="case-text-content">
-                <p>Клієнт потребував сучасного корпоративного сайту, який би не тільки представляв компанію, але й працював як інструмент для генерації лідів та автоматизації продажів.</p>
-                <p>Завдання: створити сайт з системою управління контентом, інтеграцією з CRM та автоматизацією процесу обробки заявок.</p>
+                <p>{c('overview_p1')}</p>
+                <p>{c('overview_p2')}</p>
               </div>
 
-              {/* Screens Section */}
               <div className="case-screens-section">
-                <h2 className="case-section-title">Дизайн та інтерфейс</h2>
+                <h2 className="case-section-title">{g('designInterface')}</h2>
                 <div className="case-screens-grid">
                   <div className="case-screen-item">
                     <div className="case-screen-image case-screen-corporate-1"></div>
-                    <p className="case-screen-caption">Головна сторінка</p>
+                    <p className="case-screen-caption">{c('screen1')}</p>
                   </div>
                   <div className="case-screen-item">
                     <div className="case-screen-image case-screen-corporate-2"></div>
-                    <p className="case-screen-caption">Сторінка послуг</p>
+                    <p className="case-screen-caption">{c('screen2')}</p>
                   </div>
                   <div className="case-screen-item">
                     <div className="case-screen-image case-screen-corporate-3"></div>
-                    <p className="case-screen-caption">Форма зворотного зв'язку</p>
+                    <p className="case-screen-caption">{c('screen3')}</p>
                   </div>
                   <div className="case-screen-item">
                     <div className="case-screen-image case-screen-corporate-4"></div>
-                    <p className="case-screen-caption">Блог та новини</p>
+                    <p className="case-screen-caption">{c('screen4')}</p>
                   </div>
                 </div>
               </div>
 
-              <h2 className="case-section-title">Що ми зробили</h2>
+              <h2 className="case-section-title">{g('whatWeDid')}</h2>
               <div className="case-features">
                 <div className="case-feature-item">
-                  <h3 className="case-feature-title">Розробка корпоративного сайту</h3>
-                  <p className="case-feature-text">Створили сучасний корпоративний сайт з адаптивним дизайном, системою управління контентом та оптимізацією для пошукових систем.</p>
+                  <h3 className="case-feature-title">{c('feature1_title')}</h3>
+                  <p className="case-feature-text">{c('feature1_text')}</p>
                 </div>
                 <div className="case-feature-item">
-                  <h3 className="case-feature-title">CRM-інтеграція</h3>
-                  <p className="case-feature-text">Підключили сайт до CRM-системи для автоматичної синхронізації заявок, контактів та історії взаємодії з клієнтами.</p>
+                  <h3 className="case-feature-title">{c('feature2_title')}</h3>
+                  <p className="case-feature-text">{c('feature2_text')}</p>
                 </div>
                 <div className="case-feature-item">
-                  <h3 className="case-feature-title">Автоматизація лідогенерації</h3>
-                  <p className="case-feature-text">Налаштували автоматичну обробку форм, розподіл лідів між менеджерами та відстеження джерел трафіку.</p>
+                  <h3 className="case-feature-title">{c('feature3_title')}</h3>
+                  <p className="case-feature-text">{c('feature3_text')}</p>
                 </div>
                 <div className="case-feature-item">
-                  <h3 className="case-feature-title">SEO-оптимізація</h3>
-                  <p className="case-feature-text">Провели комплексну SEO-оптимізацію, що дозволило покращити позиції в пошукових системах та збільшити органічний трафік.</p>
+                  <h3 className="case-feature-title">{c('feature4_title')}</h3>
+                  <p className="case-feature-text">{c('feature4_text')}</p>
                 </div>
               </div>
 
-              {/* Full Width Screen */}
               <div className="case-fullscreen-section">
                 <div className="case-fullscreen-image case-fullscreen-corporate"></div>
-                <p className="case-fullscreen-caption">Адаптивний дизайн для мобільних пристроїв</p>
+                <p className="case-fullscreen-caption">{c('fullscreenCaption')}</p>
               </div>
 
-              <h2 className="case-section-title">Результати</h2>
+              <h2 className="case-section-title">{g('results')}</h2>
               <div className="case-results">
                 <div className="case-result-item">
                   <div className="case-result-number">250%</div>
-                  <div className="case-result-label">Збільшення конверсії</div>
+                  <div className="case-result-label">{c('result1')}</div>
                 </div>
                 <div className="case-result-item">
                   <div className="case-result-number">180%</div>
-                  <div className="case-result-label">Зростання кількості заявок</div>
+                  <div className="case-result-label">{c('result2')}</div>
                 </div>
                 <div className="case-result-item">
                   <div className="case-result-number">SEO</div>
-                  <div className="case-result-label">Покращення позицій</div>
+                  <div className="case-result-label">{c('result3')}</div>
                 </div>
               </div>
             </div>
 
             <div className="case-sidebar">
               <div className="case-sidebar-card">
-                <h3 className="case-sidebar-title">Клієнт</h3>
-                <p className="case-sidebar-text">Корпорація</p>
+                <h3 className="case-sidebar-title">{g('client')}</h3>
+                <p className="case-sidebar-text">{c('clientType')}</p>
               </div>
               <div className="case-sidebar-card">
-                <h3 className="case-sidebar-title">Термін</h3>
-                <p className="case-sidebar-text">10 тижнів</p>
+                <h3 className="case-sidebar-title">{g('timeline')}</h3>
+                <p className="case-sidebar-text">{c('timelineValue')}</p>
               </div>
               <div className="case-sidebar-card">
-                <h3 className="case-sidebar-title">Технології</h3>
+                <h3 className="case-sidebar-title">{g('technologies')}</h3>
                 <ul className="service-tech-list">
                   <li>Next.js</li>
                   <li>Headless CMS</li>
@@ -130,19 +129,15 @@ export default function CorporateCasePage() {
         </div>
       </section>
 
-      {/* Final CTA */}
       <section className="final-cta-alt">
         <div className="container-custom">
           <div className="final-cta-alt-content">
             <div className="final-cta-alt-left">
-              <h2 className="final-cta-alt-title">Готові створити свій успішний кейс?</h2>
+              <h2 className="final-cta-alt-title">{c('ctaTitle')}</h2>
             </div>
             <div className="final-cta-alt-right">
-              <button
-                onClick={openModal}
-                className="btn btn-primary btn-large"
-              >
-                Отримати консультацію
+              <button onClick={openModal} className="btn btn-primary btn-large">
+                {t('hero.cta')}
               </button>
             </div>
           </div>

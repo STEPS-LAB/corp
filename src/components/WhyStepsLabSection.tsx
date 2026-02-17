@@ -1,9 +1,14 @@
+'use client'
+
+import { useLocale } from '@/context/LocaleContext'
+
 export default function WhyStepsLabSection() {
+  const { t } = useLocale()
   const items = [
-    { label: '01', text: 'Передбачувані результати розробки' },
-    { label: '02', text: 'Зрозуміла комунікація зі студією' },
-    { label: '03', text: 'Без хайпу — лише логіка в розробці' },
-    { label: '04', text: 'AI-розробка без хаосу' },
+    { label: '01', textKey: 'why.1' },
+    { label: '02', textKey: 'why.2' },
+    { label: '03', textKey: 'why.3' },
+    { label: '04', textKey: 'why.4' },
   ]
 
   return (
@@ -19,18 +24,18 @@ export default function WhyStepsLabSection() {
         <div className="why-steps-lab-alt-grid-pattern"></div>
       </div>
       <div className="container-custom">
-        <h2 className="section-title-alt">Чому веб-студія STEPS LAB</h2>
+        <h2 className="section-title-alt">{t('why.title')}</h2>
         <div className="why-steps-lab-alt-content">
           <div className="why-steps-lab-alt-list">
             {items.map((item, index) => (
               <div key={index} className="why-steps-lab-alt-item">
                 <div className="why-steps-lab-alt-label">{item.label}</div>
-                <div className="why-steps-lab-alt-text">{item.text}</div>
+                <div className="why-steps-lab-alt-text">{t(item.textKey)}</div>
               </div>
             ))}
           </div>
           <div className="why-steps-lab-alt-quote">
-            <p>Ми не продаємо тренди.<br />Студія розробки, яка будує сайти та системи, що працюють.</p>
+            <p className="whitespace-pre-line">{t('why.quote')}</p>
           </div>
         </div>
       </div>

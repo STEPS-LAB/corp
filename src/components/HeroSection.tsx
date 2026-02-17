@@ -1,11 +1,13 @@
 'use client'
 
 import { useModal } from '@/hooks/useModal'
+import { useLocale } from '@/context/LocaleContext'
 import Link from 'next/link'
 import ScrollIndicator from './ScrollIndicator'
 
 export default function HeroSection() {
   const { openModal } = useModal()
+  const { t } = useLocale()
 
   return (
     <section className="hero-alt">
@@ -27,37 +29,37 @@ export default function HeroSection() {
       <div className="container-custom">
         <div className="hero-alt-content">
           <h1 className="hero-alt-title">
-            <span className="hero-alt-title-line">AI-прискорена</span>
-            <span className="hero-alt-title-line">веб-розробка</span>
-            <span className="hero-alt-title-line">для бізнесу</span>
+            <span className="hero-alt-title-line">{t('hero.title1')}</span>
+            <span className="hero-alt-title-line">{t('hero.title2')}</span>
+            <span className="hero-alt-title-line">{t('hero.title3')}</span>
           </h1>
           <p className="hero-alt-description">
-            Якісні сайти та веб-додатки. AI допомагає нам працювати ефективніше — ви отримуєте надійний результат.
+            {t('hero.description')}
           </p>
           <div className="hero-alt-cta">
             <button
               onClick={openModal}
               className="btn btn-primary btn-large"
             >
-              Отримати консультацію
+              {t('hero.cta')}
             </button>
             <Link href="#cases" className="btn-link">
-              Переглянути кейси →
+              {t('hero.viewCases')}
             </Link>
           </div>
         </div>
         <div className="hero-alt-stats">
           <div className="stat-item">
             <div className="stat-number">2x</div>
-            <div className="stat-label">Швидше</div>
+            <div className="stat-label">{t('hero.statFaster')}</div>
           </div>
           <div className="stat-item">
             <div className="stat-number">AI</div>
-            <div className="stat-label">Розробка</div>
+            <div className="stat-label">{t('hero.statDev')}</div>
           </div>
           <div className="stat-item">
             <div className="stat-number">24/7</div>
-            <div className="stat-label">Підтримка</div>
+            <div className="stat-label">{t('hero.statSupport')}</div>
           </div>
         </div>
       </div>

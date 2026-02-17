@@ -1,8 +1,14 @@
 import type { Metadata } from 'next'
+import { getServerLocale } from '@/lib/server-locale'
+import en from '@/messages/en.json'
+import uk from '@/messages/uk.json'
 
-export const metadata: Metadata = {
-  title: 'Кейс: E-commerce платформа | Веб-розробка сайтів — STEPS LAB',
-  description: 'Кейс розробки e-commerce сайту: онлайн-продажі +340%. Інтеграція платежів, AI. Веб-студія STEPS LAB.',
+const messages = { en, uk } as const
+
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getServerLocale()
+  const m = (messages[locale] as { casePages: { ecommerce: { metaTitle: string; metaDescription: string } } }).casePages.ecommerce
+  return { title: m.metaTitle, description: m.metaDescription }
 }
 
 export default function EcommerceCaseLayout({

@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useModal } from '@/hooks/useModal'
+import { useLocale } from '@/context/LocaleContext'
 import { useEffect } from 'react'
 
 interface MobileMenuProps {
@@ -13,6 +14,7 @@ interface MobileMenuProps {
 export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   const pathname = usePathname()
   const { openModal } = useModal()
+  const { t } = useLocale()
 
   useEffect(() => {
     if (isOpen) {
@@ -36,12 +38,12 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   }, [isOpen, onClose])
 
   const navLinks = [
-    { href: '/', label: 'Головна' },
-    { href: '/services', label: 'Послуги' },
-    { href: '/approach', label: 'Підхід' },
-    { href: '/cases', label: 'Кейси' },
-    { href: '/about', label: 'Про нас' },
-    { href: '/contact', label: 'Контакти' },
+    { href: '/', label: t('nav.home') },
+    { href: '/services', label: t('nav.services') },
+    { href: '/approach', label: t('nav.approach') },
+    { href: '/cases', label: t('nav.cases') },
+    { href: '/about', label: t('nav.about') },
+    { href: '/contact', label: t('nav.contact') },
   ]
 
   const handleLinkClick = () => {
@@ -77,7 +79,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           onClick={handleModalClick}
           className="btn-consultation mt-8 w-full px-7 py-4.5 text-base font-medium rounded-xl transition-all duration-500 font-inter border-none cursor-pointer bg-accent text-text-light shadow-[0_4px_16px_rgba(58,91,255,0.3)] hover:bg-[#2d4ae6] hover:shadow-[0_6px_24px_rgba(58,91,255,0.4)] hover:-translate-y-0.5"
         >
-          Отримати консультацію
+          {t('hero.cta')}
         </button>
       </nav>
     </div>

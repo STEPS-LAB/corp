@@ -2,18 +2,12 @@
 
 import { useState } from 'react'
 import { useModal } from '@/hooks/useModal'
+import { useLocale } from '@/context/LocaleContext'
 import { useEffect } from 'react'
-
-const SERVICE_LABELS: Record<string, string> = {
-  web: 'Веб-розробка',
-  ai: 'AI-розробка та автоматизація',
-  mvp: 'MVP для стартапу',
-  support: 'Підтримка та масштабування',
-  other: 'Інше',
-}
 
 export default function Modal() {
   const { isOpen, closeModal } = useModal()
+  const { t } = useLocale()
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -42,11 +36,18 @@ export default function Modal() {
 
     const formData = new FormData(e.currentTarget)
     const serviceValue = formData.get('service') as string
+    const serviceLabels: Record<string, string> = {
+      web: t('modal.service_web'),
+      ai: t('modal.service_ai'),
+      mvp: t('modal.service_mvp'),
+      support: t('modal.service_support'),
+      other: t('modal.service_other'),
+    }
     const data = {
       name: formData.get('name'),
       email: formData.get('email'),
       company: formData.get('company'),
-      service: serviceValue ? SERVICE_LABELS[serviceValue] || serviceValue : '',
+      service: serviceValue ? serviceLabels[serviceValue] || serviceValue : '',
       message: formData.get('message'),
       source: 'consultation',
     }
@@ -61,14 +62,14 @@ export default function Modal() {
       const json = await res.json()
 
       if (!res.ok) {
-        throw new Error(json.error || 'Помилка відправки')
+        throw new Error(json.error || t('modal.errorDefault'))
       }
 
       setStatus('success')
       ;(e.target as HTMLFormElement).reset()
     } catch (err) {
       setStatus('error')
-      setErrorMessage(err instanceof Error ? err.message : 'Щось пішло не так. Спробуйте ще раз.')
+      setErrorMessage(err instanceof Error ? err.message : t('modal.errorDefault'))
     }
   }
 
@@ -97,23 +98,23 @@ export default function Modal() {
                 </svg>
               </div>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-text-dark mb-3 font-manrope tracking-[-1px]">
-                Дякуємо!
+                {t('modal.successTitle')}
               </h2>
               <p className="text-[15px] sm:text-base text-text-dark opacity-70 max-w-[400px] leading-relaxed">
-                Ми отримали вашу заявку та зв'яжемося з вами найближчим часом.
+                {t('modal.successText')}
               </p>
               <button
                 onClick={handleClose}
                 className="mt-8 px-7 py-3.5 text-[15px] font-medium rounded-xl transition-all duration-500 font-inter border-none cursor-pointer bg-accent text-text-light shadow-[0_4px_16px_rgba(58,91,255,0.3)] hover:bg-[#2d4ae6] hover:shadow-[0_6px_24px_rgba(58,91,255,0.4)] hover:-translate-y-0.5"
               >
-                Закрити
+                {t('modal.close')}
               </button>
             </div>
           ) : (
             <>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-text-dark mb-1 md:mb-2 font-manrope tracking-[-1px]">Отримати консультацію</h2>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-text-dark mb-1 md:mb-2 font-manrope tracking-[-1px]">{t('modal.title')}</h2>
               <p className="text-[14px] sm:text-[15px] text-text-dark opacity-70 mb-4 sm:mb-6 md:mb-8 leading-relaxed">
-                Заповніть форму, і ми зв'яжемося з вами найближчим часом.
+                {t('modal.intro')}
               </p>
               <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:gap-4 md:gap-5">
                 {status === 'error' && (
@@ -122,18 +123,18 @@ export default function Modal() {
                   </div>
                 )}
                 <div className="flex flex-col gap-1">
-                  <label className="text-sm font-medium text-text-dark tracking-wide">Ім'я</label>
+                  <label className="text-sm font-medium text-text-dark tracking-wide">{t('modal.name')}</label>
                   <input
                     type="text"
                     name="name"
                     required
                     disabled={status === 'submitting'}
                     className="px-3 py-2.5 sm:px-4 sm:py-3 border border-[rgba(14,14,17,0.1)] rounded-xl text-[15px] font-inter text-text-dark bg-bg-light transition-all duration-500 outline-none focus:border-accent focus:shadow-[0_0_0_3px_rgba(58,91,255,0.1)] disabled:opacity-60 disabled:cursor-not-allowed"
-                    placeholder="Ваше ім'я"
+                    placeholder={t('modal.namePlaceholder')}
                   />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label className="text-sm font-medium text-text-dark tracking-wide">Email</label>
+                  <label className="text-sm font-medium text-text-dark tracking-wide">{t('modal.email')}</label>
                   <input
                     type="email"
                     name="email"
@@ -144,40 +145,40 @@ export default function Modal() {
                   />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label className="text-sm font-medium text-text-dark tracking-wide">Компанія (опціонально)</label>
+                  <label className="text-sm font-medium text-text-dark tracking-wide">{t('modal.company')}</label>
                   <input
                     type="text"
                     name="company"
                     disabled={status === 'submitting'}
                     className="px-3 py-2.5 sm:px-4 sm:py-3 border border-[rgba(14,14,17,0.1)] rounded-xl text-[15px] font-inter text-text-dark bg-bg-light transition-all duration-500 outline-none focus:border-accent focus:shadow-[0_0_0_3px_rgba(58,91,255,0.1)] disabled:opacity-60 disabled:cursor-not-allowed"
-                    placeholder="Назва компанії"
+                    placeholder={t('modal.companyPlaceholder')}
                   />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label className="text-sm font-medium text-text-dark tracking-wide">Послуга</label>
+                  <label className="text-sm font-medium text-text-dark tracking-wide">{t('modal.service')}</label>
                   <select
                     name="service"
                     required
                     disabled={status === 'submitting'}
                     className="px-3 py-2.5 sm:px-4 sm:py-3 border border-[rgba(14,14,17,0.1)] rounded-xl text-[15px] font-inter text-text-dark bg-bg-light transition-all duration-500 outline-none focus:border-accent focus:shadow-[0_0_0_3px_rgba(58,91,255,0.1)] cursor-pointer appearance-none bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2212%22%20height%3D%228%22%20viewBox%3D%220%200%2012%208%22%20fill%3D%22none%22%20xmlns%3D%22http://www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M1%201L6%206L11%201%22%20stroke%3D%22%230E0E11%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E')] bg-no-repeat bg-[right_18px_center] pr-12 disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    <option value="">Оберіть послугу</option>
-                    <option value="web">Веб-розробка</option>
-                    <option value="ai">AI-розробка та автоматизація</option>
-                    <option value="mvp">MVP для стартапу</option>
-                    <option value="support">Підтримка та масштабування</option>
-                    <option value="other">Інше</option>
+                    <option value="">{t('modal.servicePlaceholder')}</option>
+                    <option value="web">{t('modal.service_web')}</option>
+                    <option value="ai">{t('modal.service_ai')}</option>
+                    <option value="mvp">{t('modal.service_mvp')}</option>
+                    <option value="support">{t('modal.service_support')}</option>
+                    <option value="other">{t('modal.service_other')}</option>
                   </select>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <label className="text-sm font-medium text-text-dark tracking-wide">Повідомлення</label>
+                  <label className="text-sm font-medium text-text-dark tracking-wide">{t('modal.message')}</label>
                   <textarea
                     name="message"
                     required
                     rows={3}
                     disabled={status === 'submitting'}
                     className="px-3 py-2.5 sm:px-4 sm:py-3 border border-[rgba(14,14,17,0.1)] rounded-xl text-[15px] font-inter text-text-dark bg-bg-light transition-all duration-500 outline-none resize-none min-h-[70px] max-h-[100px] sm:h-[100px] focus:border-accent focus:shadow-[0_0_0_3px_rgba(58,91,255,0.1)] disabled:opacity-60 disabled:cursor-not-allowed"
-                    placeholder="Ваше повідомлення"
+                    placeholder={t('modal.messagePlaceholder')}
                   />
                 </div>
                 <button
@@ -185,7 +186,7 @@ export default function Modal() {
                   disabled={status === 'submitting'}
                   className="mt-0 sm:mt-1 w-full px-5 py-3 sm:px-7 sm:py-3.5 text-[15px] font-medium rounded-xl transition-all duration-500 font-inter border-none cursor-pointer bg-accent text-text-light shadow-[0_4px_16px_rgba(58,91,255,0.3)] hover:bg-[#2d4ae6] hover:shadow-[0_6px_24px_rgba(58,91,255,0.4)] hover:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                 >
-                  {status === 'submitting' ? 'Відправка...' : 'Відправити'}
+                  {status === 'submitting' ? t('modal.submitting') : t('modal.submit')}
                 </button>
               </form>
             </>

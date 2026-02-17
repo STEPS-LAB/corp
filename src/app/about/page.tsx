@@ -1,37 +1,17 @@
 import type { Metadata } from 'next'
-import AboutSection from '@/components/AboutSection'
-import WhyStepsLabSection from '@/components/WhyStepsLabSection'
-import HeroBackground from '@/components/HeroBackground'
-import ScrollIndicator from '@/components/ScrollIndicator'
+import { getServerLocale } from '@/lib/server-locale'
+import en from '@/messages/en.json'
+import uk from '@/messages/uk.json'
+import AboutPageContent from './AboutPageContent'
 
-export const metadata: Metadata = {
-  title: 'Про веб-студію STEPS LAB | Розробка сайтів та AI-розробка',
-  description: 'Веб-студія STEPS LAB: якісні сайти та веб-додатки. AI для ефективності — високоякісний продукт і вигідні умови. Зрозумілі цифрові продукти для бізнесу.',
+const messages = { en, uk } as const
+
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getServerLocale()
+  const m = (messages[locale] as { pages: { about: { metaTitle: string; metaDescription: string } } }).pages.about
+  return { title: m.metaTitle, description: m.metaDescription }
 }
 
 export default function AboutPage() {
-  return (
-    <>
-      <section className="min-h-screen bg-bg-dark text-text-light flex items-center pt-20 pb-[120px] relative overflow-hidden">
-        <HeroBackground />
-        <div className="container-custom">
-          <div className="max-w-[1200px]">
-            <div className="text-sm tracking-wide text-accent mb-10 opacity-70 px-3 py-1.5 rounded-lg inline-block bg-accent/10">
-              About
-            </div>
-            <h1 className="hero-alt-title">
-              <span className="hero-alt-title-line">Про веб-студію</span>
-            </h1>
-            <p className="hero-alt-description">
-              Якісні сайти та веб-додатки. AI для ефективності — надійний результат для вашого бізнесу.
-            </p>
-          </div>
-        </div>
-        <ScrollIndicator />
-      </section>
-      <AboutSection />
-      <WhyStepsLabSection />
-    </>
-  )
+  return <AboutPageContent />
 }
-

@@ -188,10 +188,10 @@
     opacity: 0;
   }
 
-  /* Hero Section */
+  /* Hero Section - opacity-only to avoid CLS from translateY */
   .hero-alt-title-line {
     display: block;
-    animation: fadeInUp 0.8s ease forwards;
+    animation: heroFadeIn 0.6s ease forwards;
     opacity: 0;
   }
 
@@ -801,7 +801,7 @@
 
 @media (max-width: 375px) {
   .hero-alt-title {
-    font-size: 48px;
+    font-size: 24px;
   }
 
   .btn-consultation {
@@ -1340,6 +1340,20 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Opacity-only hero fade - avoids CLS from position change */
+@keyframes heroFadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-alt-title-line {
+    animation: none;
+    opacity: 1;
   }
 }
 
@@ -1971,9 +1985,10 @@
   text-align: right;
 }
 
-/* Hero Alternative */
+/* Hero Alternative - contain layout for CLS */
 .hero-alt {
   min-height: 100vh;
+  contain: layout;
   background-color: var(--bg-dark);
   color: var(--text-light);
   display: flex;
@@ -2629,9 +2644,11 @@
   max-width: 700px;
 }
 
+/* Case overview - contain layout for CLS */
 .case-overview {
   background-color: var(--bg-light);
   padding: var(--section-spacing) 0;
+  contain: layout;
 }
 
 .case-overview-grid {
@@ -3471,9 +3488,10 @@
     min-height: 110px;
   }
 
+  /* CLS: min-height prevents hero collapse during load */
   .hero-alt {
+    min-height: min(100vh, 600px);
     padding-top: 72px;
-    min-height: auto;
     padding-bottom: 80px;
     display: flex;
     flex-direction: column;
@@ -4175,9 +4193,9 @@
 
 @media (max-width: 375px) {
   .hero-alt-title {
-    font-size: 48px;
+    font-size: 24px;
   }
-  
+
   .btn-consultation {
     padding-top: 1rem;
     padding-bottom: 1rem;

@@ -43,7 +43,7 @@ export default function Modal() {
           ×
         </button>
         <div className="p-12 overflow-visible">
-          <h2 className="text-4xl font-semibold text-text-dark mb-2 font-manrope tracking-[-1px]">Get consultation</h2>
+          <h2 className="text-4xl font-semibold text-text-dark mb-2 font-manrope tracking-[-1px]">Отримати консультацію</h2>
           <p className="text-[15px] text-text-dark opacity-70 mb-8 leading-relaxed">
             Заповніть форму, і ми зв'яжемося з вами найближчим часом.
           </p>

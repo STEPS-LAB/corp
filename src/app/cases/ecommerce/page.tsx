@@ -13,9 +13,9 @@ export default function EcommerceCasePage() {
         <div className="case-hero-image"></div>
         <div className="container-custom">
           <div className="case-hero-content">
-            <Link href="/cases" className="service-breadcrumb">← Cases</Link>
-            <h1 className="case-hero-title">E-commerce Platform</h1>
-            <p className="case-hero-subtitle">Повнофункціональна платформа для онлайн-продажів</p>
+            <Link href="/cases" className="service-breadcrumb">← Кейси</Link>
+            <h1 className="case-hero-title">E-commerce платформа</h1>
+            <p className="case-hero-subtitle">Веб-розробка платформи для онлайн-продажів: site development під масштабування</p>
           </div>
         </div>
       </section>
@@ -142,7 +142,7 @@ export default function EcommerceCasePage() {
                 onClick={openModal}
                 className="btn btn-primary btn-large"
               >
-                Get consultation
+                Отримати консультацію
               </button>
             </div>
           </div>

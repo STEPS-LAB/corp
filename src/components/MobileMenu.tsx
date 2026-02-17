@@ -36,12 +36,12 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
   }, [isOpen, onClose])
 
   const navLinks = [
-    { href: '/', label: 'Home' },
-    { href: '/services', label: 'Services' },
-    { href: '/approach', label: 'Approach' },
-    { href: '/cases', label: 'Cases' },
-    { href: '/about', label: 'About' },
-    { href: '/contact', label: 'Contact' },
+    { href: '/', label: 'Головна' },
+    { href: '/services', label: 'Послуги' },
+    { href: '/approach', label: 'Підхід' },
+    { href: '/cases', label: 'Кейси' },
+    { href: '/about', label: 'Про нас' },
+    { href: '/contact', label: 'Контакти' },
   ]
 
   const handleLinkClick = () => {
@@ -77,7 +77,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
           onClick={handleModalClick}
           className="mt-8 w-full px-7 py-4.5 text-base font-medium rounded-xl transition-all duration-500 font-inter border-none cursor-pointer bg-accent text-text-light shadow-[0_4px_16px_rgba(58,91,255,0.3)] hover:bg-[#2d4ae6] hover:shadow-[0_6px_24px_rgba(58,91,255,0.4)] hover:-translate-y-0.5"
         >
-          Get consultation
+          Отримати консультацію
         </button>
       </nav>
     </div>

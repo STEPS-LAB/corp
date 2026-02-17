@@ -1,28 +1,34 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import HeroSection from '@/components/HeroSection'
 import HeroBackground from '@/components/HeroBackground'
 import ScrollIndicator from '@/components/ScrollIndicator'
 
+export const metadata: Metadata = {
+  title: 'Послуги веб-студії | Розробка сайтів, AI development — STEPS LAB',
+  description: 'Послуги студії: веб-розробка сайтів, AI development, MVP для стартапів, підтримка та масштабування. Website development для бізнесу.',
+}
+
 export default function ServicesPage() {
   const services = [
     {
       href: '/services/web-development',
-      title: 'Web development',
-      text: 'Бізнес-сайти, лендинги, корпоративні платформи. Створюємо веб-рішення, які працюють на результат, а не просто виглядають красиво.',
+      title: 'Розробка сайтів',
+      text: 'Веб-розробка: бізнес-сайти, лендинги, корпоративні платформи. Website development, що працює на результат.',
     },
     {
       href: '/services/ai-automation',
-      title: 'AI Automation',
+      title: 'AI development та автоматизація',
       text: 'Форми, CRM-інтеграції, контент-процеси. Автоматизуємо рутинні завдання, щоб ви могли зосередитись на стратегії.',
     },
     {
       href: '/services/mvp-startups',
-      title: 'MVP for Startups',
+      title: 'MVP для стартапів',
       text: 'Швидкий запуск і перевірка гіпотез. Створюємо мінімальний продукт, який дозволяє швидко отримати фідбек від ринку.',
     },
     {
       href: '/services/support-scaling',
-      title: 'Support & Scaling',
+      title: 'Підтримка та масштабування',
       text: 'Підтримка, оптимізація, розвиток. Допомагаємо вашому продукту рости разом з бізнесом.',
     },
   ]
@@ -37,11 +43,11 @@ export default function ServicesPage() {
               Services
             </div>
             <h1 className="hero-alt-title">
-              <span className="hero-alt-title-line">Послуги</span>
+              <span className="hero-alt-title-line">Послуги веб-студії</span>
               <span className="hero-alt-title-line">для вашого бізнесу</span>
             </h1>
             <p className="hero-alt-description">
-              Створюємо цифрові рішення, які працюють на результат.
+              Розробка сайтів, веб-розробка, AI development. Website development, що працює на результат.
             </p>
           </div>
         </div>
@@ -50,7 +56,7 @@ export default function ServicesPage() {
 
       <section className="services-alt">
         <div className="container-custom">
-          <h2 className="section-title-alt">Services</h2>
+          <h2 className="section-title-alt">Послуги веб-студії</h2>
           <div className="services-alt-list">
             {services.map((service, index) => (
               <Link

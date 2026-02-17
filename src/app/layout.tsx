@@ -24,10 +24,16 @@ const manrope = Manrope({
 })
 
 export const metadata: Metadata = {
-  title: 'STEPS LAB — Розробка, що має сенс',
-  description: 'AI-first digital studio, яка створює зрозумілі та ефективні цифрові продукти.',
+  title: 'STEPS LAB — Веб-студія | Розробка сайтів та AI-рішення для бізнесу',
+  description: 'Веб-студія STEPS LAB: розробка сайтів, веб-розробка, AI development. Створюємо сайти, веб-додатки та автоматизацію. Студія розробки з підходом — логіка, швидкість, результат.',
+  keywords: 'розробка сайтів, веб-розробка, web development, ai development, веб-студія, web studio, створення сайту, website development, site development',
   icons: {
     icon: '/steps-lab-logo.webp',
+  },
+  openGraph: {
+    title: 'STEPS LAB — Веб-студія | Розробка сайтів та AI-рішення',
+    description: 'Веб-студія розробки сайтів та веб-додатків. AI-прискорена веб-розробка для бізнесу.',
+    type: 'website',
   },
 }
 

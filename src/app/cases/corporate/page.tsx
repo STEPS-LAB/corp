@@ -13,9 +13,9 @@ export default function CorporateCasePage() {
         <div className="case-hero-image"></div>
         <div className="container-custom">
           <div className="case-hero-content">
-            <Link href="/cases" className="service-breadcrumb">← Cases</Link>
-            <h1 className="case-hero-title">Corporate Website</h1>
-            <p className="case-hero-subtitle">Корпоративний сайт з CRM-інтеграцією та автоматизацією</p>
+            <Link href="/cases" className="service-breadcrumb">← Кейси</Link>
+            <h1 className="case-hero-title">Корпоративний сайт</h1>
+            <p className="case-hero-subtitle">Розробка корпоративного сайту з CRM-інтеграцією та автоматизацією лідогенерації</p>
           </div>
         </div>
       </section>
@@ -142,7 +142,7 @@ export default function CorporateCasePage() {
                 onClick={openModal}
                 className="btn btn-primary btn-large"
               >
-                Get consultation
+                Отримати консультацію
               </button>
             </div>
           </div>

@@ -2,18 +2,18 @@ export default function ApproachSection() {
   const approaches = [
     {
       number: '01',
-      title: 'Logic first',
-      text: 'Кожне рішення має бізнес-обґрунтування, а не лише дизайн.',
+      title: 'Логіка перед усім',
+      text: 'Кожне рішення в розробці сайту має бізнес-обґрунтування, а не лише гарний дизайн.',
     },
     {
       number: '02',
-      title: 'AI as a tool',
-      text: 'Ми використовуємо AI для швидкості, але контроль залишаємо за людьми.',
+      title: 'AI development під контролем',
+      text: 'Використовуємо AI для прискорення веб-розробки, але фінальні рішення завжди за командою.',
     },
     {
       number: '03',
-      title: 'Result focused',
-      text: 'Сайт — це інструмент для зростання, а не просто сторінка в інтернеті.',
+      title: 'Орієнтація на результат',
+      text: 'Website development — це створення інструменту для зростання бізнесу, а не просто сторінки в інтернеті.',
     },
   ]
 
@@ -21,8 +21,8 @@ export default function ApproachSection() {
     <section className="approach-alt" id="approach">
       <div className="container-custom">
         <div className="approach-alt-header">
-          <h2 className="section-title-alt">Our approach</h2>
-          <p className="section-subtitle">Ми будуємо системи, які працюють</p>
+          <h2 className="section-title-alt">Наш підхід до веб-розробки</h2>
+          <p className="section-subtitle">Студія розробки, яка будує системи та сайти, що працюють</p>
         </div>
         <div className="approach-alt-grid">
           {approaches.map((approach, index) => (

@@ -1,6 +1,12 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import ScrollIndicator from '@/components/ScrollIndicator'
 import HeroBackground from '@/components/HeroBackground'
+
+export const metadata: Metadata = {
+  title: 'AI development та автоматизація | STEPS LAB — веб-студія',
+  description: 'AI development для бізнесу: автоматизація процесів, CRM-інтеграції, форми, контент-процеси. Веб-студія з досвідом AI-розробки.',
+}
 
 export default function AIAutomationPage() {
   return (
@@ -10,11 +16,11 @@ export default function AIAutomationPage() {
         <div className="container-custom">
           <div className="max-w-[900px]">
             <Link href="/services" className="text-sm tracking-wide text-accent mb-10 opacity-70 px-3 py-1.5 rounded-lg inline-block bg-accent/10 transition-all duration-500 hover:opacity-100 hover:bg-accent/20 no-underline">
-              ← Services
+              ← Послуги
             </Link>
-            <h1 className="text-[72px] font-semibold leading-[1.1] mb-6 tracking-[-2px] font-manrope">AI Automation</h1>
+            <h1 className="text-[72px] font-semibold leading-[1.1] mb-6 tracking-[-2px] font-manrope">AI development та автоматизація</h1>
             <p className="text-xl leading-relaxed opacity-80">
-              Форми, CRM-інтеграції, контент-процеси. Автоматизуємо рутинні завдання, щоб ви могли зосередитись на стратегії.
+              AI development для бізнесу: форми, CRM-інтеграції, контент-процеси. Студія розробки автоматизує рутину, щоб ви фокусувались на стратегії.
             </p>
           </div>
         </div>
@@ -27,8 +33,8 @@ export default function AIAutomationPage() {
             <div>
               <h2 className="text-[48px] font-semibold mb-8 text-text-dark tracking-[-1.5px] font-manrope">Що ми робимо</h2>
               <div className="flex flex-col gap-6 text-base leading-relaxed text-text-dark opacity-70 mb-16">
-                <p>Автоматизація бізнес-процесів за допомогою AI та сучасних інструментів. Ми інтегруємо розумні рішення, які економлять час та ресурси.</p>
-                <p>Наш підхід до AI — контрольований та прозорий. Ми використовуємо технології як інструмент, а не як чорну скриньку.</p>
+                <p>AI development та автоматизація бізнес-процесів. Веб-студія інтегрує розумні рішення в сайти та веб-додатки, які економлять час і ресурси.</p>
+                <p>Наш підхід до AI development — контрольований та прозорий. Ми використовуємо технології як інструмент для веб-розробки, а не як чорну скриньку.</p>
               </div>
 
               <h2 className="text-[48px] font-semibold mb-8 text-text-dark tracking-[-1.5px] font-manrope">Типи проєктів</h2>

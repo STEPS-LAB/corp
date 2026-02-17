@@ -1,6 +1,12 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import ScrollIndicator from '@/components/ScrollIndicator'
 import HeroBackground from '@/components/HeroBackground'
+
+export const metadata: Metadata = {
+  title: 'Підтримка та масштабування сайтів | STEPS LAB',
+  description: 'Підтримка веб-сайтів та веб-додатків. Студія розробки допомагає масштабувати проєкти, оптимізувати та розвивати існуючі сайти.',
+}
 
 export default function SupportScalingPage() {
   return (
@@ -10,11 +16,11 @@ export default function SupportScalingPage() {
         <div className="container-custom">
           <div className="max-w-[900px]">
             <Link href="/services" className="text-sm tracking-wide text-accent mb-10 opacity-70 px-3 py-1.5 rounded-lg inline-block bg-accent/10 transition-all duration-500 hover:opacity-100 hover:bg-accent/20 no-underline">
-              ← Services
+              ← Послуги
             </Link>
-            <h1 className="text-[72px] font-semibold leading-[1.1] mb-6 tracking-[-2px] font-manrope">Support & Scaling</h1>
+            <h1 className="text-[72px] font-semibold leading-[1.1] mb-6 tracking-[-2px] font-manrope">Підтримка та масштабування сайтів</h1>
             <p className="text-xl leading-relaxed opacity-80">
-              Підтримка, оптимізація, розвиток. Допомагаємо вашому продукту рости разом з бізнесом.
+              Підтримка веб-сайтів та веб-додатків. Веб-студія допомагає вашому сайту рости разом з бізнесом.
             </p>
           </div>
         </div>
@@ -27,8 +33,8 @@ export default function SupportScalingPage() {
             <div>
               <h2 className="text-[48px] font-semibold mb-8 text-text-dark tracking-[-1.5px] font-manrope">Що ми робимо</h2>
               <div className="flex flex-col gap-6 text-base leading-relaxed text-text-dark opacity-70 mb-16">
-                <p>Після запуску продукту важливо продовжувати його розвиток та оптимізацію. Ми надаємо підтримку та допомагаємо масштабувати рішення.</p>
-                <p>Наш підхід включає моніторинг продуктивності, регулярні оновлення, оптимізацію та додавання нових функцій на основі даних.</p>
+                <p>Після запуску сайту важливо продовжувати розвиток та оптимізацію. Веб-студія надає підтримку website development та допомагає масштабувати існуючі проєкти.</p>
+                <p>Студія розробки веде моніторинг продуктивності, регулярні оновлення та додає нові функції на основі даних. Підтримка сайтів — частина веб-розробки.</p>
               </div>
 
               <h2 className="text-[48px] font-semibold mb-8 text-text-dark tracking-[-1.5px] font-manrope">Типи послуг</h2>

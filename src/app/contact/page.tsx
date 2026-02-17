@@ -37,10 +37,10 @@ export default function ContactPage() {
             </div>
             <h1 className="hero-alt-title">
               <span className="hero-alt-title-line">Зв'яжіться</span>
-              <span className="hero-alt-title-line">з нами</span>
+              <span className="hero-alt-title-line">зі студією</span>
             </h1>
             <p className="hero-alt-description">
-              Готові обговорити ваш проєкт та знайти найкраще рішення.
+              Обговоримо ваш проєкт розробки сайту або веб-додатку. Консультація безкоштовно.
             </p>
           </div>
         </div>
@@ -50,7 +50,7 @@ export default function ContactPage() {
       <section className="bg-bg-light py-section-spacing">
         <div className="container-custom">
           <div className="max-w-[800px] mx-auto text-center">
-            <h2 className="text-[64px] font-semibold mb-6 text-text-dark tracking-[-2px] font-manrope">Get in touch</h2>
+            <h2 className="text-[64px] font-semibold mb-6 text-text-dark tracking-[-2px] font-manrope">Напишіть нам</h2>
             
             <div className="flex flex-col gap-12 mt-20">
               <div className="flex flex-col gap-16 bg-[rgba(14,14,17,0.02)] p-12 rounded-[20px] border border-[rgba(14,14,17,0.05)]">
@@ -79,7 +79,7 @@ export default function ContactPage() {
               </div>
               
               <div className="bg-[rgba(14,14,17,0.02)] p-12 rounded-[20px] border border-[rgba(14,14,17,0.05)]">
-                <h3 className="text-2xl font-semibold text-text-dark font-manrope mb-8 tracking-[-0.5px]">Fill out form</h3>
+                <h3 className="text-2xl font-semibold text-text-dark font-manrope mb-8 tracking-[-0.5px]">Залиште заявку</h3>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                   <div className="flex flex-col gap-1.5">
                     <input

@@ -4,30 +4,30 @@ export default function ServicesSection() {
   const services = [
     {
       href: '/services/web-development',
-      title: 'Web development',
-      text: 'Бізнес-сайти, лендинги, корпоративні платформи.',
+      title: 'Розробка сайтів',
+      text: 'Веб-розробка сайтів: бізнес-сайти, лендинги, корпоративні платформи. Website development під ваш бізнес.',
     },
     {
       href: '/services/ai-automation',
-      title: 'AI automation',
-      text: 'Форми, CRM-інтеграції, контент-процеси.',
+      title: 'AI development та автоматизація',
+      text: 'AI development для бізнесу: форми, CRM-інтеграції, автоматизація контент-процесів.',
     },
     {
       href: '/services/mvp-startups',
-      title: 'MVP for startups',
-      text: 'Швидкий запуск і перевірка гіпотез.',
+      title: 'MVP для стартапів',
+      text: 'Швидка розробка мінімального продукту. Site development для перевірки гіпотез на ринку.',
     },
     {
       href: '/services/support-scaling',
-      title: 'Support & scaling',
-      text: 'Підтримка, оптимізація, розвиток.',
+      title: 'Підтримка та масштабування',
+      text: 'Підтримка сайтів та веб-додатків, оптимізація та розвиток проєктів.',
     },
   ]
 
   return (
     <section className="services-alt" id="services">
       <div className="container-custom">
-        <h2 className="section-title-alt">Services</h2>
+        <h2 className="section-title-alt">Послуги веб-студії</h2>
         <div className="services-alt-list">
           {services.map((service, index) => (
             <Link

@@ -32,32 +32,32 @@ export default function HeroSection() {
             <span className="hero-alt-title-line">для бізнесу</span>
           </h1>
           <p className="hero-alt-description">
-            Логіка, швидкість, результат.
+            Студія розробки сайтів та веб-додатків. Розробка сайту та website development з фокусом на результат.
           </p>
           <div className="hero-alt-cta">
             <button
               onClick={openModal}
               className="btn btn-primary btn-large"
             >
-              Get consultation
+              Отримати консультацію
             </button>
             <Link href="#cases" className="btn-link">
-              View cases →
+              Переглянути кейси →
             </Link>
           </div>
         </div>
         <div className="hero-alt-stats">
           <div className="stat-item">
             <div className="stat-number">2x</div>
-            <div className="stat-label">Faster</div>
+            <div className="stat-label">Швидше</div>
           </div>
           <div className="stat-item">
             <div className="stat-number">AI</div>
-            <div className="stat-label">Powered</div>
+            <div className="stat-label">Розробка</div>
           </div>
           <div className="stat-item">
             <div className="stat-number">24/7</div>
-            <div className="stat-label">Support</div>
+            <div className="stat-label">Підтримка</div>
           </div>
         </div>
       </div>

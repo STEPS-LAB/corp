@@ -10,14 +10,14 @@ export default function FinalCTASection() {
       <div className="container-custom">
         <div className="final-cta-alt-content">
           <div className="final-cta-alt-left">
-            <h2 className="final-cta-alt-title">Let's build something that makes sense.</h2>
+            <h2 className="final-cta-alt-title">Створимо сайт або веб-додаток, що працює на результат.</h2>
           </div>
           <div className="final-cta-alt-right">
             <button
               onClick={openModal}
               className="btn btn-primary btn-large"
             >
-              Get consultation
+              Отримати консультацію
             </button>
           </div>
         </div>

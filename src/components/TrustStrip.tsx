@@ -3,13 +3,13 @@ export default function TrustStrip() {
     <section className="trust-strip-alt">
       <div className="container-custom">
         <div className="trust-strip-content">
-          <span className="trust-item-alt">Structured process</span>
+          <span className="trust-item-alt">Структурований процес розробки</span>
           <span className="trust-divider">•</span>
-          <span className="trust-item-alt">AI under control</span>
+          <span className="trust-item-alt">AI development під контролем</span>
           <span className="trust-divider">•</span>
-          <span className="trust-item-alt">Business-driven</span>
+          <span className="trust-item-alt">Орієнтація на бізнес</span>
           <span className="trust-divider">•</span>
-          <span className="trust-item-alt">Transparent</span>
+          <span className="trust-item-alt">Прозорість у веб-розробці</span>
         </div>
       </div>
     </section>

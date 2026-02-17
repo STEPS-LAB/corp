@@ -1,6 +1,12 @@
+import type { Metadata } from 'next'
 import CasesSection from '@/components/CasesSection'
 import HeroBackground from '@/components/HeroBackground'
 import ScrollIndicator from '@/components/ScrollIndicator'
+
+export const metadata: Metadata = {
+  title: 'Кейси розробки сайтів | STEPS LAB — веб-студія',
+  description: 'Реальні кейси веб-розробки: корпоративні сайти, e-commerce, SaaS MVP. Результати website development та AI development від студії STEPS LAB.',
+}
 
 export default function CasesPage() {
   return (
@@ -13,11 +19,11 @@ export default function CasesPage() {
               Cases
             </div>
             <h1 className="hero-alt-title">
-              <span className="hero-alt-title-line">Вибрані проєкти</span>
+              <span className="hero-alt-title-line">Кейси веб-розробки</span>
               <span className="hero-alt-title-line">та результати</span>
             </h1>
             <p className="hero-alt-description">
-              Реальні кейси з реальними результатами для бізнесу.
+              Реальні кейси розробки сайтів: корпоративні сайти, e-commerce, SaaS. Результати для бізнесу.
             </p>
           </div>
         </div>

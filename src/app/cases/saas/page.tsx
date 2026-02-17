@@ -13,9 +13,9 @@ export default function SaaSCasePage() {
         <div className="case-hero-image"></div>
         <div className="container-custom">
           <div className="case-hero-content">
-            <Link href="/cases" className="service-breadcrumb">← Cases</Link>
+            <Link href="/cases" className="service-breadcrumb">← Кейси</Link>
             <h1 className="case-hero-title">SaaS MVP</h1>
-            <p className="case-hero-subtitle">Мінімальний продукт для стартапу з AI-інтеграцією</p>
+            <p className="case-hero-subtitle">AI development для стартапу: розробка мінімального продукту з AI-інтеграцією</p>
           </div>
         </div>
       </section>
@@ -142,7 +142,7 @@ export default function SaaSCasePage() {
                 onClick={openModal}
                 className="btn btn-primary btn-large"
               >
-                Get consultation
+                Отримати консультацію
               </button>
             </div>
           </div>

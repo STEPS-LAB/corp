@@ -1,9 +1,9 @@
 export default function WhyStepsLabSection() {
   const items = [
-    { label: '01', text: 'Predictable results' },
-    { label: '02', text: 'Clear communication' },
-    { label: '03', text: 'No hype, only logic' },
-    { label: '04', text: 'AI without chaos' },
+    { label: '01', text: 'Передбачувані результати розробки' },
+    { label: '02', text: 'Зрозуміла комунікація зі студією' },
+    { label: '03', text: 'Без хайпу — лише логіка в development' },
+    { label: '04', text: 'AI development без хаосу' },
   ]
 
   return (
@@ -19,7 +19,7 @@ export default function WhyStepsLabSection() {
         <div className="why-steps-lab-alt-grid-pattern"></div>
       </div>
       <div className="container-custom">
-        <h2 className="section-title-alt">Why STEPS LAB</h2>
+        <h2 className="section-title-alt">Чому веб-студія STEPS LAB</h2>
         <div className="why-steps-lab-alt-content">
           <div className="why-steps-lab-alt-list">
             {items.map((item, index) => (
@@ -30,7 +30,7 @@ export default function WhyStepsLabSection() {
             ))}
           </div>
           <div className="why-steps-lab-alt-quote">
-            <p>Ми не продаємо тренди.<br />Ми будуємо системи, які працюють.</p>
+            <p>Ми не продаємо тренди.<br />Студія розробки, яка будує сайти та системи, що працюють.</p>
           </div>
         </div>
       </div>

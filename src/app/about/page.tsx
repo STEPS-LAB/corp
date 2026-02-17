@@ -1,7 +1,13 @@
+import type { Metadata } from 'next'
 import AboutSection from '@/components/AboutSection'
 import WhyStepsLabSection from '@/components/WhyStepsLabSection'
 import HeroBackground from '@/components/HeroBackground'
 import ScrollIndicator from '@/components/ScrollIndicator'
+
+export const metadata: Metadata = {
+  title: 'Про веб-студію STEPS LAB | Розробка сайтів та AI development',
+  description: 'Веб-студія STEPS LAB: команда розробки сайтів, веб-розробки та AI development. Студія, яка створює зрозумілі цифрові продукти для бізнесу.',
+}
 
 export default function AboutPage() {
   return (
@@ -14,10 +20,10 @@ export default function AboutPage() {
               About
             </div>
             <h1 className="hero-alt-title">
-              <span className="hero-alt-title-line">Про нас</span>
+              <span className="hero-alt-title-line">Про веб-студію</span>
             </h1>
             <p className="hero-alt-description">
-              AI-first digital studio, яка створює зрозумілі та ефективні цифрові продукти.
+              Студія розробки сайтів та веб-додатків. AI development та website development для бізнесу.
             </p>
           </div>
         </div>

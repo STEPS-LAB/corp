@@ -1,6 +1,12 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import ScrollIndicator from '@/components/ScrollIndicator'
 import HeroBackground from '@/components/HeroBackground'
+
+export const metadata: Metadata = {
+  title: 'MVP для стартапів | Швидка розробка — STEPS LAB',
+  description: 'Розробка MVP для стартапів: швидкий запуск, перевірка гіпотез. Студія розробки сайтів та веб-додатків за 6-10 тижнів. AI-прискорена веб-розробка.',
+}
 
 export default function MVPStartupsPage() {
   return (
@@ -10,11 +16,11 @@ export default function MVPStartupsPage() {
         <div className="container-custom">
           <div className="max-w-[900px]">
             <Link href="/services" className="text-sm tracking-wide text-accent mb-10 opacity-70 px-3 py-1.5 rounded-lg inline-block bg-accent/10 transition-all duration-500 hover:opacity-100 hover:bg-accent/20 no-underline">
-              ← Services
+              ← Послуги
             </Link>
-            <h1 className="text-[72px] font-semibold leading-[1.1] mb-6 tracking-[-2px] font-manrope">MVP for Startups</h1>
+            <h1 className="text-[72px] font-semibold leading-[1.1] mb-6 tracking-[-2px] font-manrope">MVP для стартапів</h1>
             <p className="text-xl leading-relaxed opacity-80">
-              Швидкий запуск і перевірка гіпотез. Створюємо мінімальний продукт, який дозволяє швидко отримати фідбек від ринку.
+              Швидка розробка мінімального продукту. Веб-студія створює MVP для перевірки гіпотез та отримання фідбеку від ринку. Site development за тижні.
             </p>
           </div>
         </div>
@@ -27,8 +33,8 @@ export default function MVPStartupsPage() {
             <div>
               <h2 className="text-[48px] font-semibold mb-8 text-text-dark tracking-[-1.5px] font-manrope">Що ми робимо</h2>
               <div className="flex flex-col gap-6 text-base leading-relaxed text-text-dark opacity-70 mb-16">
-                <p>MVP (Minimum Viable Product) — це мінімальна версія продукту, яка дозволяє швидко перевірити бізнес-гіпотезу на реальному ринку.</p>
-                <p>Ми створюємо MVP за 6-10 тижнів, фокусуючись на ключових функціях та швидкому отриманні фідбеку від користувачів.</p>
+                <p>MVP — мінімальна версія продукту для швидкої перевірки бізнес-гіпотези. Веб-студія спеціалізується на розробці MVP: сайти та веб-додатки за мінімальний термін.</p>
+                <p>Website development MVP за 6-10 тижнів: фокус на ключових функціях, AI-прискорена веб-розробка, швидке отримання фідбеку від ринку.</p>
               </div>
 
               <h2 className="text-[48px] font-semibold mb-8 text-text-dark tracking-[-1.5px] font-manrope">Типи проєктів</h2>

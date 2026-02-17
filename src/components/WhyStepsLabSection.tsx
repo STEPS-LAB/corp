@@ -2,8 +2,8 @@ export default function WhyStepsLabSection() {
   const items = [
     { label: '01', text: 'Передбачувані результати розробки' },
     { label: '02', text: 'Зрозуміла комунікація зі студією' },
-    { label: '03', text: 'Без хайпу — лише логіка в development' },
-    { label: '04', text: 'AI development без хаосу' },
+    { label: '03', text: 'Без хайпу — лише логіка в розробці' },
+    { label: '04', text: 'AI-розробка без хаосу' },
   ]
 
   return (

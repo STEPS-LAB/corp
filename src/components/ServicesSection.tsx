@@ -5,17 +5,17 @@ export default function ServicesSection() {
     {
       href: '/services/web-development',
       title: 'Розробка сайтів',
-      text: 'Веб-розробка сайтів: бізнес-сайти, лендинги, корпоративні платформи. Website development під ваш бізнес.',
+      text: 'Веб-розробка сайтів: бізнес-сайти, лендинги, корпоративні платформи. Розробка під ваш бізнес.',
     },
     {
       href: '/services/ai-automation',
-      title: 'AI development та автоматизація',
-      text: 'AI development для бізнесу: форми, CRM-інтеграції, автоматизація контент-процесів.',
+      title: 'AI-розробка та автоматизація',
+      text: 'AI-розробка для бізнесу: форми, CRM-інтеграції, автоматизація контент-процесів.',
     },
     {
       href: '/services/mvp-startups',
       title: 'MVP для стартапів',
-      text: 'Швидка розробка мінімального продукту. Site development для перевірки гіпотез на ринку.',
+      text: 'Швидка розробка мінімального продукту для перевірки гіпотез на ринку.',
     },
     {
       href: '/services/support-scaling',

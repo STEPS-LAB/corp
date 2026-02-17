@@ -11,15 +11,15 @@ export const metadata: Metadata = {
 export default function SupportScalingPage() {
   return (
     <>
-      <section className="min-h-screen bg-bg-dark text-text-light flex items-center pt-20 pb-[120px] relative overflow-hidden">
+      <section className="min-h-screen bg-bg-dark text-text-light flex items-center pt-20 pb-20 md:pb-[120px] relative overflow-hidden">
         <HeroBackground />
         <div className="container-custom">
           <div className="max-w-[900px]">
             <Link href="/services" className="text-sm tracking-wide text-accent mb-10 opacity-70 px-3 py-1.5 rounded-lg inline-block bg-accent/10 transition-all duration-500 hover:opacity-100 hover:bg-accent/20 no-underline">
               ← Послуги
             </Link>
-            <h1 className="text-[72px] font-semibold leading-[1.1] mb-6 tracking-[-2px] font-manrope">Підтримка та масштабування сайтів</h1>
-            <p className="text-xl leading-relaxed opacity-80">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[72px] font-semibold leading-[1.1] mb-6 tracking-[-2px] font-manrope">Підтримка та масштабування сайтів</h1>
+            <p className="text-base sm:text-lg md:text-xl leading-relaxed opacity-80">
               Підтримка веб-сайтів та веб-додатків. Веб-студія допомагає вашому сайту рости разом з бізнесом.
             </p>
           </div>
@@ -29,11 +29,11 @@ export default function SupportScalingPage() {
 
       <section className="bg-bg-light py-section-spacing">
         <div className="container-custom">
-          <div className="grid grid-cols-[1fr_400px] gap-20">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-12 lg:gap-20">
             <div>
-              <h2 className="text-[48px] font-semibold mb-8 text-text-dark tracking-[-1.5px] font-manrope">Що ми робимо</h2>
+              <h2 className="text-3xl md:text-4xl lg:text-[48px] font-semibold mb-6 md:mb-8 text-text-dark tracking-[-1.5px] font-manrope">Що ми робимо</h2>
               <div className="flex flex-col gap-6 text-base leading-relaxed text-text-dark opacity-70 mb-16">
-                <p>Після запуску сайту важливо продовжувати розвиток та оптимізацію. Веб-студія надає підтримку website development та допомагає масштабувати існуючі проєкти.</p>
+                <p>Після запуску сайту важливо продовжувати розвиток та оптимізацію. Веб-студія надає підтримку та допомагає масштабувати існуючі проєкти.</p>
                 <p>Студія розробки веде моніторинг продуктивності, регулярні оновлення та додає нові функції на основі даних. Підтримка сайтів — частина веб-розробки.</p>
               </div>
 
@@ -53,7 +53,7 @@ export default function SupportScalingPage() {
                 </div>
               </div>
 
-              <h2 className="text-[48px] font-semibold mb-8 text-text-dark tracking-[-1.5px] font-manrope">Процес роботи</h2>
+              <h2 className="text-3xl md:text-4xl lg:text-[48px] font-semibold mb-6 md:mb-8 text-text-dark tracking-[-1.5px] font-manrope">Процес роботи</h2>
               <div className="flex flex-col gap-8">
                 {[
                   { number: '01', title: 'Аудит та аналіз', text: 'Оцінюємо поточний стан продукту та визначаємо точки росту.' },
@@ -61,7 +61,7 @@ export default function SupportScalingPage() {
                   { number: '03', title: 'Впровадження змін', text: 'Поступово впроваджуємо покращення та нові функції.' },
                   { number: '04', title: 'Моніторинг та оптимізація', text: 'Постійно моніторимо продуктивність та оптимізуємо рішення.' },
                 ].map((item, index) => (
-                  <div key={index} className="flex gap-6 items-start">
+                  <div key={index} className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start">
                     <div className="text-sm tracking-wide text-accent min-w-[60px] opacity-70 px-3 py-1.5 rounded-lg bg-accent/10 text-center">
                       {item.number}
                     </div>

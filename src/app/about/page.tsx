@@ -5,8 +5,8 @@ import HeroBackground from '@/components/HeroBackground'
 import ScrollIndicator from '@/components/ScrollIndicator'
 
 export const metadata: Metadata = {
-  title: 'Про веб-студію STEPS LAB | Розробка сайтів та AI development',
-  description: 'Веб-студія STEPS LAB: команда розробки сайтів, веб-розробки та AI development. Студія, яка створює зрозумілі цифрові продукти для бізнесу.',
+  title: 'Про веб-студію STEPS LAB | Розробка сайтів та AI-розробка',
+  description: 'Веб-студія STEPS LAB: якісні сайти та веб-додатки. AI для ефективності — високоякісний продукт і вигідні умови. Зрозумілі цифрові продукти для бізнесу.',
 }
 
 export default function AboutPage() {
@@ -23,7 +23,7 @@ export default function AboutPage() {
               <span className="hero-alt-title-line">Про веб-студію</span>
             </h1>
             <p className="hero-alt-description">
-              Студія розробки сайтів та веб-додатків. AI development та website development для бізнесу.
+              Якісні сайти та веб-додатки. AI для ефективності — надійний результат для вашого бізнесу.
             </p>
           </div>
         </div>

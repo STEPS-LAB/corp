@@ -5,22 +5,22 @@ import HeroBackground from '@/components/HeroBackground'
 
 export const metadata: Metadata = {
   title: 'Розробка сайтів | Веб-розробка — STEPS LAB',
-  description: 'Веб-розробка та розробка сайтів: бізнес-сайти, лендинги, корпоративні платформи. Website development, site development від веб-студії. AI-прискорена розробка.',
+  description: 'Веб-розробка та розробка сайтів: бізнес-сайти, лендинги, корпоративні платформи. AI-прискорена розробка від веб-студії.',
 }
 
 export default function WebDevelopmentPage() {
   return (
     <>
-      <section className="min-h-screen bg-bg-dark text-text-light flex items-center pt-20 pb-[120px] relative overflow-hidden">
+      <section className="min-h-screen bg-bg-dark text-text-light flex items-center pt-20 pb-20 md:pb-[120px] relative overflow-hidden">
         <HeroBackground />
         <div className="container-custom">
           <div className="max-w-[900px]">
             <Link href="/services" className="text-sm tracking-wide text-accent mb-10 opacity-70 px-3 py-1.5 rounded-lg inline-block bg-accent/10 transition-all duration-500 hover:opacity-100 hover:bg-accent/20 no-underline">
               ← Послуги
             </Link>
-            <h1 className="text-[72px] font-semibold leading-[1.1] mb-6 tracking-[-2px] font-manrope">Розробка сайтів та веб-розробка</h1>
-            <p className="text-xl leading-relaxed opacity-80">
-              Website development для бізнесу: бізнес-сайти, лендинги, корпоративні платформи. Веб-студія створює сайти, що працюють на результат.
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[72px] font-semibold leading-[1.1] mb-6 tracking-[-2px] font-manrope">Розробка сайтів та веб-розробка</h1>
+            <p className="text-base sm:text-lg md:text-xl leading-relaxed opacity-80">
+              Розробка сайтів для бізнесу: бізнес-сайти, лендинги, корпоративні платформи. Веб-студія створює сайти, що працюють на результат.
             </p>
           </div>
         </div>
@@ -29,15 +29,15 @@ export default function WebDevelopmentPage() {
 
       <section className="bg-bg-light py-section-spacing">
         <div className="container-custom">
-          <div className="grid grid-cols-[1fr_400px] gap-20">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-12 lg:gap-20">
             <div>
-              <h2 className="text-[48px] font-semibold mb-8 text-text-dark tracking-[-1.5px] font-manrope">Що ми робимо</h2>
+              <h2 className="text-3xl md:text-4xl lg:text-[48px] font-semibold mb-6 md:mb-8 text-text-dark tracking-[-1.5px] font-manrope">Що ми робимо</h2>
               <div className="flex flex-col gap-6 text-base leading-relaxed text-text-dark opacity-70 mb-16">
-                <p>Веб-студія STEPS LAB займається розробкою сайтів та веб-додатків, які працюють на ваш бізнес. Кожен проєкт website development починається з аналізу цілей, аудиторії та бізнес-процесів.</p>
-                <p>Web development з логікою: ми використовуємо AI для прискорення розробки, але кожне рішення проходить через фільтр бізнес-сенсу. Site development — це не лише код, це результат.</p>
+                <p>Веб-студія STEPS LAB займається розробкою сайтів та веб-додатків, які працюють на ваш бізнес. Кожен проєкт починається з аналізу цілей, аудиторії та бізнес-процесів.</p>
+                <p>Ми використовуємо AI для ефективності — якісний продукт і вигідні умови для вас. Кожне рішення проходить через фільтр бізнес-сенсу. Розробка сайту — це не лише код, це результат.</p>
               </div>
 
-              <h2 className="text-[48px] font-semibold mb-8 text-text-dark tracking-[-1.5px] font-manrope">Типи проєктів</h2>
+              <h2 className="text-3xl md:text-4xl lg:text-[48px] font-semibold mb-6 md:mb-8 text-text-dark tracking-[-1.5px] font-manrope">Типи проєктів</h2>
               <div className="flex flex-col gap-8 mb-16">
                 <div className="p-6 rounded-2xl transition-all duration-500 hover:bg-[rgba(14,14,17,0.02)] hover:-translate-y-1">
                   <h3 className="text-2xl font-semibold text-text-dark mb-3 font-manrope">Бізнес-сайти</h3>
@@ -53,7 +53,7 @@ export default function WebDevelopmentPage() {
                 </div>
               </div>
 
-              <h2 className="text-[48px] font-semibold mb-8 text-text-dark tracking-[-1.5px] font-manrope">Процес роботи</h2>
+              <h2 className="text-3xl md:text-4xl lg:text-[48px] font-semibold mb-6 md:mb-8 text-text-dark tracking-[-1.5px] font-manrope">Процес роботи</h2>
               <div className="flex flex-col gap-8">
                 {[
                   { number: '01', title: 'Аналіз та планування', text: 'Досліджуємо ваш бізнес, цілі та аудиторію. Визначаємо технічні вимоги та архітектуру рішення.' },
@@ -61,7 +61,7 @@ export default function WebDevelopmentPage() {
                   { number: '03', title: 'Розробка', text: 'AI-прискорена розробка з фокусом на якість коду, продуктивність та масштабованість.' },
                   { number: '04', title: 'Тестування та запуск', text: 'Комплексне тестування, оптимізація та запуск з підтримкою після релізу.' },
                 ].map((item, index) => (
-                  <div key={index} className="flex gap-6 items-start">
+                  <div key={index} className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start">
                     <div className="text-sm tracking-wide text-accent min-w-[60px] opacity-70 px-3 py-1.5 rounded-lg bg-accent/10 text-center">
                       {item.number}
                     </div>

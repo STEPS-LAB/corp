@@ -15,7 +15,7 @@ export default function EcommerceCasePage() {
           <div className="case-hero-content">
             <Link href="/cases" className="service-breadcrumb">← Кейси</Link>
             <h1 className="case-hero-title">E-commerce платформа</h1>
-            <p className="case-hero-subtitle">Веб-розробка платформи для онлайн-продажів: site development під масштабування</p>
+            <p className="case-hero-subtitle">Веб-розробка платформи для онлайн-продажів під масштабування</p>
           </div>
         </div>
       </section>

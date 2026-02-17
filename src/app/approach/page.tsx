@@ -6,7 +6,7 @@ import ScrollIndicator from '@/components/ScrollIndicator'
 
 export const metadata: Metadata = {
   title: 'Підхід до веб-розробки | STEPS LAB — студія розробки сайтів',
-  description: 'Як ми працюємо: логіка, AI development, орієнтація на результат. Студія розробки сайтів з прозорим процесом website development.',
+  description: 'Як ми працюємо: логіка, AI-розробка, орієнтація на результат. Студія розробки сайтів з прозорим процесом.',
 }
 
 export default function ApproachPage() {
@@ -24,7 +24,7 @@ export default function ApproachPage() {
               <span className="hero-alt-title-line">до веб-розробки</span>
             </h1>
             <p className="hero-alt-description">
-              Студія розробки сайтів, яка будує системи. Логіка, AI development, результат.
+              Студія розробки сайтів, яка будує системи. Логіка, AI-розробка, результат.
             </p>
           </div>
         </div>

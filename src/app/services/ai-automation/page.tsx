@@ -4,23 +4,23 @@ import ScrollIndicator from '@/components/ScrollIndicator'
 import HeroBackground from '@/components/HeroBackground'
 
 export const metadata: Metadata = {
-  title: 'AI development та автоматизація | STEPS LAB — веб-студія',
-  description: 'AI development для бізнесу: автоматизація процесів, CRM-інтеграції, форми, контент-процеси. Веб-студія з досвідом AI-розробки.',
+  title: 'AI-розробка та автоматизація | STEPS LAB — веб-студія',
+  description: 'AI-розробка для бізнесу: автоматизація процесів, CRM-інтеграції, форми, контент-процеси. Веб-студія з досвідом.',
 }
 
 export default function AIAutomationPage() {
   return (
     <>
-      <section className="min-h-screen bg-bg-dark text-text-light flex items-center pt-20 pb-[120px] relative overflow-hidden">
+      <section className="min-h-screen bg-bg-dark text-text-light flex items-center pt-20 pb-20 md:pb-[120px] relative overflow-hidden">
         <HeroBackground />
         <div className="container-custom">
           <div className="max-w-[900px]">
             <Link href="/services" className="text-sm tracking-wide text-accent mb-10 opacity-70 px-3 py-1.5 rounded-lg inline-block bg-accent/10 transition-all duration-500 hover:opacity-100 hover:bg-accent/20 no-underline">
               ← Послуги
             </Link>
-            <h1 className="text-[72px] font-semibold leading-[1.1] mb-6 tracking-[-2px] font-manrope">AI development та автоматизація</h1>
-            <p className="text-xl leading-relaxed opacity-80">
-              AI development для бізнесу: форми, CRM-інтеграції, контент-процеси. Студія розробки автоматизує рутину, щоб ви фокусувались на стратегії.
+            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[72px] font-semibold leading-[1.1] mb-6 tracking-[-2px] font-manrope">AI-розробка та автоматизація</h1>
+            <p className="text-base sm:text-lg md:text-xl leading-relaxed opacity-80">
+              AI-розробка для бізнесу: форми, CRM-інтеграції, контент-процеси. Студія автоматизує рутину, щоб ви фокусувались на стратегії.
             </p>
           </div>
         </div>
@@ -29,15 +29,15 @@ export default function AIAutomationPage() {
 
       <section className="bg-bg-light py-section-spacing">
         <div className="container-custom">
-          <div className="grid grid-cols-[1fr_400px] gap-20">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-12 lg:gap-20">
             <div>
-              <h2 className="text-[48px] font-semibold mb-8 text-text-dark tracking-[-1.5px] font-manrope">Що ми робимо</h2>
+              <h2 className="text-3xl md:text-4xl lg:text-[48px] font-semibold mb-6 md:mb-8 text-text-dark tracking-[-1.5px] font-manrope">Що ми робимо</h2>
               <div className="flex flex-col gap-6 text-base leading-relaxed text-text-dark opacity-70 mb-16">
-                <p>AI development та автоматизація бізнес-процесів. Веб-студія інтегрує розумні рішення в сайти та веб-додатки, які економлять час і ресурси.</p>
-                <p>Наш підхід до AI development — контрольований та прозорий. Ми використовуємо технології як інструмент для веб-розробки, а не як чорну скриньку.</p>
+                <p>AI-розробка та автоматизація бізнес-процесів. Веб-студія інтегрує розумні рішення в сайти та веб-додатки, які економлять час і ресурси.</p>
+                <p>Наш підхід до AI-розробки — контрольований та прозорий. Ми використовуємо технології як інструмент для веб-розробки, а не як чорну скриньку.</p>
               </div>
 
-              <h2 className="text-[48px] font-semibold mb-8 text-text-dark tracking-[-1.5px] font-manrope">Типи проєктів</h2>
+              <h2 className="text-3xl md:text-4xl lg:text-[48px] font-semibold mb-6 md:mb-8 text-text-dark tracking-[-1.5px] font-manrope">Типи проєктів</h2>
               <div className="flex flex-col gap-8 mb-16">
                 <div className="p-6 rounded-2xl transition-all duration-500 hover:bg-[rgba(14,14,17,0.02)] hover:-translate-y-1">
                   <h3 className="text-2xl font-semibold text-text-dark mb-3 font-manrope">CRM-інтеграції</h3>
@@ -53,7 +53,7 @@ export default function AIAutomationPage() {
                 </div>
               </div>
 
-              <h2 className="text-[48px] font-semibold mb-8 text-text-dark tracking-[-1.5px] font-manrope">Процес роботи</h2>
+              <h2 className="text-3xl md:text-4xl lg:text-[48px] font-semibold mb-6 md:mb-8 text-text-dark tracking-[-1.5px] font-manrope">Процес роботи</h2>
               <div className="flex flex-col gap-8">
                 {[
                   { number: '01', title: 'Аналіз процесів', text: 'Виявляємо рутинні завдання та можливості для автоматизації.' },
@@ -61,7 +61,7 @@ export default function AIAutomationPage() {
                   { number: '03', title: 'Інтеграція та налаштування', text: 'Впроваджуємо AI-інструменти та налаштовуємо процеси.' },
                   { number: '04', title: 'Тестування та оптимізація', text: 'Перевіряємо роботу системи та оптимізуємо для максимальної ефективності.' },
                 ].map((item, index) => (
-                  <div key={index} className="flex gap-6 items-start">
+                  <div key={index} className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start">
                     <div className="text-sm tracking-wide text-accent min-w-[60px] opacity-70 px-3 py-1.5 rounded-lg bg-accent/10 text-center">
                       {item.number}
                     </div>

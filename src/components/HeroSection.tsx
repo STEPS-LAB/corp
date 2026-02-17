@@ -32,7 +32,7 @@ export default function HeroSection() {
             <span className="hero-alt-title-line">для бізнесу</span>
           </h1>
           <p className="hero-alt-description">
-            Студія розробки сайтів та веб-додатків. Розробка сайту та website development з фокусом на результат.
+            Якісні сайти та веб-додатки. AI допомагає нам працювати ефективніше — ви отримуєте надійний результат.
           </p>
           <div className="hero-alt-cta">
             <button

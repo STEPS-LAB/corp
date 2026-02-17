@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Кейс: E-commerce платформа | Веб-розробка сайтів — STEPS LAB',
-  description: 'Кейс розробки e-commerce сайту: онлайн-продажі +340%. Website development, інтеграція платежів, AI. Веб-студія STEPS LAB.',
+  description: 'Кейс розробки e-commerce сайту: онлайн-продажі +340%. Інтеграція платежів, AI. Веб-студія STEPS LAB.',
 }
 
 export default function EcommerceCaseLayout({

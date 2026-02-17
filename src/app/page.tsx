@@ -10,7 +10,7 @@ import FinalCTASection from '@/components/FinalCTASection'
 
 export const metadata: Metadata = {
   title: 'STEPS LAB — Веб-студія | Розробка сайтів та AI-рішення',
-  description: 'Веб-студія розробки сайтів та веб-додатків. Web development, AI development, створення сайтів для бізнесу. Логіка, швидкість, результат.',
+  description: 'Веб-студія розробки сайтів та веб-додатків. Якісні продукти, ефективний процес. Створення сайтів для бізнесу. Логіка, швидкість, результат.',
 }
 
 export default function Home() {

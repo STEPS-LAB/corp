@@ -346,6 +346,7 @@
   .nav-link {
     font-size: 15px;
     color: var(--text-light);
+    white-space: nowrap;
     text-decoration: none;
     transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     font-weight: 400;
@@ -387,7 +388,7 @@
   }
 
   .header .container {
-    max-width: 1240px;
+    max-width: 1440px;
     margin: 0 auto;
     padding: 0 var(--gutter);
   }
@@ -398,13 +399,13 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    gap: 48px;
+    gap: 32px;
   }
 
   /* Nav */
   .nav {
     display: flex;
-    gap: 56px;
+    gap: 40px;
     align-items: center;
   }
 
@@ -773,6 +774,14 @@
     font-size: 42px;
     line-height: 1.1;
     margin-bottom: 20px;
+  }
+}
+
+@media (max-width: 500px) {
+  .hero-alt-title {
+    font-size: 32px;
+    letter-spacing: -1.5px;
+    margin-bottom: 16px;
   }
 }
 
@@ -1216,6 +1225,23 @@
 
 /* Scroll Indicator Responsive */
 @media (max-width: 500px) {
+  .hero-alt {
+    padding-bottom: 100px;
+  }
+  
+  .hero-alt-stats {
+    margin-top: 32px;
+    gap: 16px;
+  }
+  
+  .stat-item {
+    min-width: calc(50% - 8px);
+  }
+  
+  .stat-number {
+    font-size: 24px;
+  }
+  
   .scroll-indicator {
     bottom: 24px;
   }
@@ -1360,6 +1386,22 @@
   color: var(--text-light);
 }
 
+@media (max-width: 500px) {
+  .trust-strip-alt {
+    padding: 24px 0;
+  }
+  
+  .trust-strip-content {
+    gap: 12px;
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .trust-divider {
+    display: none;
+  }
+}
+
 .trust-item-alt {
   font-size: 13px;
   letter-spacing: 1px;
@@ -1379,6 +1421,12 @@
 
 .approach-alt-header {
   margin-bottom: 80px;
+}
+
+@media (max-width: 768px) {
+  .approach-alt-header {
+    margin-bottom: 40px;
+  }
 }
 
 .approach-alt-grid {
@@ -3324,12 +3372,21 @@
 @media (max-width: 768px) {
   .hero-alt {
     padding-top: 72px;
-    min-height: calc(100vh - 72px);
-    padding-bottom: 60px;
+    min-height: auto;
+    padding-bottom: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  
+  .hero-alt .container-custom {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
   }
   
   .hero-alt-content {
-    margin-bottom: 48px;
+    margin-bottom: 32px;
   }
   
   .hero-alt-title-line {
@@ -3338,7 +3395,8 @@
   
   .hero-alt-description {
     font-size: 18px;
-    margin-bottom: 32px;
+    margin-bottom: 28px;
+    max-width: 100%;
   }
   
   .hero-alt-cta {
@@ -3349,31 +3407,37 @@
   
   .hero-alt-cta .btn {
     width: 100%;
+    text-align: center;
+  }
+  
+  .hero-alt-cta .btn-link {
+    text-align: center;
   }
   
   .hero-alt-stats {
     position: relative;
     bottom: auto;
     right: auto;
-    margin-top: 48px;
+    margin-top: 40px;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 24px;
+    gap: 20px;
     width: 100%;
+    order: 2;
   }
   
   .stat-item {
     flex: 1;
-    min-width: calc(50% - 12px);
+    min-width: calc(33.333% - 14px);
     text-align: center;
   }
   
   .stat-number {
-    font-size: 36px;
+    font-size: 28px;
   }
   
   .stat-label {
-    font-size: 12px;
+    font-size: 11px;
   }
   
   .hero-alt-gradient-1,
@@ -3405,7 +3469,11 @@
   }
   
   .service-alt-item {
-    padding: 32px;
+    padding: 24px 20px;
+  }
+  
+  .service-alt-title {
+    font-size: 22px;
   }
   
   .why-steps-lab-alt-content {
@@ -3427,12 +3495,17 @@
   }
   
   .case-alt-content {
-    padding: 48px;
+    padding: 32px 24px;
     border-radius: 0;
+  }
+  
+  .case-alt-title {
+    font-size: 28px;
   }
   
   .case-alt-preview {
     border-radius: 0;
+    min-height: 200px;
   }
   
   .case-alt-item {
@@ -3449,20 +3522,52 @@
   }
   
   .case-screens-section {
-    margin: 48px 0;
+    margin: 40px 0;
   }
   
   .case-screen-image {
-    height: 200px;
+    height: 180px;
+  }
+  
+  .case-screen-caption {
+    font-size: 13px;
   }
   
   .case-fullscreen-section {
-    margin: 48px 0;
+    margin: 40px 0;
   }
   
   .case-fullscreen-image {
-    height: 300px;
+    height: 250px;
     border-radius: 12px;
+  }
+  
+  .case-fullscreen-caption {
+    font-size: 13px;
+  }
+  
+  .case-result-label {
+    font-size: 12px;
+  }
+  
+  .final-cta-alt-content .btn {
+    width: 100%;
+  }
+}
+
+/* Case page - smaller mobile (500px) */
+@media (max-width: 500px) {
+  .case-alt-content {
+    padding: 24px 20px;
+  }
+  
+  .case-alt-title {
+    font-size: 24px;
+  }
+  
+  .case-alt-description,
+  .case-alt-result {
+    font-size: 15px;
   }
 }
 

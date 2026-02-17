@@ -28,7 +28,7 @@ export default function ContactPage() {
 
   return (
     <>
-      <section className="min-h-screen bg-bg-dark text-text-light flex items-center pt-20 pb-[120px] relative overflow-hidden">
+      <section className="min-h-screen bg-bg-dark text-text-light flex items-center pt-20 pb-20 md:pb-[120px] relative overflow-hidden">
         <HeroBackground />
         <div className="container-custom">
           <div className="max-w-[1200px]">
@@ -50,22 +50,22 @@ export default function ContactPage() {
       <section className="bg-bg-light py-section-spacing">
         <div className="container-custom">
           <div className="max-w-[800px] mx-auto text-center">
-            <h2 className="text-[64px] font-semibold mb-6 text-text-dark tracking-[-2px] font-manrope">Напишіть нам</h2>
+            <h2 className="text-4xl sm:text-5xl md:text-[64px] font-semibold mb-6 text-text-dark tracking-[-2px] font-manrope">Напишіть нам</h2>
             
-            <div className="flex flex-col gap-12 mt-20">
-              <div className="flex flex-col gap-16 bg-[rgba(14,14,17,0.02)] p-12 rounded-[20px] border border-[rgba(14,14,17,0.05)]">
+            <div className="flex flex-col gap-12 mt-12 md:mt-20">
+              <div className="flex flex-col gap-16 bg-[rgba(14,14,17,0.02)] p-6 sm:p-8 md:p-12 rounded-[20px] border border-[rgba(14,14,17,0.05)]">
                 <div className="flex flex-col gap-4">
                   <div className="text-sm tracking-wide uppercase text-text-dark opacity-50 font-semibold font-inter">Email</div>
-                  <a href="mailto:hello@stepslab.com" className="text-2xl text-accent no-underline transition-all duration-500 inline-block font-manrope hover:opacity-80 hover:translate-x-1">
+                  <a href="mailto:hello@stepslab.com" className="text-xl sm:text-2xl text-accent no-underline transition-all duration-500 inline-block font-manrope hover:opacity-80 hover:translate-x-1 break-all">
                     hello@stepslab.com
                   </a>
                 </div>
                 <div className="flex flex-col gap-4">
                   <div className="text-sm tracking-wide uppercase text-text-dark opacity-50 font-semibold font-inter">Social</div>
                   <div className="flex items-center gap-3 flex-wrap justify-center">
-                    <a href="#" className="text-2xl text-accent no-underline transition-all duration-500 inline-block font-manrope hover:opacity-80 hover:translate-x-1">LinkedIn</a>
+                    <a href="#" className="text-xl sm:text-2xl text-accent no-underline transition-all duration-500 inline-block font-manrope hover:opacity-80 hover:translate-x-1">LinkedIn</a>
                     <span className="text-text-dark opacity-30 text-xl">•</span>
-                    <a href="#" className="text-2xl text-accent no-underline transition-all duration-500 inline-block font-manrope hover:opacity-80 hover:translate-x-1">GitHub</a>
+                    <a href="#" className="text-xl sm:text-2xl text-accent no-underline transition-all duration-500 inline-block font-manrope hover:opacity-80 hover:translate-x-1">GitHub</a>
                   </div>
                 </div>
               </div>
@@ -78,7 +78,7 @@ export default function ContactPage() {
                 </span>
               </div>
               
-              <div className="bg-[rgba(14,14,17,0.02)] p-12 rounded-[20px] border border-[rgba(14,14,17,0.05)]">
+              <div className="bg-[rgba(14,14,17,0.02)] p-6 sm:p-8 md:p-12 rounded-[20px] border border-[rgba(14,14,17,0.05)]">
                 <h3 className="text-2xl font-semibold text-text-dark font-manrope mb-8 tracking-[-0.5px]">Залиште заявку</h3>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                   <div className="flex flex-col gap-1.5">

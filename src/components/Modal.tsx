@@ -85,10 +85,10 @@ export default function Modal() {
                 className="px-4 py-3 border border-[rgba(14,14,17,0.1)] rounded-xl text-[15px] font-inter text-text-dark bg-bg-light transition-all duration-500 outline-none focus:border-accent focus:shadow-[0_0_0_3px_rgba(58,91,255,0.1)] cursor-pointer appearance-none bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2212%22%20height%3D%228%22%20viewBox%3D%220%200%2012%208%22%20fill%3D%22none%22%20xmlns%3D%22http://www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M1%201L6%206L11%201%22%20stroke%3D%22%230E0E11%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E')] bg-no-repeat bg-[right_18px_center] pr-12"
               >
                 <option value="">Оберіть послугу</option>
-                <option value="web">Web development</option>
-                <option value="ai">AI automation</option>
-                <option value="mvp">MVP for Startup</option>
-                <option value="support">Support & Scaling</option>
+                <option value="web">Веб-розробка</option>
+                <option value="ai">AI-розробка та автоматизація</option>
+                <option value="mvp">MVP для стартапу</option>
+                <option value="support">Підтримка та масштабування</option>
                 <option value="other">Інше</option>
               </select>
             </div>

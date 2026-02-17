@@ -5,7 +5,7 @@ import ScrollIndicator from '@/components/ScrollIndicator'
 
 export const metadata: Metadata = {
   title: 'Кейси розробки сайтів | STEPS LAB — веб-студія',
-  description: 'Реальні кейси веб-розробки: корпоративні сайти, e-commerce, SaaS MVP. Результати website development та AI development від студії STEPS LAB.',
+  description: 'Реальні кейси веб-розробки: корпоративні сайти, e-commerce, SaaS MVP. Результати від студії STEPS LAB.',
 }
 
 export default function CasesPage() {

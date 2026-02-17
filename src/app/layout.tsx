@@ -25,8 +25,8 @@ const manrope = Manrope({
 
 export const metadata: Metadata = {
   title: 'STEPS LAB — Веб-студія | Розробка сайтів та AI-рішення для бізнесу',
-  description: 'Веб-студія STEPS LAB: розробка сайтів, веб-розробка, AI development. Створюємо сайти, веб-додатки та автоматизацію. Студія розробки з підходом — логіка, швидкість, результат.',
-  keywords: 'розробка сайтів, веб-розробка, web development, ai development, веб-студія, web studio, створення сайту, website development, site development',
+  description: 'Веб-студія STEPS LAB: розробка сайтів, веб-розробка, AI-розробка. Швидко і економно. Створюємо сайти, веб-додатки та автоматизацію. Логіка, швидкість, результат.',
+  keywords: 'розробка сайтів, веб-розробка, AI-розробка, веб-студія, створення сайту',
   icons: {
     icon: '/steps-lab-logo.webp',
   },

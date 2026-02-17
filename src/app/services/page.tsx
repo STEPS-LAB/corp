@@ -5,8 +5,8 @@ import HeroBackground from '@/components/HeroBackground'
 import ScrollIndicator from '@/components/ScrollIndicator'
 
 export const metadata: Metadata = {
-  title: 'Послуги веб-студії | Розробка сайтів, AI development — STEPS LAB',
-  description: 'Послуги студії: веб-розробка сайтів, AI development, MVP для стартапів, підтримка та масштабування. Website development для бізнесу.',
+  title: 'Послуги веб-студії | Розробка сайтів, AI-розробка — STEPS LAB',
+  description: 'Послуги студії: веб-розробка сайтів, AI-розробка, MVP для стартапів, підтримка та масштабування.',
 }
 
 export default function ServicesPage() {
@@ -14,11 +14,11 @@ export default function ServicesPage() {
     {
       href: '/services/web-development',
       title: 'Розробка сайтів',
-      text: 'Веб-розробка: бізнес-сайти, лендинги, корпоративні платформи. Website development, що працює на результат.',
+      text: 'Веб-розробка: бізнес-сайти, лендинги, корпоративні платформи. Результат, що працює.',
     },
     {
       href: '/services/ai-automation',
-      title: 'AI development та автоматизація',
+      title: 'AI-розробка та автоматизація',
       text: 'Форми, CRM-інтеграції, контент-процеси. Автоматизуємо рутинні завдання, щоб ви могли зосередитись на стратегії.',
     },
     {
@@ -47,7 +47,7 @@ export default function ServicesPage() {
               <span className="hero-alt-title-line">для вашого бізнесу</span>
             </h1>
             <p className="hero-alt-description">
-              Розробка сайтів, веб-розробка, AI development. Website development, що працює на результат.
+              Розробка сайтів, веб-розробка, AI-розробка. Швидко, економно, з результатом.
             </p>
           </div>
         </div>

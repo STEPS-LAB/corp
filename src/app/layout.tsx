@@ -26,6 +26,9 @@ const manrope = Manrope({
 export const metadata: Metadata = {
   title: 'STEPS LAB — Розробка, що має сенс',
   description: 'AI-first digital studio, яка створює зрозумілі та ефективні цифрові продукти.',
+  icons: {
+    icon: '/steps-lab-logo.webp',
+  },
 }
 
 export default function RootLayout({

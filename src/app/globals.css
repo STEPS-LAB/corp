@@ -799,6 +799,36 @@
   }
 }
 
+@media (max-width: 375px) {
+  .hero-alt-title {
+    font-size: 48px;
+  }
+
+  .btn-consultation {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .case-overview-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .case-sidebar {
+    order: -1;
+  }
+
+  .case-results {
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  .footer-alt-content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+    justify-items: center;
+  }
+}
+
 /* Responsive Service/Case Hero Titles */
 @media (max-width: 1920px) {
   .service-hero-title,

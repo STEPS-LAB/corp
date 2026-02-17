@@ -52,7 +52,7 @@ export default function Header() {
             </nav>
             <button
               onClick={openModal}
-              className="hidden md:inline-block px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-500 font-inter border-none cursor-pointer bg-accent text-text-light shadow-[0_4px_16px_rgba(58,91,255,0.3)] hover:bg-[#2d4ae6] hover:shadow-[0_6px_24px_rgba(58,91,255,0.4)] hover:-translate-y-0.5"
+              className="btn-consultation hidden md:inline-block px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-500 font-inter border-none cursor-pointer bg-accent text-text-light shadow-[0_4px_16px_rgba(58,91,255,0.3)] hover:bg-[#2d4ae6] hover:shadow-[0_6px_24px_rgba(58,91,255,0.4)] hover:-translate-y-0.5"
             >
               Консультація
             </button>

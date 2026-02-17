@@ -13,7 +13,7 @@ export default function Footer() {
               <a href="#" className="footer-alt-link">GitHub</a>
             </div>
           </div>
-          <div className="footer-alt-copyright">© 2025</div>
+          <div className="footer-alt-copyright">© {new Date().getFullYear()} STEPS LAB</div>
         </div>
       </div>
     </footer>

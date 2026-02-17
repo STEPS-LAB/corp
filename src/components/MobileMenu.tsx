@@ -75,7 +75,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
         ))}
         <button
           onClick={handleModalClick}
-          className="mt-8 w-full px-7 py-4.5 text-base font-medium rounded-xl transition-all duration-500 font-inter border-none cursor-pointer bg-accent text-text-light shadow-[0_4px_16px_rgba(58,91,255,0.3)] hover:bg-[#2d4ae6] hover:shadow-[0_6px_24px_rgba(58,91,255,0.4)] hover:-translate-y-0.5"
+          className="btn-consultation mt-8 w-full px-7 py-4.5 text-base font-medium rounded-xl transition-all duration-500 font-inter border-none cursor-pointer bg-accent text-text-light shadow-[0_4px_16px_rgba(58,91,255,0.3)] hover:bg-[#2d4ae6] hover:shadow-[0_6px_24px_rgba(58,91,255,0.4)] hover:-translate-y-0.5"
         >
           Отримати консультацію
         </button>

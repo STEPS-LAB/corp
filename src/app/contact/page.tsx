@@ -79,8 +79,8 @@ export default function ContactPage() {
               <div className="flex flex-col gap-16 bg-[rgba(14,14,17,0.02)] p-6 sm:p-8 md:p-12 rounded-[20px] border border-[rgba(14,14,17,0.05)]">
                 <div className="flex flex-col gap-4">
                   <div className="text-sm tracking-wide uppercase text-text-dark opacity-50 font-semibold font-inter">Email</div>
-                  <a href="mailto:hello@stepslab.com" className="text-xl sm:text-2xl text-accent no-underline transition-all duration-500 inline-block font-manrope hover:opacity-80 hover:translate-x-1 break-all">
-                    hello@stepslab.com
+                  <a href="mailto:dmitry.stepanov28@gmail.com" className="text-xl sm:text-2xl text-accent no-underline transition-all duration-500 inline-block font-manrope hover:opacity-80 hover:translate-x-1 break-all">
+                    dmitry.stepanov28@gmail.com
                   </a>
                 </div>
                 <div className="flex flex-col gap-4">

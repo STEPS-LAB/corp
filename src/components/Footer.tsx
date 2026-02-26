@@ -10,7 +10,7 @@ export default function Footer() {
         <div className="footer-alt-content">
           <div className="footer-alt-logo">STEPS LAB</div>
           <div className="footer-alt-info">
-            <a href="mailto:hello@stepslab.com" className="footer-alt-link">hello@stepslab.com</a>
+            <a href="mailto:dmitry.stepanov28@gmail.com" className="footer-alt-link">dmitry.stepanov28@gmail.com</a>
             <div className="footer-alt-social">
               <a href="#" className="footer-alt-link">LinkedIn</a>
               <a href="#" className="footer-alt-link">GitHub</a>

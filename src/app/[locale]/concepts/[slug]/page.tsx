@@ -8,6 +8,8 @@ import { getConceptBySlug, getConceptTexts } from '@/lib/concepts'
 import { getAlternateLanguages } from '@/lib/hreflang'
 import { SITE_URL } from '@/lib/constants'
 
+export const dynamic = 'force-dynamic'
+
 export async function generateMetadata({
   params,
 }: {

@@ -1,6 +1,4 @@
 'use client'
-
-import Image from 'next/image'
 import { useLocale } from '@/context/LocaleContext'
 
 const TECH_LOGOS = [
@@ -36,7 +34,7 @@ export default function TechStack({ variant = 'dark' }: { variant?: 'dark' | 'li
               }
               style={{ ['--tech-color' as string]: item.color }}
             >
-              <Image
+              <img
                 src={item.src}
                 alt={item.alt}
                 width={120}

@@ -43,7 +43,7 @@ export default function Header() {
         <div className="container">
           <div className="header-content">
             <Link href={localizePath('/', locale)} className="logo" aria-label="STEPS LAB AI-supported development homepage">
-              STEPS LAB
+              <img src="/steps-lab_logo-w.webp" alt="STEPS LAB logo" width={112} height={22} className="object-contain" />
             </Link>
             <nav className="nav hidden md:flex">
               {navLinks.map((link) => (

@@ -149,7 +149,7 @@ export default function HomePremiumContent() {
 
       <section className="container-custom max-w-6xl pb-20">
         <Image
-          src="/steps-lab-logo.webp"
+          src="/steps-lab_logo-w.webp"
           alt="AI-supported development and Next.js performance optimization by STEPS LAB"
           title="Premium website development by STEPS LAB"
           width={1200}

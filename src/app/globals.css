@@ -440,10 +440,10 @@
 
   /* Footer alt logo */
   .footer-alt-logo {
-    font-family: var(--font-manrope), 'Manrope', sans-serif;
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--text-light);
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    text-decoration: none;
   }
 
   /* Footer alt link */
@@ -2224,10 +2224,10 @@
 }
 
 .footer-alt-logo {
-  font-family: var(--font-manrope), 'Manrope', sans-serif;
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--text-light);
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  text-decoration: none;
 }
 
 .footer-alt-info {

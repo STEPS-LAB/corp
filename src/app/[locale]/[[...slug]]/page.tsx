@@ -29,6 +29,8 @@ import SaaSCasePage from '@/app/cases/saas/page'
 import en from '@/messages/en.json'
 import uk from '@/messages/uk.json'
 
+export const dynamic = 'force-dynamic'
+
 type RouteEntry = {
   render: () => React.ReactNode | Promise<React.ReactNode>
   getMetadata?: () => Promise<Metadata>

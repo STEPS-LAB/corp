@@ -1,6 +1,4 @@
 import { Inter, Manrope } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/next'
-import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.css'
 
 const inter = Inter({
@@ -26,8 +24,6 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${manrope.variable}`}>
       <body className="font-inter antialiased" style={{ backgroundColor: '#0E0E11' }}>
         {children}
-        <Analytics />
-        <SpeedInsights />
       </body>
     </html>
   )

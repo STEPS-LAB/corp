@@ -36,7 +36,7 @@ export async function generateMetadata({
       currentLocale === 'uk'
         ? 'AI-supported development, Next.js performance, веб-розробка, custom admin panels'
         : 'AI-supported development, Next.js performance, premium website development, custom admin panels',
-    icons: { icon: '/steps-lab-logo.webp' },
+    icons: { icon: '/steps-lab_logo-w.webp' },
     openGraph: {
       title: m.metaTitle,
       description: m.metaDescription,

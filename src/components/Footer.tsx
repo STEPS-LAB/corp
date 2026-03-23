@@ -21,7 +21,9 @@ export default function Footer() {
     <footer className="footer-alt">
       <div className="container-custom">
         <div className="footer-alt-content">
-          <div className="footer-alt-logo">STEPS LAB</div>
+          <Link href={localizePath('/', locale)} className="footer-alt-logo" aria-label="STEPS LAB homepage">
+            <img src="/steps-lab_logo-w.webp" alt="STEPS LAB logo" width={120} height={24} className="object-contain" />
+          </Link>
           <div className="flex flex-wrap gap-x-6 gap-y-3 text-sm">
             {footerLinks.map((link) => (
               <Link

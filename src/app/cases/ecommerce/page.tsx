@@ -3,10 +3,11 @@
 import Link from 'next/link'
 import { useModal } from '@/hooks/useModal'
 import { useLocale } from '@/context/LocaleContext'
+import { localizePath } from '@/lib/locale-path'
 
 export default function EcommerceCasePage() {
   const { openModal } = useModal()
-  const { t } = useLocale()
+  const { t, locale } = useLocale()
   const c = (k: string) => t(`casePages.ecommerce.${k}`)
   const g = (k: string) => t(`casePages.${k}`)
 
@@ -16,7 +17,7 @@ export default function EcommerceCasePage() {
         <div className="case-hero-image"></div>
         <div className="container-custom">
           <div className="case-hero-content">
-            <Link href="/cases" className="service-breadcrumb">{c('breadcrumb')}</Link>
+            <Link href={localizePath('/cases', locale)} aria-label="Back to Next.js performance case studies" className="service-breadcrumb">{c('breadcrumb')}</Link>
             <h1 className="case-hero-title">{c('title')}</h1>
             <p className="case-hero-subtitle">{c('subtitle')}</p>
           </div>

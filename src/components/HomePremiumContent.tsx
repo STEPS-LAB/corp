@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useLocale } from '@/context/LocaleContext'
+import { localizePath } from '@/lib/locale-path'
 
 type FeatureCard = {
   title: string
@@ -99,10 +100,10 @@ export default function HomePremiumContent() {
         </h1>
         <p className="mt-6 text-lg md:text-xl text-text-dark/70 max-w-3xl leading-relaxed">{copy.subtitle}</p>
         <div className="mt-10 flex flex-wrap gap-3">
-          <Link href="/contacts" className="px-7 py-3 rounded-xl bg-accent text-text-light font-medium transition-colors hover:bg-[#2d4ae6]">
+          <Link href={localizePath('/contacts', locale)} aria-label="Start project with AI-supported development team" className="px-7 py-3 rounded-xl bg-accent text-text-light font-medium transition-colors hover:bg-[#2d4ae6]">
             {copy.ctaPrimary}
           </Link>
-          <Link href="/cases" className="px-7 py-3 rounded-xl border border-black/15 text-text-dark font-medium transition-colors hover:border-black/35">
+          <Link href={localizePath('/cases', locale)} aria-label="View Next.js performance case studies" className="px-7 py-3 rounded-xl border border-black/15 text-text-dark font-medium transition-colors hover:border-black/35">
             {copy.ctaSecondary}
           </Link>
         </div>
@@ -114,7 +115,7 @@ export default function HomePremiumContent() {
             <article key={card.title} className="rounded-2xl border border-black/10 bg-white p-7">
               <h2 className="text-2xl font-manrope font-semibold text-text-dark tracking-tight mb-3">{card.title}</h2>
               <p className="text-text-dark/70 leading-relaxed text-sm mb-5">{card.text}</p>
-              <Link href={card.href} className="text-accent text-sm font-semibold">
+              <Link href={localizePath(card.href, locale)} aria-label={`${card.title} - AI-supported development service`} className="text-accent text-sm font-semibold">
                 {locale === 'uk' ? 'Детальніше' : 'Learn more'}
               </Link>
             </article>

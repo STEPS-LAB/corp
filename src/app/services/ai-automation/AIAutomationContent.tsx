@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useLocale } from '@/context/LocaleContext'
 import ScrollIndicator from '@/components/ScrollIndicator'
 import HeroBackground from '@/components/HeroBackground'
+import { localizePath } from '@/lib/locale-path'
 
 const processKeys = [
   { number: '01', titleKey: 'servicePages.aiAutomation.process_1_title', textKey: 'servicePages.aiAutomation.process_1_text' },
@@ -15,7 +16,7 @@ const processKeys = [
 const TECH_LIST = ['OpenAI API', 'LangChain', 'Zapier / Make', 'Custom Integrations', 'Webhooks', 'Data Processing']
 
 export default function AIAutomationContent() {
-  const { t } = useLocale()
+  const { t, locale } = useLocale()
   const p = (k: string) => t(`servicePages.aiAutomation.${k}`)
   return (
     <>
@@ -23,7 +24,7 @@ export default function AIAutomationContent() {
         <HeroBackground />
         <div className="container-custom">
           <div className="max-w-[900px]">
-            <Link href="/services" className="text-sm tracking-wide text-accent mb-10 opacity-70 px-3 py-1.5 rounded-lg inline-block bg-accent/10 transition-all duration-500 hover:opacity-100 hover:bg-accent/20 no-underline">
+            <Link href={localizePath('/services', locale)} aria-label="Back to AI-supported development services" className="text-sm tracking-wide text-accent mb-10 opacity-70 px-3 py-1.5 rounded-lg inline-block bg-accent/10 transition-all duration-500 hover:opacity-100 hover:bg-accent/20 no-underline">
               ← {t('pages.services.backToServices')}
             </Link>
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[72px] font-semibold leading-[1.1] mb-6 tracking-[-2px] font-manrope">{p('title')}</h1>

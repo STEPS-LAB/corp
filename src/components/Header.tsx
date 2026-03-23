@@ -5,15 +5,17 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useModal } from '@/hooks/useModal'
 import { useLocale } from '@/context/LocaleContext'
+import { localizePath } from '@/lib/locale-path'
 import MobileMenu from './MobileMenu'
 import LanguageSelect from './LanguageSelect'
 
 export default function Header() {
   const pathname = usePathname()
   const { openModal } = useModal()
-  const { t } = useLocale()
+  const { t, locale } = useLocale()
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const pathWithoutLocale = (pathname || '/').replace(/^\/(en|uk)(?=\/|$)/, '') || '/'
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,22 +34,23 @@ export default function Header() {
     { href: '/contacts', label: t('nav.contact') },
   ]
 
-  const isServiceOrCasePage = pathname?.startsWith('/services/') || pathname?.startsWith('/cases/')
+  const isServiceOrCasePage = pathWithoutLocale.startsWith('/services/') || pathWithoutLocale.startsWith('/cases/')
   
   return (
     <>
-      <header className={`header ${isScrolled || pathname !== '/' || isServiceOrCasePage ? 'scrolled' : ''}`}>
+      <header className={`header ${isScrolled || pathWithoutLocale !== '/' || isServiceOrCasePage ? 'scrolled' : ''}`}>
         <div className="container">
           <div className="header-content">
-            <Link href="/" className="logo">
+            <Link href={localizePath('/', locale)} className="logo" aria-label="STEPS LAB AI-supported development homepage">
               STEPS LAB
             </Link>
             <nav className="nav hidden md:flex">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
-                  href={link.href}
-                  className={`nav-link ${pathname === link.href ? 'active' : ''}`}
+                  href={localizePath(link.href, locale)}
+                  aria-label={`${link.label} - AI-supported development and Next.js performance`}
+                  className={`nav-link ${pathWithoutLocale === link.href ? 'active' : ''}`}
                 >
                   {link.label}
                 </Link>

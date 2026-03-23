@@ -1,6 +1,6 @@
-import HomePremiumContent from '@/components/HomePremiumContent'
+import { redirect } from 'next/navigation'
 
 export default function Home() {
-  return <HomePremiumContent />
+  redirect('/en')
 }
 

@@ -1,10 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { useModal } from '@/hooks/useModal'
 import { useLocale } from '@/context/LocaleContext'
 import { useEffect } from 'react'
+import { localizePath } from '@/lib/locale-path'
 
 interface MobileMenuProps {
   isOpen: boolean
@@ -12,9 +12,8 @@ interface MobileMenuProps {
 }
 
 export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
-  const pathname = usePathname()
   const { openModal } = useModal()
-  const { t } = useLocale()
+  const { t, locale } = useLocale()
 
   useEffect(() => {
     if (isOpen) {
@@ -68,8 +67,9 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
         {navLinks.map((link) => (
           <Link
             key={link.href}
-            href={link.href}
+            href={localizePath(link.href, locale)}
             onClick={handleLinkClick}
+            aria-label={`${link.label} - AI-supported development and Next.js performance`}
             className="text-2xl text-text-light no-underline py-4 border-b border-white/10 transition-all duration-500 font-manrope font-medium hover:opacity-80 pl-4"
           >
             {link.label}

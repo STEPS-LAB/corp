@@ -34,40 +34,40 @@ export default function MVPStartupsContent() {
         <ScrollIndicator />
       </section>
 
-      <section className="bg-bg-light py-section-spacing">
+      <section className="bg-slate-50 text-slate-900 py-section-spacing">
         <div className="container-custom">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-12 lg:gap-20">
             <div>
-              <h2 className="text-3xl md:text-4xl lg:text-[48px] font-semibold mb-6 md:mb-8 text-text-dark tracking-[-1.5px] font-manrope">{p('whatWeDo')}</h2>
-              <div className="flex flex-col gap-6 text-base leading-relaxed text-text-dark opacity-70 mb-16">
+              <h2 className="text-3xl md:text-4xl lg:text-[48px] font-semibold mb-6 md:mb-8 text-slate-900 tracking-[-1.5px] font-manrope">{p('whatWeDo')}</h2>
+              <div className="flex flex-col gap-6 text-base leading-relaxed text-slate-700 mb-16">
                 <p>{p('whatWeDo_p1')}</p>
                 <p>{p('whatWeDo_p2')}</p>
               </div>
 
-              <h2 className="text-3xl md:text-4xl lg:text-[48px] font-semibold mb-6 md:mb-8 text-text-dark tracking-[-1.5px] font-manrope">{p('projectTypes')}</h2>
+              <h2 className="text-3xl md:text-4xl lg:text-[48px] font-semibold mb-6 md:mb-8 text-slate-900 tracking-[-1.5px] font-manrope">{p('projectTypes')}</h2>
               <div className="flex flex-col gap-8 mb-16">
-                <div className="p-6 rounded-2xl transition-all duration-500 hover:bg-[rgba(14,14,17,0.02)] hover:-translate-y-1">
-                  <h3 className="text-2xl font-semibold text-text-dark mb-3 font-manrope">{p('saasMvp')}</h3>
-                  <p className="text-base leading-relaxed text-text-dark opacity-70">{p('saasMvp_desc')}</p>
+                <div className="p-6 rounded-2xl border border-slate-200 bg-white transition-all duration-500 hover:bg-slate-50 hover:-translate-y-1">
+                  <h3 className="text-2xl font-semibold text-slate-900 mb-3 font-manrope">{p('saasMvp')}</h3>
+                  <p className="text-base leading-relaxed text-slate-700">{p('saasMvp_desc')}</p>
                 </div>
-                <div className="p-6 rounded-2xl transition-all duration-500 hover:bg-[rgba(14,14,17,0.02)] hover:-translate-y-1">
-                  <h3 className="text-2xl font-semibold text-text-dark mb-3 font-manrope">{p('mobileApps')}</h3>
-                  <p className="text-base leading-relaxed text-text-dark opacity-70">{p('mobileApps_desc')}</p>
+                <div className="p-6 rounded-2xl border border-slate-200 bg-white transition-all duration-500 hover:bg-slate-50 hover:-translate-y-1">
+                  <h3 className="text-2xl font-semibold text-slate-900 mb-3 font-manrope">{p('mobileApps')}</h3>
+                  <p className="text-base leading-relaxed text-slate-700">{p('mobileApps_desc')}</p>
                 </div>
-                <div className="p-6 rounded-2xl transition-all duration-500 hover:bg-[rgba(14,14,17,0.02)] hover:-translate-y-1">
-                  <h3 className="text-2xl font-semibold text-text-dark mb-3 font-manrope">{p('webPlatforms')}</h3>
-                  <p className="text-base leading-relaxed text-text-dark opacity-70">{p('webPlatforms_desc')}</p>
+                <div className="p-6 rounded-2xl border border-slate-200 bg-white transition-all duration-500 hover:bg-slate-50 hover:-translate-y-1">
+                  <h3 className="text-2xl font-semibold text-slate-900 mb-3 font-manrope">{p('webPlatforms')}</h3>
+                  <p className="text-base leading-relaxed text-slate-700">{p('webPlatforms_desc')}</p>
                 </div>
               </div>
 
-              <h2 className="text-3xl md:text-4xl lg:text-[48px] font-semibold mb-6 md:mb-8 text-text-dark tracking-[-1.5px] font-manrope">{p('process')}</h2>
+              <h2 className="text-3xl md:text-4xl lg:text-[48px] font-semibold mb-6 md:mb-8 text-slate-900 tracking-[-1.5px] font-manrope">{p('process')}</h2>
               <div className="flex flex-col gap-8">
                 {processKeys.map((item, index) => (
                   <div key={index} className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start">
                     <div className="text-sm tracking-wide text-accent min-w-[60px] opacity-70 px-3 py-1.5 rounded-lg bg-accent/10 text-center">{item.number}</div>
                     <div>
-                      <h3 className="text-xl font-semibold text-text-dark mb-2 font-manrope">{t(item.titleKey)}</h3>
-                      <p className="text-base leading-relaxed text-text-dark opacity-70">{t(item.textKey)}</p>
+                      <h3 className="text-xl font-semibold text-slate-900 mb-2 font-manrope">{t(item.titleKey)}</h3>
+                      <p className="text-base leading-relaxed text-slate-700">{t(item.textKey)}</p>
                     </div>
                   </div>
                 ))}
@@ -75,17 +75,17 @@ export default function MVPStartupsContent() {
             </div>
 
             <div className="flex flex-col gap-8">
-              <div className="bg-[rgba(14,14,17,0.02)] p-8 rounded-2xl border border-[rgba(14,14,17,0.05)]">
-                <h3 className="text-xl font-semibold text-text-dark mb-6 font-manrope">{p('technologies')}</h3>
+              <div className="bg-white p-8 rounded-2xl border border-slate-200">
+                <h3 className="text-xl font-semibold text-slate-900 mb-6 font-manrope">{p('technologies')}</h3>
                 <ul className="flex flex-col gap-3 list-none">
                   {TECH_LIST.map((tech, index) => (
-                    <li key={index} className="text-base text-text-dark opacity-70 relative pl-6 before:content-[''] before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-accent">{tech}</li>
+                    <li key={index} className="text-base text-slate-700 relative pl-6 before:content-[''] before:absolute before:left-0 before:top-2 before:w-1.5 before:h-1.5 before:rounded-full before:bg-accent">{tech}</li>
                   ))}
                 </ul>
               </div>
-              <div className="bg-[rgba(14,14,17,0.02)] p-8 rounded-2xl border border-[rgba(14,14,17,0.05)]">
-                <h3 className="text-xl font-semibold text-text-dark mb-6 font-manrope">{p('results')}</h3>
-                <p className="text-base leading-relaxed text-text-dark opacity-70">{p('resultsText')}</p>
+              <div className="bg-white p-8 rounded-2xl border border-slate-200">
+                <h3 className="text-xl font-semibold text-slate-900 mb-6 font-manrope">{p('results')}</h3>
+                <p className="text-base leading-relaxed text-slate-700">{p('resultsText')}</p>
               </div>
             </div>
           </div>

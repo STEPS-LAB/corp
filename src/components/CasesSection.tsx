@@ -1,7 +1,7 @@
 'use client'
 
-import Link from 'next/link'
 import { useLocale } from '@/context/LocaleContext'
+import LocalizedLink from '@/components/LocalizedLink'
 
 export default function CasesSection() {
   const { t } = useLocale()
@@ -18,7 +18,7 @@ export default function CasesSection() {
       </div>
       <div className="cases-alt-list">
         {cases.map((caseItem, index) => (
-          <Link
+          <LocalizedLink
             key={index}
             href={caseItem.href}
             className="case-alt-item"
@@ -30,7 +30,7 @@ export default function CasesSection() {
               <p className="case-alt-result">{t(caseItem.resultKey)}</p>
               <span className="case-alt-link">{t('cases.viewCase')}</span>
             </div>
-          </Link>
+          </LocalizedLink>
         ))}
       </div>
     </section>

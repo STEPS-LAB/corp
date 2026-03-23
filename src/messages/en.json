@@ -4,6 +4,7 @@
     "services": "Services",
     "approach": "Approach",
     "cases": "Cases",
+    "concepts": "Concepts",
     "blog": "Blog",
     "about": "About",
     "contact": "Contact"
@@ -247,7 +248,10 @@
       "process_3_title": "Launch & testing",
       "process_3_text": "We launch the MVP and collect feedback from first users.",
       "process_4_title": "Iterations",
-      "process_4_text": "We iterate quickly based on data and feedback."
+      "process_4_text": "We iterate quickly based on data and feedback.",
+      "technologies": "Technologies",
+      "results": "Results",
+      "resultsText": "MVP releases in 6-10 weeks with clear product feedback loops and reduced go-to-market risk."
     },
     "supportScaling": {
       "metaTitle": "Website support & scaling | STEPS LAB",
@@ -370,6 +374,78 @@
       "clientType": "Corporation",
       "timelineValue": "10 weeks",
       "ctaTitle": "Ready to create your success case?"
+    }
+  },
+  "concepts": {
+    "heading": "Concepts",
+    "subtitle": "Selected redesign concepts with conversion-focused structure and premium visual direction.",
+    "viewAll": "View All Concepts",
+    "listBadge": "Concepts",
+    "listTitle1": "Redesign",
+    "listTitle2": "concepts",
+    "listDescription": "A selected list of website concepts focused on UX, conversion and clean information architecture.",
+    "detailHeroLine2": "concept",
+    "detailBack": "Back to concepts",
+    "detailCompareTitle": "Comparisons and improvements",
+    "detailTechTitle": "Technology stack",
+    "oldVersionTitle": "Old version",
+    "newVersionTitle": "New version",
+    "oldCaptionMobile": "Mobile (old): overloaded structure and weak call-to-action focus.",
+    "oldCaptionDesktop": "Desktop (old): low hierarchy clarity and weaker conversion path.",
+    "newCaptionMobile": "Mobile (new): cleaner rhythm, stronger CTA and improved readability.",
+    "newCaptionDesktop": "Desktop (new): clearer hierarchy and faster content scanning.",
+    "technologies": ["Next.js", "React", "Node.js", "Cursor", "Claude", "QWEN"],
+    "items": {
+      "ribas-karpaty": {
+        "title": "Ribas Karpaty",
+        "shortDescription": "Premium resort concept focused on booking clarity and visual storytelling.",
+        "description": "A redesign concept for a mountain resort website focused on conversion-first booking flow, cleaner information hierarchy, and premium visuals.",
+        "improvements": [
+          "Simplified booking funnel from the first screen.",
+          "Cleaner typography rhythm and section spacing.",
+          "Improved mobile readability and CTA focus."
+        ]
+      },
+      "amstelski": {
+        "title": "AmstelSki",
+        "shortDescription": "Ski-tour concept with stronger package presentation and faster browsing.",
+        "description": "A concept upgrade for a ski destination site with clearer package cards, better seasonal offers visibility, and stronger trust cues.",
+        "improvements": [
+          "Rebuilt package overview for rapid comparison.",
+          "Reduced visual noise in offer-heavy sections.",
+          "Improved mobile navigation and offer scanning."
+        ]
+      },
+      "chudodievo": {
+        "title": "Chudodievo",
+        "shortDescription": "Hospitality concept with stronger storytelling and structured page flow.",
+        "description": "A redesign concept for a family recreation complex with polished storytelling, event-focused blocks, and improved user journey logic.",
+        "improvements": [
+          "Sharper hero narrative with direct conversion points.",
+          "More predictable structure for content-heavy sections.",
+          "Optimized touch-friendly interaction patterns on mobile."
+        ]
+      },
+      "kosmodent": {
+        "title": "Kosmodent",
+        "shortDescription": "Dental clinic concept with trust-first UX and cleaner medical information blocks.",
+        "description": "A healthcare website concept balancing credibility and conversion, with stronger doctor and service presentation plus a cleaner appointment flow.",
+        "improvements": [
+          "Reworked service and doctor sections for trust.",
+          "Clearer hierarchy for treatment information.",
+          "Faster appointment action path across devices."
+        ]
+      },
+      "asklepiy": {
+        "title": "Asklepiy",
+        "shortDescription": "Medical platform concept optimized for speed, structure, and conversion clarity.",
+        "description": "A modernized clinic platform concept with improved CTA cadence, content scannability, and mobile-first interaction polish.",
+        "improvements": [
+          "Streamlined navigation between key medical services.",
+          "Cleaner layout system with stronger visual rhythm.",
+          "Improved mobile conversion touchpoints."
+        ]
+      }
     }
   }
 }

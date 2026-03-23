@@ -1,9 +1,9 @@
 'use client'
 
-import Link from 'next/link'
 import { useLocale } from '@/context/LocaleContext'
 import HeroBackground from '@/components/HeroBackground'
 import ScrollIndicator from '@/components/ScrollIndicator'
+import LocalizedLink from '@/components/LocalizedLink'
 
 const serviceKeys = [
   { href: '/services/web-development', titleKey: 'services.web_title', textKey: 'services.web_text' },
@@ -40,7 +40,7 @@ export default function ServicesPageContent() {
           <h2 className="section-title-alt">{t('pages.services.sectionTitle')}</h2>
           <div className="services-alt-list">
             {serviceKeys.map((service, index) => (
-              <Link
+              <LocalizedLink
                 key={index}
                 href={service.href}
                 className="service-alt-item"
@@ -50,7 +50,7 @@ export default function ServicesPageContent() {
                   <span className="service-alt-arrow">→</span>
                 </div>
                 <p className="service-alt-text">{t(service.textKey)}</p>
-              </Link>
+              </LocalizedLink>
             ))}
           </div>
         </div>

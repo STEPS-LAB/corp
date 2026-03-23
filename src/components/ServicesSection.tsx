@@ -1,7 +1,7 @@
 'use client'
 
-import Link from 'next/link'
 import { useLocale } from '@/context/LocaleContext'
+import LocalizedLink from '@/components/LocalizedLink'
 
 export default function ServicesSection() {
   const { t } = useLocale()
@@ -18,7 +18,7 @@ export default function ServicesSection() {
         <h2 className="section-title-alt">{t('services.sectionTitle')}</h2>
         <div className="services-alt-list">
           {services.map((service, index) => (
-            <Link
+            <LocalizedLink
               key={index}
               href={service.href}
               className="service-alt-item"
@@ -28,7 +28,7 @@ export default function ServicesSection() {
                 <span className="service-alt-arrow">→</span>
               </div>
               <p className="service-alt-text">{t(service.textKey)}</p>
-            </Link>
+            </LocalizedLink>
           ))}
         </div>
       </div>

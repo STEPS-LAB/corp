@@ -2,7 +2,7 @@
 
 import { useModal } from '@/hooks/useModal'
 import { useLocale } from '@/context/LocaleContext'
-import Link from 'next/link'
+import LocalizedLink from '@/components/LocalizedLink'
 import ScrollIndicator from './ScrollIndicator'
 
 export default function HeroSection() {
@@ -43,9 +43,9 @@ export default function HeroSection() {
             >
               {t('hero.cta')}
             </button>
-            <Link href="#cases" className="btn-link">
+            <LocalizedLink href="/cases" className="btn-link">
               {t('hero.viewCases')}
-            </Link>
+            </LocalizedLink>
           </div>
         </div>
         <div className="hero-alt-stats">

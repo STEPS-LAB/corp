@@ -29,6 +29,7 @@ export default function Header() {
     { href: '/', label: t('nav.home') },
     { href: '/services', label: t('nav.services') },
     { href: '/cases', label: t('nav.cases') },
+    { href: '/concepts', label: t('nav.concepts') },
     { href: '/blog', label: t('nav.blog') },
     { href: '/about', label: t('nav.about') },
     { href: '/contacts', label: t('nav.contact') },

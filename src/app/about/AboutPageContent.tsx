@@ -2,6 +2,7 @@
 
 import { useLocale } from '@/context/LocaleContext'
 import AboutSection from '@/components/AboutSection'
+import TechStack from '@/components/sections/TechStack'
 import WhyStepsLabSection from '@/components/WhyStepsLabSection'
 import HeroBackground from '@/components/HeroBackground'
 import ScrollIndicator from '@/components/ScrollIndicator'
@@ -28,6 +29,7 @@ export default function AboutPageContent() {
         <ScrollIndicator />
       </section>
       <AboutSection />
+      <TechStack />
       <WhyStepsLabSection />
     </>
   )

@@ -75,6 +75,17 @@
     "title": "About the web studio",
     "text": "STEPS LAB is a web studio ahead of its time.\nWe use AI for efficiency: you get a high-quality product and favorable terms. Engineering mindset and modern tools — so your business gets digital products that actually work."
   },
+  "aboutPage": {
+    "heroBadge": "About Us",
+    "heroTitle": "Experience, amplified by intelligence.",
+    "heroSubtitle": "We combined 6 years of commercial software delivery with the capabilities of generative AI. STEPS LAB is not mass-market production; it is complex solution engineering where every line of code is controlled by an experienced developer.",
+    "philosophyTitle": "Technology as the standard.",
+    "philosophyText": "We do not believe in magical numbers, we believe in architecture. Using Next.js and custom solutions, we deliver consistently high speed and flexibility that no standard CMS can provide. Your website performs fast because it is engineered correctly.",
+    "customFocusTitle": "Custom focus",
+    "customFocusText": "Instead of templates, we build proprietary admin panels around your real workflows. This guarantees security, scalability, and zero codebase clutter. AI helps us deliver this 2-3x faster without sacrificing premium output quality.",
+    "conceptsTitle": "See how we rethink existing businesses",
+    "conceptsCta": "View concepts"
+  },
   "finalCta": {
     "title": "Let's build a website or web app that delivers results."
   },

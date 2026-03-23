@@ -12,24 +12,42 @@ const TECH_LOGOS = [
   { src: '/tech/qwen.svg', alt: 'QWEN logo', name: 'QWEN', color: '#F5F6F8' },
 ]
 
-export default function TechStack() {
+export default function TechStack({ variant = 'dark' }: { variant?: 'dark' | 'light' }) {
   const { locale } = useLocale()
+  const isLight = variant === 'light'
 
   return (
-    <section className="tech-stack-section" aria-label={locale === 'uk' ? 'Наш стек' : 'Technologies We Use'}>
+    <section
+      className={isLight ? 'bg-slate-50 text-slate-900 py-14 md:py-20' : 'tech-stack-section'}
+      aria-label={locale === 'uk' ? 'Наш стек' : 'Technologies We Use'}
+    >
       <div className="container-custom">
-        <h2 className="section-title-alt">{locale === 'uk' ? 'Наш стек' : 'Technologies We Use'}</h2>
-        <div className="tech-stack-grid">
+        <h2 className={isLight ? 'section-title-alt text-slate-900 mb-10' : 'section-title-alt'}>
+          {locale === 'uk' ? 'Наш стек' : 'Technologies We Use'}
+        </h2>
+        <div className={isLight ? 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5 md:gap-6' : 'tech-stack-grid'}>
           {TECH_LOGOS.map((item) => (
-            <div key={item.name} className="tech-item" style={{ ['--tech-color' as string]: item.color }}>
+            <div
+              key={item.name}
+              className={
+                isLight
+                  ? 'rounded-xl border border-slate-800/10 bg-slate-900 p-4 md:p-5 flex flex-col items-center gap-3'
+                  : 'tech-item'
+              }
+              style={{ ['--tech-color' as string]: item.color }}
+            >
               <Image
                 src={item.src}
                 alt={item.alt}
                 width={120}
                 height={48}
-                className={`tech-logo ${item.invertOnDark ? 'tech-logo-invert' : ''}`}
+                className={
+                  isLight
+                    ? `w-full max-w-[120px] h-auto ${item.invertOnDark ? '[filter:brightness(0)_invert(1)] opacity-95' : 'grayscale opacity-85'}`
+                    : `tech-logo ${item.invertOnDark ? 'tech-logo-invert' : ''}`
+                }
               />
-              <p className="tech-name">{item.name}</p>
+              <p className={isLight ? 'text-xs md:text-sm text-slate-200/85 font-inter' : 'tech-name'}>{item.name}</p>
             </div>
           ))}
         </div>

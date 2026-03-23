@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { getServerLocale } from '@/lib/server-locale'
 import { getAlternateLanguages } from '@/lib/hreflang'
+import JsonLd from '@/components/JsonLd'
+import { getBreadcrumbSchema } from '@/lib/schema'
 import en from '@/messages/en.json'
 import uk from '@/messages/uk.json'
 
@@ -16,10 +18,27 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default function EcommerceCaseLayout({
+export default async function EcommerceCaseLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  return children
+  const locale = await getServerLocale()
+  return (
+    <>
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@graph': [
+            getBreadcrumbSchema([
+              { name: locale === 'uk' ? 'Головна' : 'Home', path: '/' },
+              { name: locale === 'uk' ? 'Кейси' : 'Cases', path: '/cases' },
+              { name: 'E-commerce', path: '/cases/ecommerce' },
+            ]),
+          ],
+        }}
+      />
+      {children}
+    </>
+  )
 }

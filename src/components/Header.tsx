@@ -26,10 +26,10 @@ export default function Header() {
   const navLinks = [
     { href: '/', label: t('nav.home') },
     { href: '/services', label: t('nav.services') },
-    { href: '/approach', label: t('nav.approach') },
     { href: '/cases', label: t('nav.cases') },
+    { href: '/blog', label: t('nav.blog') },
     { href: '/about', label: t('nav.about') },
-    { href: '/contact', label: t('nav.contact') },
+    { href: '/contacts', label: t('nav.contact') },
   ]
 
   const isServiceOrCasePage = pathname?.startsWith('/services/') || pathname?.startsWith('/cases/')

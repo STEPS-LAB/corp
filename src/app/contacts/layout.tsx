@@ -10,20 +10,19 @@ const messages = { en, uk } as const
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getServerLocale()
-  const m = (messages[locale] as { casePages: { corporate: { metaTitle: string; metaDescription: string } } }).casePages.corporate
+  const m = (messages[locale] as { pages: { contact: { metaTitle: string; metaDescription: string } } }).pages.contact
   return {
     title: m.metaTitle,
     description: m.metaDescription,
-    alternates: { languages: (await getAlternateLanguages('/cases/corporate')).languages },
+    alternates: { languages: (await getAlternateLanguages('/contacts')).languages },
   }
 }
 
-export default async function CorporateCaseLayout({
+export default function ContactsLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const locale = await getServerLocale()
   return (
     <>
       <JsonLd
@@ -31,9 +30,8 @@ export default async function CorporateCaseLayout({
           '@context': 'https://schema.org',
           '@graph': [
             getBreadcrumbSchema([
-              { name: locale === 'uk' ? 'Головна' : 'Home', path: '/' },
-              { name: locale === 'uk' ? 'Кейси' : 'Cases', path: '/cases' },
-              { name: locale === 'uk' ? 'Корпоративний сайт' : 'Corporate Website', path: '/cases/corporate' },
+              { name: 'Home', path: '/' },
+              { name: 'Contacts', path: '/contacts' },
             ]),
           ],
         }}

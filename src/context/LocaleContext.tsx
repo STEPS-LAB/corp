@@ -1,7 +1,7 @@
 'use client'
 
 import React, { createContext, useCallback, useContext, useMemo, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import type { Locale } from '@/lib/i18n'
 import { LOCALE_COOKIE, getNested, replaceParams } from '@/lib/i18n'
 import en from '@/messages/en.json'
@@ -26,15 +26,21 @@ export function LocaleProvider({
 }) {
   const [locale, setLocaleState] = useState<Locale>(initialLocale)
   const router = useRouter()
+  const pathname = usePathname()
 
   const setLocale = useCallback(
     (newLocale: Locale) => {
       if (newLocale === locale) return
       setLocaleState(newLocale)
       document.cookie = `${LOCALE_COOKIE}=${newLocale}; path=/; max-age=31536000; SameSite=Lax`
+      const currentPath = pathname || '/'
+      const pathWithoutLocale = currentPath.replace(/^\/(en|uk)(?=\/|$)/, '') || '/'
+      const localizedPath = `/${newLocale}${pathWithoutLocale === '/' ? '' : pathWithoutLocale}`
+      const search = typeof window !== 'undefined' ? window.location.search : ''
+      router.push(`${localizedPath}${search}`)
       router.refresh()
     },
-    [locale, router]
+    [locale, pathname, router]
   )
 
   const t = useCallback(

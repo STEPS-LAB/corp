@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { getServerLocale } from '@/lib/server-locale'
 import { getAlternateLanguages } from '@/lib/hreflang'
+import JsonLd from '@/components/JsonLd'
+import { getBreadcrumbSchema } from '@/lib/schema'
 import en from '@/messages/en.json'
 import uk from '@/messages/uk.json'
 import MVPStartupsContent from './MVPStartupsContent'
@@ -17,6 +19,23 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default function MVPStartupsPage() {
-  return <MVPStartupsContent />
+export default async function MVPStartupsPage() {
+  const locale = await getServerLocale()
+  return (
+    <>
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@graph': [
+            getBreadcrumbSchema([
+              { name: locale === 'uk' ? 'Головна' : 'Home', path: '/' },
+              { name: locale === 'uk' ? 'Послуги' : 'Services', path: '/services' },
+              { name: locale === 'uk' ? 'MVP для стартапів' : 'MVP for Startups', path: '/services/mvp-startups' },
+            ]),
+          ],
+        }}
+      />
+      <MVPStartupsContent />
+    </>
+  )
 }

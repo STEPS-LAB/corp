@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { getServerLocale } from '@/lib/server-locale'
 import { getAlternateLanguages } from '@/lib/hreflang'
+import JsonLd from '@/components/JsonLd'
+import { getBreadcrumbSchema } from '@/lib/schema'
 import en from '@/messages/en.json'
 import uk from '@/messages/uk.json'
 import WebDevelopmentContent from './WebDevelopmentContent'
@@ -17,6 +19,23 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default function WebDevelopmentPage() {
-  return <WebDevelopmentContent />
+export default async function WebDevelopmentPage() {
+  const locale = await getServerLocale()
+  return (
+    <>
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@graph': [
+            getBreadcrumbSchema([
+              { name: locale === 'uk' ? 'Головна' : 'Home', path: '/' },
+              { name: locale === 'uk' ? 'Послуги' : 'Services', path: '/services' },
+              { name: locale === 'uk' ? 'Веб-розробка' : 'Web Development', path: '/services/web-development' },
+            ]),
+          ],
+        }}
+      />
+      <WebDevelopmentContent />
+    </>
+  )
 }

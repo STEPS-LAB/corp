@@ -1,21 +1,44 @@
 'use client'
 
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { DEFAULT_SITE_CONTENT, sanitizeSiteContent, type SiteContent } from '@/lib/content'
+import { useLocale } from '@/context/LocaleContext'
+import { DEFAULT_SITE_CONTENT, type SiteContent } from '@/lib/content'
+import {
+  type PublicCmsPayload,
+  defaultCmsPayload,
+  flattenToSiteContent,
+} from '@/lib/cms-types'
 
 type SiteContentContextValue = {
   content: SiteContent
+  payload: PublicCmsPayload
   isLoading: boolean
 }
 
 const SiteContentContext = createContext<SiteContentContextValue>({
   content: DEFAULT_SITE_CONTENT,
+  payload: defaultCmsPayload(),
   isLoading: true,
 })
 
+function mergePayloadPatch(server: unknown): PublicCmsPayload {
+  const d = defaultCmsPayload()
+  if (!server || typeof server !== 'object') return d
+  const s = server as Partial<PublicCmsPayload>
+  return {
+    pages: s.pages ?? d.pages,
+    services: Array.isArray(s.services) && s.services.length > 0 ? s.services : d.services,
+    cases: Array.isArray(s.cases) && s.cases.length > 0 ? s.cases : d.cases,
+    concepts: Array.isArray(s.concepts) && s.concepts.length > 0 ? s.concepts : d.concepts,
+  }
+}
+
 export function SiteContentProvider({ children }: { children: React.ReactNode }) {
-  const [content, setContent] = useState<SiteContent>(DEFAULT_SITE_CONTENT)
+  const { locale } = useLocale()
+  const [payload, setPayload] = useState<PublicCmsPayload>(defaultCmsPayload())
   const [isLoading, setIsLoading] = useState(true)
+
+  const content = useMemo(() => flattenToSiteContent(payload, locale), [payload, locale])
 
   useEffect(() => {
     let isMounted = true
@@ -30,9 +53,9 @@ export function SiteContentProvider({ children }: { children: React.ReactNode })
         })
         if (!response.ok) return
         const data: unknown = await response.json()
-        if (isMounted) setContent(sanitizeSiteContent(data))
+        if (isMounted) setPayload(mergePayloadPatch(data))
       } catch {
-        // Keep defaults when the API is unavailable.
+        /* keep defaults */
       } finally {
         if (isMounted) setIsLoading(false)
       }
@@ -45,10 +68,14 @@ export function SiteContentProvider({ children }: { children: React.ReactNode })
     }
   }, [])
 
-  const value = useMemo(() => ({ content, isLoading }), [content, isLoading])
+  const value = useMemo(
+    () => ({ content, payload, isLoading }),
+    [content, payload, isLoading]
+  )
+
   return <SiteContentContext.Provider value={value}>{children}</SiteContentContext.Provider>
 }
 
-export function useSiteContent() {
+export function useSiteContent(): SiteContentContextValue {
   return useContext(SiteContentContext)
 }

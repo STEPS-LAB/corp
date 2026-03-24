@@ -1,34 +1,49 @@
 'use client'
 
 import { useLocale } from '@/context/LocaleContext'
+import { useSiteContent } from '@/context/SiteContentContext'
 import LocalizedLink from '@/components/LocalizedLink'
+import { pickLang } from '@/lib/cms-types'
+import type { CaseCMS } from '@/lib/cms-types'
+
+function sortLatestThreeCases(items: CaseCMS[]): CaseCMS[] {
+  return [...items]
+    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+    .slice(0, 3)
+}
 
 export default function CasesSection() {
-  const { t } = useLocale()
-  const cases = [
-    { href: '/cases/ecommerce', titleKey: 'cases.ecommerce_title', descKey: 'cases.ecommerce_desc', resultKey: 'cases.ecommerce_result' },
-    { href: '/cases/saas', titleKey: 'cases.saas_title', descKey: 'cases.saas_desc', resultKey: 'cases.saas_result' },
-    { href: '/cases/corporate', titleKey: 'cases.corporate_title', descKey: 'cases.corporate_desc', resultKey: 'cases.corporate_result' },
-  ]
+  const { locale } = useLocale()
+  const { payload } = useSiteContent()
+  const cases = sortLatestThreeCases(payload.cases)
+  const sectionTitle = pickLang(payload.pages.labels.casesSectionTitle, locale)
+  const viewLabel = pickLang(payload.pages.labels.casesViewCase, locale)
 
   return (
     <section className="cases-alt" id="cases">
       <div className="container-custom">
-        <h2 className="section-title-alt">{t('cases.sectionTitle')}</h2>
+        <h2 className="section-title-alt">{sectionTitle}</h2>
       </div>
       <div className="cases-alt-list">
-        {cases.map((caseItem, index) => (
-          <LocalizedLink
-            key={index}
-            href={caseItem.href}
-            className="case-alt-item"
-          >
-            <div className="case-alt-preview"></div>
+        {cases.map((caseItem) => (
+          <LocalizedLink key={caseItem.id} href={caseItem.href} className="case-alt-item">
+            {caseItem.previewImageUrl ? (
+              <div
+                className="case-alt-preview"
+                style={{
+                  backgroundImage: `url(${caseItem.previewImageUrl})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}
+              />
+            ) : (
+              <div className="case-alt-preview" />
+            )}
             <div className="case-alt-content">
-              <h3 className="case-alt-title">{t(caseItem.titleKey)}</h3>
-              <p className="case-alt-description">{t(caseItem.descKey)}</p>
-              <p className="case-alt-result">{t(caseItem.resultKey)}</p>
-              <span className="case-alt-link">{t('cases.viewCase')}</span>
+              <h3 className="case-alt-title">{pickLang(caseItem.title, locale)}</h3>
+              <p className="case-alt-description">{pickLang(caseItem.description, locale)}</p>
+              <p className="case-alt-result">{pickLang(caseItem.result, locale)}</p>
+              <span className="case-alt-link">{viewLabel}</span>
             </div>
           </LocalizedLink>
         ))}

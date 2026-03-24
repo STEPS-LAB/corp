@@ -56,7 +56,7 @@ async function handleAdminRoute(
 
   if (isAuthenticated && isAdminLogin) {
     const dashboardUrl = request.nextUrl.clone()
-    dashboardUrl.pathname = '/admin/dashboard'
+    dashboardUrl.pathname = '/admin'
     dashboardUrl.search = ''
     return NextResponse.redirect(dashboardUrl)
   }

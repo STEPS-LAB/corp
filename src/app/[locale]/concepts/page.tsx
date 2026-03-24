@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import HeroBackground from '@/components/HeroBackground'
 import ScrollIndicator from '@/components/ScrollIndicator'
 import LocalizedLink from '@/components/LocalizedLink'
-import { getConcepts, getConceptTexts } from '@/lib/concepts'
+import { getConceptsForLocale, getConceptTexts } from '@/lib/concepts'
 import { getAlternateLanguages } from '@/lib/hreflang'
 import { SITE_URL } from '@/lib/constants'
 
@@ -43,7 +43,7 @@ export default async function ConceptsPage({
     notFound()
   }
 
-  const concepts = getConcepts(locale)
+  const concepts = await getConceptsForLocale(locale)
   const copy = getConceptTexts(locale)
 
   return (

@@ -17,7 +17,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale, slug } = await params
   if (locale !== 'en' && locale !== 'uk') return {}
-  const concept = getConceptBySlug(locale, slug)
+  const concept = await getConceptBySlug(locale, slug)
   if (!concept) return {}
   const copy = getConceptTexts(locale)
 
@@ -46,7 +46,7 @@ export default async function ConceptDetailPage({
     notFound()
   }
 
-  const concept = getConceptBySlug(locale, slug)
+  const concept = await getConceptBySlug(locale, slug)
   if (!concept) {
     notFound()
   }

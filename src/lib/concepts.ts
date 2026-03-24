@@ -1,5 +1,8 @@
 import en from '@/messages/en.json'
 import uk from '@/messages/uk.json'
+import type { ConceptCMS } from '@/lib/cms-types'
+import { pickLang } from '@/lib/cms-types'
+import { getConceptsFromKv } from '@/lib/kv'
 
 export type ConceptItem = {
   slug: string
@@ -107,6 +110,44 @@ export function getConcepts(locale: 'en' | 'uk'): ConceptItem[] {
   })
 }
 
-export function getConceptBySlug(locale: 'en' | 'uk', slug: string) {
+export function conceptCmsToItem(row: ConceptCMS, locale: 'en' | 'uk'): ConceptItem {
+  return {
+    slug: row.slug,
+    title: pickLang(row.title, locale),
+    shortDescription: pickLang(row.shortDescription, locale),
+    description: pickLang(row.description, locale),
+    technologies: row.technologies[locale].length ? row.technologies[locale] : row.technologies.en,
+    improvements: row.improvements[locale].length ? row.improvements[locale] : row.improvements.en,
+    desktopImage: row.desktopImage || `/concepts/${row.slug}-desktop.png`,
+    mobileImage: row.mobileImage || `/concepts/${row.slug}-mobile.png`,
+    oldDesktopImage: row.oldDesktopImage || row.desktopImage || `/concepts/${row.slug}-desktop.png`,
+    oldMobileImage: row.oldMobileImage || row.mobileImage || `/concepts/${row.slug}-mobile.png`,
+  }
+}
+
+/** Prefer KV-backed concepts; fall back to bundled messages + static assets. */
+export async function getConceptsForLocale(locale: 'en' | 'uk'): Promise<ConceptItem[]> {
+  try {
+    const cms = await getConceptsFromKv()
+    if (cms.length > 0) {
+      return cms
+        .slice()
+        .sort((a, b) => a.order - b.order)
+        .map((c) => conceptCmsToItem(c, locale))
+    }
+  } catch {
+    /* KV unavailable */
+  }
+  return getConcepts(locale)
+}
+
+export async function getConceptBySlug(locale: 'en' | 'uk', slug: string): Promise<ConceptItem | undefined> {
+  try {
+    const cms = await getConceptsFromKv()
+    const row = cms.find((c) => c.slug === slug)
+    if (row) return conceptCmsToItem(row, locale)
+  } catch {
+    /* fallback */
+  }
   return getConcepts(locale).find((item) => item.slug === slug)
 }

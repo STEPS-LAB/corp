@@ -14,7 +14,7 @@ async function loginAction(formData: FormData) {
   'use server'
 
   const password = String(formData.get('password') ?? '')
-  const nextPath = String(formData.get('next') ?? '/admin/dashboard')
+  const nextPath = String(formData.get('next') ?? '/admin')
 
   if (!verifyAdminPassword(password)) {
     redirect(`/admin/login?error=1&next=${encodeURIComponent(nextPath)}`)
@@ -38,7 +38,7 @@ export default async function AdminLoginPage({
 }) {
   const params = await searchParams
   const hasError = params.error === '1'
-  const nextPath = params.next || '/admin/dashboard'
+  const nextPath = params.next || '/admin'
   const passwordConfigured = isAdminPasswordConfigured()
 
   return (

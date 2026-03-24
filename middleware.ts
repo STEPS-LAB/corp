@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { LOCALE_COOKIE, SUPPORTED_LOCALES, type Locale } from '@/lib/i18n'
+import { getAdminCookieName, verifyAdminToken } from '@/lib/admin-auth'
 
 const UKRAINE_COUNTRY = 'UA'
 const BOT_UA_RE =
@@ -24,8 +25,14 @@ function getLocaleFromPath(pathname: string): Locale | null {
   return null
 }
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl
+  const isAdminRoute = pathname.startsWith('/admin')
+  const isAdminLogin = pathname === '/admin/login'
+
+  if (isAdminRoute) {
+    return await handleAdminRoute(request, isAdminLogin)
+  }
   const pathLocale = getLocaleFromPath(pathname)
   const cookieLocale = request.cookies.get(LOCALE_COOKIE)?.value
   const hasValidCookieLocale = SUPPORTED_LOCALES.includes(cookieLocale as Locale)
@@ -71,6 +78,27 @@ export function middleware(request: NextRequest) {
     sameSite: 'lax',
   })
   return response
+}
+
+async function handleAdminRoute(request: NextRequest, isAdminLogin: boolean) {
+  const token = request.cookies.get(getAdminCookieName())?.value
+  const isAuthenticated = await verifyAdminToken(token)
+
+  if (!isAuthenticated && !isAdminLogin) {
+    const loginUrl = request.nextUrl.clone()
+    loginUrl.pathname = '/admin/login'
+    loginUrl.searchParams.set('next', request.nextUrl.pathname)
+    return NextResponse.redirect(loginUrl)
+  }
+
+  if (isAuthenticated && isAdminLogin) {
+    const dashboardUrl = request.nextUrl.clone()
+    dashboardUrl.pathname = '/admin/dashboard'
+    dashboardUrl.search = ''
+    return NextResponse.redirect(dashboardUrl)
+  }
+
+  return NextResponse.next()
 }
 
 export const config = {

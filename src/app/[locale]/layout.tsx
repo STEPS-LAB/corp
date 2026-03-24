@@ -6,6 +6,7 @@ import Modal from '@/components/Modal'
 import JsonLd from '@/components/SEO/JsonLd'
 import { ModalProvider } from '@/hooks/useModal'
 import { LocaleProvider } from '@/context/LocaleContext'
+import { SiteContentProvider } from '@/context/SiteContentContext'
 import { getAlternateLanguages } from '@/lib/hreflang'
 import { SITE_URL } from '@/lib/constants'
 import { getOrganizationSchema, getWebsiteSchema } from '@/lib/schema'
@@ -71,12 +72,14 @@ export default async function LocaleLayout({
         }}
       />
       <LocaleProvider initialLocale={locale as Locale}>
-        <ModalProvider>
-          <Header />
-          <main>{children}</main>
-          <Footer />
-          <Modal />
-        </ModalProvider>
+        <SiteContentProvider>
+          <ModalProvider>
+            <Header />
+            <main>{children}</main>
+            <Footer />
+            <Modal />
+          </ModalProvider>
+        </SiteContentProvider>
       </LocaleProvider>
     </>
   )

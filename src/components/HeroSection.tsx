@@ -2,12 +2,14 @@
 
 import { useModal } from '@/hooks/useModal'
 import { useLocale } from '@/context/LocaleContext'
+import { useSiteContent } from '@/context/SiteContentContext'
 import LocalizedLink from '@/components/LocalizedLink'
 import ScrollIndicator from './ScrollIndicator'
 
 export default function HeroSection() {
   const { openModal } = useModal()
   const { t } = useLocale()
+  const { content } = useSiteContent()
 
   return (
     <section className="hero-alt">
@@ -29,24 +31,29 @@ export default function HeroSection() {
       <div className="container-custom">
         <div className="hero-alt-content">
           <h1 className="hero-alt-title">
-            <span className="hero-alt-title-line">{t('hero.title1')}</span>
-            <span className="hero-alt-title-line">{t('hero.title2')}</span>
-            <span className="hero-alt-title-line">{t('hero.title3')}</span>
+            <span className="hero-alt-title-line">{content.hero.title}</span>
           </h1>
           <p className="hero-alt-description">
-            {t('hero.description')}
+            {content.hero.subtitle}
           </p>
           <div className="hero-alt-cta">
             <button
               onClick={openModal}
               className="btn btn-primary btn-large"
             >
-              {t('hero.cta')}
+              {content.hero.ctaText || t('hero.cta')}
             </button>
-            <LocalizedLink href="/cases" className="btn-link">
+            <LocalizedLink href={content.hero.ctaLink || '/cases'} className="btn-link">
               {t('hero.viewCases')}
             </LocalizedLink>
           </div>
+        </div>
+        <div className="mt-10 max-w-xl">
+          <img
+            src={content.hero.heroImageUrl || content.images.hero}
+            alt="STEPS LAB hero"
+            className="w-full h-auto rounded-2xl border border-white/10"
+          />
         </div>
         <div className="hero-alt-stats">
           <div className="stat-item">

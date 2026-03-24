@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useModal } from '@/hooks/useModal'
 import { useLocale } from '@/context/LocaleContext'
+import { useSiteContent } from '@/context/SiteContentContext'
 import { localizePath } from '@/lib/locale-path'
 import MobileMenu from './MobileMenu'
 import LanguageSelect from './LanguageSelect'
@@ -13,6 +14,7 @@ export default function Header() {
   const pathname = usePathname()
   const { openModal } = useModal()
   const { t, locale } = useLocale()
+  const { content } = useSiteContent()
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const pathWithoutLocale = (pathname || '/').replace(/^\/(en|uk)(?=\/|$)/, '') || '/'
@@ -44,7 +46,7 @@ export default function Header() {
           <div className="header-content">
             <Link href={localizePath('/', locale)} className="logo" aria-label="STEPS LAB AI-supported development homepage">
               <img
-                src="/steps-lab_logo-w.webp"
+                src={content.images.logo || '/steps-lab_logo-w.webp'}
                 alt="STEPS LAB logo"
                 width={112}
                 height={22}

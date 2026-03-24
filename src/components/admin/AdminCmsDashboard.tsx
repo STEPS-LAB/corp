@@ -825,7 +825,11 @@ function CaseFields({ c, upd, L }: { c: CaseCMS; upd: (u: CaseCMS) => void; L: L
       <Field label="ID">
         <input className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2" value={c.id} onChange={(e) => upd({ ...c, id: e.target.value })} />
       </Field>
-      <Field label="Href">
+      <Field label="Href (public URL path)">
+        <p className="mb-1 text-xs text-zinc-500">
+          Must start with <code className="text-zinc-400">/cases/</code>, e.g. <code className="text-zinc-400">/cases/ecommerce</code>. Locale{' '}
+          <code className="text-zinc-400">/en</code> is added automatically in links.
+        </p>
         <input className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2" value={c.href} onChange={(e) => upd({ ...c, href: e.target.value })} />
       </Field>
       <Field label={`Title (${L})`} className="md:col-span-2">

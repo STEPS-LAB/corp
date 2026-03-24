@@ -1,7 +1,11 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { cache } from 'react'
 import { getAlternateLanguages } from '@/lib/hreflang'
+import { getFullCmsPayload } from '@/lib/kv'
+import { pickLang } from '@/lib/cms-types'
 import HomePageContent from '@/components/HomePageContent'
+import CaseStudyContent from '@/components/CaseStudyContent'
 import { generateMetadata as generateServicesMetadata } from '@/app/services/page'
 import ServicesPageContent from '@/app/services/ServicesPageContent'
 import { generateMetadata as generateCasesMetadata } from '@/app/cases/page'
@@ -20,14 +24,17 @@ import { generateMetadata as generateSupportMetadata } from '@/app/services/supp
 import SupportScalingPage from '@/app/services/support-scaling/page'
 import { generateMetadata as generateWebMetadata } from '@/app/services/web-development/page'
 import WebDevelopmentPage from '@/app/services/web-development/page'
-import { generateMetadata as generateCorporateMetadata } from '@/app/cases/corporate/layout'
-import CorporateCasePage from '@/app/cases/corporate/page'
-import { generateMetadata as generateEcommerceMetadata } from '@/app/cases/ecommerce/layout'
-import EcommerceCasePage from '@/app/cases/ecommerce/page'
-import { generateMetadata as generateSaasMetadata } from '@/app/cases/saas/layout'
-import SaaSCasePage from '@/app/cases/saas/page'
 import en from '@/messages/en.json'
 import uk from '@/messages/uk.json'
+
+const getCachedCmsPayload = cache(getFullCmsPayload)
+
+function caseDetailHrefFromKey(key: string): string | null {
+  if (key === 'cases' || !key.startsWith('cases/')) return null
+  const rest = key.slice('cases/'.length)
+  if (!rest || rest.includes('//')) return null
+  return `/${key}`
+}
 
 export const dynamic = 'force-dynamic'
 
@@ -55,9 +62,6 @@ const routeMap: Record<string, RouteEntry> = {
   'services/mvp-startups': { render: () => <MVPStartupsPage />, getMetadata: generateMvpMetadata },
   'services/support-scaling': { render: () => <SupportScalingPage />, getMetadata: generateSupportMetadata },
   'services/web-development': { render: () => <WebDevelopmentPage />, getMetadata: generateWebMetadata },
-  'cases/corporate': { render: () => <CorporateCasePage />, getMetadata: generateCorporateMetadata },
-  'cases/ecommerce': { render: () => <EcommerceCasePage />, getMetadata: generateEcommerceMetadata },
-  'cases/saas': { render: () => <SaaSCasePage />, getMetadata: generateSaasMetadata },
 }
 
 function getLocalizedMeta(locale: 'en' | 'uk', key: string): Pick<Metadata, 'title' | 'description'> {
@@ -75,11 +79,6 @@ function getLocalizedMeta(locale: 'en' | 'uk', key: string): Pick<Metadata, 'tit
       aiAutomation: { metaTitle: string; metaDescription: string }
       mvpStartups: { metaTitle: string; metaDescription: string }
       supportScaling: { metaTitle: string; metaDescription: string }
-    }
-    casePages: {
-      ecommerce: { metaTitle: string; metaDescription: string }
-      corporate: { metaTitle: string; metaDescription: string }
-      saas: { metaTitle: string; metaDescription: string }
     }
   }
 
@@ -105,18 +104,6 @@ function getLocalizedMeta(locale: 'en' | 'uk', key: string): Pick<Metadata, 'tit
       title: typed.servicePages.supportScaling.metaTitle,
       description: typed.servicePages.supportScaling.metaDescription,
     },
-    'cases/ecommerce': {
-      title: typed.casePages.ecommerce.metaTitle,
-      description: typed.casePages.ecommerce.metaDescription,
-    },
-    'cases/corporate': {
-      title: typed.casePages.corporate.metaTitle,
-      description: typed.casePages.corporate.metaDescription,
-    },
-    'cases/saas': {
-      title: typed.casePages.saas.metaTitle,
-      description: typed.casePages.saas.metaDescription,
-    },
   }
 
   if (map[key]) return map[key]
@@ -136,8 +123,28 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale, slug } = await params
   if (locale !== 'en' && locale !== 'uk') return {}
+  const loc = locale as 'en' | 'uk'
   const key = (slug ?? []).join('/')
   const path = key ? `/${key}` : '/'
+
+  const caseHref = caseDetailHrefFromKey(key)
+  if (caseHref) {
+    const payload = await getCachedCmsPayload()
+    const c = payload.cases.find((x) => x.href === caseHref)
+    if (!c) notFound()
+    const title = pickLang(c.title, loc)
+    const desc = pickLang(c.description, loc).slice(0, 160)
+    const canonicalPath = `/${locale}${path === '/' ? '' : path}`
+    return {
+      title: `${title} | STEPS LAB`,
+      description: desc,
+      alternates: {
+        canonical: canonicalPath,
+        languages: (await getAlternateLanguages(path)).languages,
+      },
+    }
+  }
+
   const route = routeMap[key]
   if (!route) return {}
 
@@ -166,6 +173,15 @@ export default async function LocalizedPage({
   }
 
   const key = (slug ?? []).join('/')
+
+  const caseHref = caseDetailHrefFromKey(key)
+  if (caseHref) {
+    const payload = await getCachedCmsPayload()
+    const found = payload.cases.some((c) => c.href === caseHref)
+    if (!found) notFound()
+    return <CaseStudyContent caseHref={caseHref} />
+  }
+
   const route = routeMap[key]
   if (!route) {
     notFound()

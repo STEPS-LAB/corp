@@ -1,6 +1,14 @@
 import { createClient } from 'redis'
 import { kv } from '@vercel/kv'
-import type { CaseCMS, ConceptCMS, PagesContent, PublicCmsPayload, ServiceCMS } from '@/lib/cms-types'
+import type {
+  BilingualText,
+  CaseCMS,
+  CasePageDetail,
+  ConceptCMS,
+  PagesContent,
+  PublicCmsPayload,
+  ServiceCMS,
+} from '@/lib/cms-types'
 import {
   DEFAULT_CASES_CMS,
   DEFAULT_CONCEPTS_CMS,
@@ -9,6 +17,7 @@ import {
   KV_KEYS,
   defaultCmsPayload,
 } from '@/lib/cms-types'
+import { builtInCaseDetail } from '@/lib/cms-case-defaults'
 
 function hasRedisUrl(): boolean {
   return Boolean(process.env.REDIS_URL?.trim())
@@ -80,6 +89,45 @@ async function getJson<T>(key: string): Promise<T | null> {
   }
 }
 
+function mb(base: BilingualText, patch?: Partial<BilingualText>): BilingualText {
+  return { ...base, ...(patch ?? {}) }
+}
+
+function mergeCasePageDetail(base: CasePageDetail, patch?: Partial<CasePageDetail>): CasePageDetail {
+  if (!patch) return base
+  return {
+    screensSectionTitle: mb(base.screensSectionTitle, patch.screensSectionTitle),
+    breadcrumb: mb(base.breadcrumb, patch.breadcrumb),
+    subtitle: mb(base.subtitle, patch.subtitle),
+    overviewP1: mb(base.overviewP1, patch.overviewP1),
+    overviewP2: mb(base.overviewP2, patch.overviewP2),
+    screen1Caption: mb(base.screen1Caption, patch.screen1Caption),
+    screen2Caption: mb(base.screen2Caption, patch.screen2Caption),
+    screen3Caption: mb(base.screen3Caption, patch.screen3Caption),
+    screen4Caption: mb(base.screen4Caption, patch.screen4Caption),
+    feature1Title: mb(base.feature1Title, patch.feature1Title),
+    feature1Text: mb(base.feature1Text, patch.feature1Text),
+    feature2Title: mb(base.feature2Title, patch.feature2Title),
+    feature2Text: mb(base.feature2Text, patch.feature2Text),
+    feature3Title: mb(base.feature3Title, patch.feature3Title),
+    feature3Text: mb(base.feature3Text, patch.feature3Text),
+    feature4Title: mb(base.feature4Title, patch.feature4Title),
+    feature4Text: mb(base.feature4Text, patch.feature4Text),
+    fullscreenCaption: mb(base.fullscreenCaption, patch.fullscreenCaption),
+    result1Value: patch.result1Value ?? base.result1Value,
+    result2Value: patch.result2Value ?? base.result2Value,
+    result3Value: patch.result3Value ?? base.result3Value,
+    result1Label: mb(base.result1Label, patch.result1Label),
+    result2Label: mb(base.result2Label, patch.result2Label),
+    result3Label: mb(base.result3Label, patch.result3Label),
+    clientType: mb(base.clientType, patch.clientType),
+    timelineValue: mb(base.timelineValue, patch.timelineValue),
+    technologies: Array.isArray(patch.technologies) ? patch.technologies : base.technologies,
+    ctaTitle: mb(base.ctaTitle, patch.ctaTitle),
+    images: { ...base.images, ...(patch.images ?? {}) },
+  }
+}
+
 async function setJson<T>(key: string, value: T): Promise<void> {
   const mode = storageMode()
   if (mode === 'none') {
@@ -140,6 +188,43 @@ function mergePages(partial: unknown): PagesContent {
       conceptsViewAll: { ...d.labels.conceptsViewAll, ...(p.labels?.conceptsViewAll ?? {}) },
       casesViewCase: { ...d.labels.casesViewCase, ...(p.labels?.casesViewCase ?? {}) },
     },
+    casePageLabels: {
+      aboutProject: mb(d.casePageLabels.aboutProject, p.casePageLabels?.aboutProject),
+      whatWeDid: mb(d.casePageLabels.whatWeDid, p.casePageLabels?.whatWeDid),
+      results: mb(d.casePageLabels.results, p.casePageLabels?.results),
+      client: mb(d.casePageLabels.client, p.casePageLabels?.client),
+      timeline: mb(d.casePageLabels.timeline, p.casePageLabels?.timeline),
+      technologies: mb(d.casePageLabels.technologies, p.casePageLabels?.technologies),
+    },
+    aboutPageContent: {
+      heroBadge: mb(d.aboutPageContent.heroBadge, p.aboutPageContent?.heroBadge),
+      heroTitle: mb(d.aboutPageContent.heroTitle, p.aboutPageContent?.heroTitle),
+      heroSubtitle: mb(d.aboutPageContent.heroSubtitle, p.aboutPageContent?.heroSubtitle),
+      philosophyTitle: mb(d.aboutPageContent.philosophyTitle, p.aboutPageContent?.philosophyTitle),
+      philosophyText: mb(d.aboutPageContent.philosophyText, p.aboutPageContent?.philosophyText),
+      customFocusTitle: mb(d.aboutPageContent.customFocusTitle, p.aboutPageContent?.customFocusTitle),
+      customFocusText: mb(d.aboutPageContent.customFocusText, p.aboutPageContent?.customFocusText),
+      conceptsTitle: mb(d.aboutPageContent.conceptsTitle, p.aboutPageContent?.conceptsTitle),
+      conceptsCta: mb(d.aboutPageContent.conceptsCta, p.aboutPageContent?.conceptsCta),
+    },
+    contactPageContent: {
+      badge: mb(d.contactPageContent.badge, p.contactPageContent?.badge),
+      title1: mb(d.contactPageContent.title1, p.contactPageContent?.title1),
+      title2: mb(d.contactPageContent.title2, p.contactPageContent?.title2),
+      description: mb(d.contactPageContent.description, p.contactPageContent?.description),
+      writeUs: mb(d.contactPageContent.writeUs, p.contactPageContent?.writeUs),
+      or: mb(d.contactPageContent.or, p.contactPageContent?.or),
+      leaveRequest: mb(d.contactPageContent.leaveRequest, p.contactPageContent?.leaveRequest),
+      namePlaceholder: mb(d.contactPageContent.namePlaceholder, p.contactPageContent?.namePlaceholder),
+      companyPlaceholder: mb(d.contactPageContent.companyPlaceholder, p.contactPageContent?.companyPlaceholder),
+      messagePlaceholder: mb(d.contactPageContent.messagePlaceholder, p.contactPageContent?.messagePlaceholder),
+      submit: mb(d.contactPageContent.submit, p.contactPageContent?.submit),
+      submitting: mb(d.contactPageContent.submitting, p.contactPageContent?.submitting),
+      successTitle: mb(d.contactPageContent.successTitle, p.contactPageContent?.successTitle),
+      successText: mb(d.contactPageContent.successText, p.contactPageContent?.successText),
+      writeAgain: mb(d.contactPageContent.writeAgain, p.contactPageContent?.writeAgain),
+      errorDefault: mb(d.contactPageContent.errorDefault, p.contactPageContent?.errorDefault),
+    },
   }
 }
 
@@ -166,17 +251,21 @@ function sanitizeServices(arr: unknown): ServiceCMS[] {
 }
 
 function sanitizeCaseItem(c: unknown, index: number): CaseCMS {
-  const d = DEFAULT_CASES_CMS[index] ?? DEFAULT_CASES_CMS[0]
-  if (!c || typeof c !== 'object') return { ...d, id: d?.id ?? `case-${index}` }
+  const fallback = DEFAULT_CASES_CMS[index] ?? DEFAULT_CASES_CMS[0]
+  if (!c || typeof c !== 'object') return fallback
   const x = c as Partial<CaseCMS>
-  const def = d ?? DEFAULT_CASES_CMS[0]
+  const id = typeof x.id === 'string' && x.id.length > 0 ? x.id : fallback.id
+  const def = DEFAULT_CASES_CMS.find((dc) => dc.id === id) ?? fallback
+  const baseDetail = builtInCaseDetail(id)
+  const mergedDetail = mergeCasePageDetail(baseDetail, x.detail)
   return {
-    id: x.id ?? def.id,
+    id,
     href: x.href ?? def.href,
     title: { ...def.title, ...(x.title ?? {}) },
     description: { ...def.description, ...(x.description ?? {}) },
     result: { ...def.result, ...(x.result ?? {}) },
     previewImageUrl: x.previewImageUrl ?? def.previewImageUrl,
+    detail: mergedDetail,
     order: typeof x.order === 'number' ? x.order : def.order,
     updatedAt: typeof x.updatedAt === 'string' ? x.updatedAt : def.updatedAt,
   }

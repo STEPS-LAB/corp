@@ -1,5 +1,8 @@
 import type { Locale } from '@/lib/i18n'
 import type { SiteContent } from '@/lib/content'
+import { builtInCaseDetail } from '@/lib/cms-case-defaults'
+
+export { emptyCasePageDetail } from '@/lib/cms-case-defaults'
 
 export type BilingualText = { en: string; uk: string }
 
@@ -38,6 +41,89 @@ export type PagesContent = {
     conceptsViewAll: BilingualText
     casesViewCase: BilingualText
   }
+  /** Shared headings on all case study inner pages. */
+  casePageLabels: {
+    aboutProject: BilingualText
+    whatWeDid: BilingualText
+    results: BilingualText
+    client: BilingualText
+    timeline: BilingualText
+    technologies: BilingualText
+  }
+  /** /about — falls back to next-intl keys when empty. */
+  aboutPageContent: {
+    heroBadge: BilingualText
+    heroTitle: BilingualText
+    heroSubtitle: BilingualText
+    philosophyTitle: BilingualText
+    philosophyText: BilingualText
+    customFocusTitle: BilingualText
+    customFocusText: BilingualText
+    conceptsTitle: BilingualText
+    conceptsCta: BilingualText
+  }
+  /** /contacts — falls back to next-intl when empty. */
+  contactPageContent: {
+    badge: BilingualText
+    title1: BilingualText
+    title2: BilingualText
+    description: BilingualText
+    writeUs: BilingualText
+    or: BilingualText
+    leaveRequest: BilingualText
+    namePlaceholder: BilingualText
+    companyPlaceholder: BilingualText
+    messagePlaceholder: BilingualText
+    submit: BilingualText
+    submitting: BilingualText
+    successTitle: BilingualText
+    successText: BilingualText
+    writeAgain: BilingualText
+    errorDefault: BilingualText
+  }
+}
+
+export type CasePageImages = {
+  heroBackground: string
+  heroMain: string
+  screen1: string
+  screen2: string
+  screen3: string
+  screen4: string
+  fullscreen: string
+}
+
+/** Full inner case page (per case item). Card title/description/result stay on CaseCMS. */
+export type CasePageDetail = {
+  screensSectionTitle: BilingualText
+  breadcrumb: BilingualText
+  subtitle: BilingualText
+  overviewP1: BilingualText
+  overviewP2: BilingualText
+  screen1Caption: BilingualText
+  screen2Caption: BilingualText
+  screen3Caption: BilingualText
+  screen4Caption: BilingualText
+  feature1Title: BilingualText
+  feature1Text: BilingualText
+  feature2Title: BilingualText
+  feature2Text: BilingualText
+  feature3Title: BilingualText
+  feature3Text: BilingualText
+  feature4Title: BilingualText
+  feature4Text: BilingualText
+  fullscreenCaption: BilingualText
+  result1Value: string
+  result2Value: string
+  result3Value: string
+  result1Label: BilingualText
+  result2Label: BilingualText
+  result3Label: BilingualText
+  clientType: BilingualText
+  timelineValue: BilingualText
+  technologies: string[]
+  ctaTitle: BilingualText
+  images: CasePageImages
 }
 
 export type ServiceCMS = {
@@ -58,6 +144,8 @@ export type CaseCMS = {
   description: BilingualText
   result: BilingualText
   previewImageUrl: string
+  /** Inner /cases/... page copy and images. */
+  detail: CasePageDetail
   order: number
   updatedAt: string
 }
@@ -140,6 +228,58 @@ export const DEFAULT_PAGES_CONTENT: PagesContent = {
     conceptsViewAll: b('View All Concepts', 'Переглянути всі концепти'),
     casesViewCase: b('View case →', 'Переглянути кейс →'),
   },
+  casePageLabels: {
+    aboutProject: b('About the project', 'Про проєкт'),
+    whatWeDid: b('What we did', 'Що ми зробили'),
+    results: b('Results', 'Результати'),
+    client: b('Client', 'Клієнт'),
+    timeline: b('Timeline', 'Термін'),
+    technologies: b('Technologies', 'Технології'),
+  },
+  aboutPageContent: {
+    heroBadge: b('About Us', 'Про нас'),
+    heroTitle: b('Experience, amplified by intelligence.', 'Досвід, посилений інтелектом.'),
+    heroSubtitle: b(
+      'We combined 6 years of commercial software delivery with the capabilities of generative AI. STEPS LAB is not mass-market production; it is complex solution engineering where every line of code is controlled by an experienced developer.',
+      'Ми поєднали 6 років комерційної розробки ПЗ із можливостями генеративного AI. STEPS LAB — це не масове виробництво, а інженерія складних рішень, де кожен рядок коду контролює досвідчений розробник.'
+    ),
+    philosophyTitle: b('Technology as the standard.', 'Технологія як стандарт.'),
+    philosophyText: b(
+      'We do not believe in magical numbers, we believe in architecture. Using Next.js and custom solutions, we deliver consistently high speed and flexibility that no standard CMS can provide. Your website performs fast because it is engineered correctly.',
+      'Ми не віримо в магічні цифри — віримо в архітектуру. На Next.js і кастомних рішеннях ми даємо стабільно високу швидкість і гнучкість, якої не дає жодна типова CMS. Сайт швидкий, бо він спроєктований правильно.'
+    ),
+    customFocusTitle: b('Custom focus', 'Кастомний фокус'),
+    customFocusText: b(
+      'Instead of templates, we build proprietary admin panels around your real workflows. This guarantees security, scalability, and zero codebase clutter. AI helps us deliver this 2-3x faster without sacrificing premium output quality.',
+      'Замість шаблонів будуємо власні адмін-панелі під ваші процеси. Це дає безпеку, масштабованість і чистий код. AI допомагає поставляти в 2–3 рази швидше без втрати якості.'
+    ),
+    conceptsTitle: b('See how we rethink existing businesses', 'Подивіться, як ми переосмислюємо бізнеси'),
+    conceptsCta: b('View concepts', 'До концептів'),
+  },
+  contactPageContent: {
+    badge: b('Contact', 'Контакт'),
+    title1: b('Get in touch', 'Зв’яжіться'),
+    title2: b('with the studio', 'зі студією'),
+    description: b(
+      "Let's discuss your website or web app project. Free consultation.",
+      'Обговорімо ваш сайт або веб-застосунок. Безкоштовна консультація.'
+    ),
+    writeUs: b('Write to us', 'Напишіть нам'),
+    or: b('OR', 'АБО'),
+    leaveRequest: b('Leave a request', 'Залишити заявку'),
+    namePlaceholder: b('Name', 'Ім’я'),
+    companyPlaceholder: b('Company (optional)', 'Компанія (необов’язково)'),
+    messagePlaceholder: b('Message', 'Повідомлення'),
+    submit: b('Send', 'Надіслати'),
+    submitting: b('Sending...', 'Надсилання...'),
+    successTitle: b('Thank you!', 'Дякуємо!'),
+    successText: b(
+      "We've received your message and will contact you shortly.",
+      'Ми отримали ваше повідомлення і невдовзі зв’яжемося.'
+    ),
+    writeAgain: b('Write again', 'Написати ще раз'),
+    errorDefault: b('Something went wrong. Please try again.', 'Щось пішло не так. Спробуйте ще раз.'),
+  },
 }
 
 export const DEFAULT_SERVICES_CMS: ServiceCMS[] = [
@@ -211,6 +351,7 @@ export const DEFAULT_CASES_CMS: CaseCMS[] = [
       'Результат: збільшення онлайн-продажів на 340% за 6 місяців, зниження часу обробки на 60%.'
     ),
     previewImageUrl: '',
+    detail: builtInCaseDetail('case-ecommerce'),
     order: 0,
     updatedAt: iso(),
   },
@@ -227,6 +368,7 @@ export const DEFAULT_CASES_CMS: CaseCMS[] = [
       'Результат: запуск за 8 тижнів, 100+ платних користувачів за місяць, валідація бізнес-моделі.'
     ),
     previewImageUrl: '',
+    detail: builtInCaseDetail('case-saas'),
     order: 1,
     updatedAt: iso(),
   },
@@ -243,6 +385,7 @@ export const DEFAULT_CASES_CMS: CaseCMS[] = [
       'Результат: конверсія +250%, заявки +180%, покращення SEO-позицій.'
     ),
     previewImageUrl: '',
+    detail: builtInCaseDetail('case-corporate'),
     order: 2,
     updatedAt: iso(),
   },

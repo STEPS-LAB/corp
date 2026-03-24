@@ -7,6 +7,7 @@ import {
   type ConceptCMS,
   type PagesContent,
   type ServiceCMS,
+  emptyCasePageDetail,
 } from '@/lib/cms-types'
 import { getAdminCookieName, verifyAdminToken } from '@/lib/admin-auth'
 import {
@@ -35,11 +36,17 @@ async function assertAdmin(): Promise<ActionResult> {
 
 function revalidateCmsPaths() {
   const locales = ['en', 'uk'] as const
+  const caseSlugs = ['ecommerce', 'saas', 'corporate'] as const
   for (const loc of locales) {
     revalidatePath(`/${loc}`, 'page')
     revalidatePath(`/${loc}/concepts`, 'layout')
     revalidatePath(`/${loc}/cases`, 'page')
     revalidatePath(`/${loc}/services`, 'page')
+    revalidatePath(`/${loc}/about`, 'page')
+    revalidatePath(`/${loc}/contacts`, 'page')
+    for (const slug of caseSlugs) {
+      revalidatePath(`/${loc}/cases/${slug}`, 'page')
+    }
   }
 }
 
@@ -150,6 +157,7 @@ export async function addCaseAction(): Promise<ActionResult<CaseCMS[]>> {
     description: { en: '', uk: '' },
     result: { en: '', uk: '' },
     previewImageUrl: '',
+    detail: emptyCasePageDetail(),
     order: list.length,
     updatedAt: new Date().toISOString(),
   }

@@ -14,6 +14,7 @@ import type {
 } from '@/lib/cms-types'
 import { defaultCmsPayload } from '@/lib/cms-types'
 import ImageUploader from '@/components/admin/ImageUploader'
+import CaseDetailEditor from '@/components/admin/CaseDetailEditor'
 import {
   type ActionResult,
   addCaseAction,
@@ -414,6 +415,152 @@ function GeneralTab({
             }
           />
         </Field>
+
+        <details className="md:col-span-2 rounded-xl border border-zinc-800 bg-zinc-950/40 p-4">
+          <summary className="cursor-pointer text-sm font-medium text-zinc-200">Case study pages — shared headings</summary>
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
+            {(
+              [
+                ['aboutProject', pages.casePageLabels.aboutProject],
+                ['whatWeDid', pages.casePageLabels.whatWeDid],
+                ['results', pages.casePageLabels.results],
+                ['client', pages.casePageLabels.client],
+                ['timeline', pages.casePageLabels.timeline],
+                ['technologies', pages.casePageLabels.technologies],
+              ] as const
+            ).map(([key, bt]) => (
+              <Field key={key} label={`${key} (${L})`}>
+                <input
+                  className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2"
+                  value={bt[L]}
+                  onChange={(e) =>
+                    setPages({
+                      ...pages,
+                      casePageLabels: {
+                        ...pages.casePageLabels,
+                        [key]: { ...bt, [L]: e.target.value },
+                      },
+                    })
+                  }
+                />
+              </Field>
+            ))}
+          </div>
+        </details>
+
+        <details className="md:col-span-2 rounded-xl border border-zinc-800 bg-zinc-950/40 p-4">
+          <summary className="cursor-pointer text-sm font-medium text-zinc-200">About page (/about)</summary>
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
+            {(
+              [
+                ['heroBadge', pages.aboutPageContent.heroBadge],
+                ['heroTitle', pages.aboutPageContent.heroTitle],
+                ['heroSubtitle', pages.aboutPageContent.heroSubtitle],
+                ['philosophyTitle', pages.aboutPageContent.philosophyTitle],
+                ['philosophyText', pages.aboutPageContent.philosophyText],
+                ['customFocusTitle', pages.aboutPageContent.customFocusTitle],
+                ['customFocusText', pages.aboutPageContent.customFocusText],
+                ['conceptsTitle', pages.aboutPageContent.conceptsTitle],
+                ['conceptsCta', pages.aboutPageContent.conceptsCta],
+              ] as const
+            ).map(([key, bt]) => (
+              <Field key={key} label={`${key} (${L})`} className={key.includes('Subtitle') || key.includes('Text') ? 'md:col-span-2' : ''}>
+                {key.includes('Subtitle') || key.includes('Text') ? (
+                  <textarea
+                    className="mt-1 min-h-20 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2"
+                    value={bt[L]}
+                    onChange={(e) =>
+                      setPages({
+                        ...pages,
+                        aboutPageContent: {
+                          ...pages.aboutPageContent,
+                          [key]: { ...bt, [L]: e.target.value },
+                        },
+                      })
+                    }
+                  />
+                ) : (
+                  <input
+                    className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2"
+                    value={bt[L]}
+                    onChange={(e) =>
+                      setPages({
+                        ...pages,
+                        aboutPageContent: {
+                          ...pages.aboutPageContent,
+                          [key]: { ...bt, [L]: e.target.value },
+                        },
+                      })
+                    }
+                  />
+                )}
+              </Field>
+            ))}
+          </div>
+        </details>
+
+        <details className="md:col-span-2 rounded-xl border border-zinc-800 bg-zinc-950/40 p-4">
+          <summary className="cursor-pointer text-sm font-medium text-zinc-200">Contact page (/contacts)</summary>
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
+            {(
+              [
+                ['badge', pages.contactPageContent.badge],
+                ['title1', pages.contactPageContent.title1],
+                ['title2', pages.contactPageContent.title2],
+                ['description', pages.contactPageContent.description],
+                ['writeUs', pages.contactPageContent.writeUs],
+                ['or', pages.contactPageContent.or],
+                ['leaveRequest', pages.contactPageContent.leaveRequest],
+                ['namePlaceholder', pages.contactPageContent.namePlaceholder],
+                ['companyPlaceholder', pages.contactPageContent.companyPlaceholder],
+                ['messagePlaceholder', pages.contactPageContent.messagePlaceholder],
+                ['submit', pages.contactPageContent.submit],
+                ['submitting', pages.contactPageContent.submitting],
+                ['successTitle', pages.contactPageContent.successTitle],
+                ['successText', pages.contactPageContent.successText],
+                ['writeAgain', pages.contactPageContent.writeAgain],
+                ['errorDefault', pages.contactPageContent.errorDefault],
+              ] as const
+            ).map(([key, bt]) => (
+              <Field
+                key={key}
+                label={`${key} (${L})`}
+                className={key === 'description' || key === 'successText' ? 'md:col-span-2' : ''}
+              >
+                {key === 'description' || key === 'successText' ? (
+                  <textarea
+                    className="mt-1 min-h-16 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2"
+                    value={bt[L]}
+                    onChange={(e) =>
+                      setPages({
+                        ...pages,
+                        contactPageContent: {
+                          ...pages.contactPageContent,
+                          [key]: { ...bt, [L]: e.target.value },
+                        },
+                      })
+                    }
+                  />
+                ) : (
+                  <input
+                    className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2"
+                    value={bt[L]}
+                    onChange={(e) =>
+                      setPages({
+                        ...pages,
+                        contactPageContent: {
+                          ...pages.contactPageContent,
+                          [key]: { ...bt, [L]: e.target.value },
+                        },
+                      })
+                    }
+                  />
+                )}
+              </Field>
+            ))}
+          </div>
+        </details>
+
         <Field label="LinkedIn URL">
           <input
             className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2"
@@ -675,13 +822,29 @@ function CaseFields({ c, upd, L }: { c: CaseCMS; upd: (u: CaseCMS) => void; L: L
           onChange={(e) => upd({ ...c, result: { ...c.result, [L]: e.target.value }, updatedAt: new Date().toISOString() })}
         />
       </Field>
-      <Field label="Preview image URL" className="md:col-span-2">
-        <input
-          className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2"
+      <Field label="Card preview (home section)" className="md:col-span-2">
+        <ImageUploader
+          label="Upload or paste URL"
           value={c.previewImageUrl}
-          onChange={(e) => upd({ ...c, previewImageUrl: e.target.value })}
+          onUrlChange={(url) => upd({ ...c, previewImageUrl: url, updatedAt: new Date().toISOString() })}
         />
       </Field>
+      <Field label="Order">
+        <input
+          type="number"
+          className="mt-1 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 py-2"
+          value={c.order}
+          onChange={(e) => upd({ ...c, order: Number(e.target.value), updatedAt: new Date().toISOString() })}
+        />
+      </Field>
+      <details className="md:col-span-2 rounded-xl border border-zinc-800 bg-zinc-950/50 p-4 open:pb-6">
+        <summary className="cursor-pointer text-sm font-medium text-zinc-200">Full case page — copy &amp; all images</summary>
+        <CaseDetailEditor
+          detail={c.detail}
+          L={L}
+          onChange={(detail) => upd({ ...c, detail, updatedAt: new Date().toISOString() })}
+        />
+      </details>
     </div>
   )
 }

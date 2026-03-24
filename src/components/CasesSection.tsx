@@ -12,6 +12,20 @@ function sortLatestThreeCases(items: CaseCMS[]): CaseCMS[] {
     .slice(0, 3)
 }
 
+/** Homepage strip uses card preview; fall back to first inner image if set. */
+function caseCardImageUrl(c: CaseCMS): string {
+  const p = c.previewImageUrl?.trim()
+  if (p) return p
+  const im = c.detail?.images
+  if (!im) return ''
+  return (
+    im.heroMain?.trim() ||
+    im.heroBackground?.trim() ||
+    im.screen1?.trim() ||
+    ''
+  )
+}
+
 export default function CasesSection() {
   const { locale } = useLocale()
   const { payload } = useSiteContent()
@@ -27,11 +41,11 @@ export default function CasesSection() {
       <div className="cases-alt-list">
         {cases.map((caseItem) => (
           <LocalizedLink key={caseItem.id} href={caseItem.href} className="case-alt-item">
-            {caseItem.previewImageUrl ? (
+            {caseCardImageUrl(caseItem) ? (
               <div
                 className="case-alt-preview"
                 style={{
-                  backgroundImage: `url(${caseItem.previewImageUrl})`,
+                  backgroundImage: `url(${caseCardImageUrl(caseItem)})`,
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                 }}

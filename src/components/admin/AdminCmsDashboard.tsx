@@ -823,6 +823,9 @@ function CaseFields({ c, upd, L }: { c: CaseCMS; upd: (u: CaseCMS) => void; L: L
         />
       </Field>
       <Field label="Card preview (home section)" className="md:col-span-2">
+        <p className="mb-2 text-xs text-zinc-500">
+          Shown on the homepage cases list. Inner-page images are in &quot;Full case page&quot; below; if this field is empty, the homepage will use hero main → hero background → screen 1 as fallback.
+        </p>
         <ImageUploader
           label="Upload or paste URL"
           value={c.previewImageUrl}

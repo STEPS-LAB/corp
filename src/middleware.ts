@@ -5,7 +5,7 @@ import { getAdminCookieName, verifyAdminToken } from '@/lib/admin-auth'
 
 const UKRAINE_COUNTRY = 'UA'
 const BOT_UA_RE =
-  /(googlebot|bingbot|slurp|duckduckbot|baiduspider|yandexbot|yandexbot|sogou|exabot|facebot|ia_archiver)/i
+  /(googlebot|bingbot|slurp|duckduckbot|baiduspider|yandexbot|sogou|exabot|facebot|ia_archiver)/i
 
 function getGeoLocale(request: NextRequest): Locale {
   const country =
@@ -44,10 +44,10 @@ async function handleAdminRoute(
   const isAuthenticated = await verifyAdminToken(token)
 
   if (!isAuthenticated && !isAdminLogin) {
-                       const loginUrl = request.nextUrl.clone()
-                       loginUrl.pathname = '/admin/login'
-                       loginUrl.searchParams.set('next', pathnameWithoutLocale)
-                       return NextResponse.redirect(loginUrl)
+    const loginUrl = request.nextUrl.clone()
+    loginUrl.pathname = '/admin/login'
+    loginUrl.searchParams.set('next', pathnameWithoutLocale)
+    return NextResponse.redirect(loginUrl)
   }
 
   if (isAuthenticated && isAdminLogin) {

@@ -57,6 +57,8 @@ Open:
 
 ## 4) Authentication & Middleware Checks
 
+Admin routes live at **`/admin/*`** (e.g. `/admin/dashboard`). If you open a **locale-prefixed** URL such as **`/uk/admin/dashboard`**, middleware rewrites it internally to `/admin/dashboard` so it no longer hits the localized catch-all route (which would 404).
+
 ### A. Protected route redirect
 
 1. Open: `/admin/dashboard` directly in a private/incognito window.

@@ -57,7 +57,9 @@ Open:
 
 ## 4) Authentication & Middleware Checks
 
-Admin routes live at **`/admin/*`** (e.g. `/admin/dashboard`). If you open a **locale-prefixed** URL such as **`/uk/admin/dashboard`**, middleware rewrites it internally to `/admin/dashboard` so it no longer hits the localized catch-all route (which would 404).
+**Localized home and pages** must stay as **`/en`**, **`/uk`**, **`/en/services`**, etc. Middleware must not rewrite those to **`/`** (that caused a redirect loop with `app/page.tsx`). **`/en` and `/uk` use the same logic.**
+
+Admin routes: **`/admin/*`** or **`/uk/admin/*`** — locale-prefixed admin URLs are rewritten internally to `/admin/...` so they do not hit the localized catch-all (which would 404).
 
 ### A. Protected route redirect
 

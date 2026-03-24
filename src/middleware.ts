@@ -17,10 +17,13 @@ function getGeoLocale(request: NextRequest): Locale {
   return country === UKRAINE_COUNTRY ? 'uk' : 'en'
 }
 
+/** First URL segment, canonical `en` | `uk` only (handles `/UK`, trailing segments). */
 function getLocaleFromPath(pathname: string): Locale | null {
-  const segment = pathname.split('/')[1]
-  if (SUPPORTED_LOCALES.includes(segment as Locale)) {
-    return segment as Locale
+  const segment = pathname.split('/').filter(Boolean)[0]
+  if (!segment) return null
+  const lower = segment.toLowerCase()
+  if (lower === 'en' || lower === 'uk') {
+    return lower as Locale
   }
   return null
 }
@@ -31,7 +34,8 @@ function stripLocalePrefix(pathname: string): { pathnameWithoutLocale: string } 
   if (!locale) {
     return { pathnameWithoutLocale: pathname }
   }
-  const rest = pathname.slice(`/${locale}`.length) || '/'
+  const raw = pathname.split('/').filter(Boolean)[0]!
+  const rest = pathname.slice(`/${raw}`.length) || '/'
   return { pathnameWithoutLocale: rest }
 }
 
@@ -76,12 +80,26 @@ export async function middleware(request: NextRequest) {
   const userAgent = request.headers.get('user-agent') ?? ''
   const isKnownBot = BOT_UA_RE.test(userAgent)
 
+  // Do NOT rewrite /en or /uk → /. That hits `app/page.tsx` (redirect('/en')) and loops forever.
+  // Same rule for both locales: real pages live under `app/[locale]/...`.
   if (pathLocale) {
-    const internalPath = pathname.replace(`/${pathLocale}`, '') || '/'
-    const rewriteUrl = request.nextUrl.clone()
-    rewriteUrl.pathname = internalPath
+    const segments = pathname.split('/').filter(Boolean)
+    const rawFirst = segments[0]
+    if (rawFirst && rawFirst !== pathLocale) {
+      const tail = segments.slice(1)
+      const canonical = request.nextUrl.clone()
+      canonical.pathname = `/${pathLocale}${tail.length ? `/${tail.join('/')}` : ''}`
+      canonical.search = search
+      const response = NextResponse.redirect(canonical)
+      response.cookies.set(LOCALE_COOKIE, pathLocale, {
+        path: '/',
+        maxAge: 31536000,
+        sameSite: 'lax',
+      })
+      return response
+    }
 
-    const response = NextResponse.rewrite(rewriteUrl)
+    const response = NextResponse.next()
     response.cookies.set(LOCALE_COOKIE, pathLocale, {
       path: '/',
       maxAge: 31536000,

@@ -33,8 +33,14 @@ export default function ImageUploader({
         body: fd,
         credentials: 'include',
       })
-      const data = (await res.json()) as { url?: string; error?: string }
-      if (!res.ok) throw new Error(data.error ?? 'Upload failed')
+      let data: { url?: string; error?: string } = {}
+      try {
+        const text = await res.text()
+        if (text) data = JSON.parse(text) as { url?: string; error?: string }
+      } catch {
+        /* non-JSON error page */
+      }
+      if (!res.ok) throw new Error(data.error ?? `Upload failed (HTTP ${res.status})`)
       if (data.url) onUrlChange(data.url)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Upload failed')

@@ -9,6 +9,7 @@ import {
   defaultCmsPayload,
   flattenToSiteContent,
 } from '@/lib/cms-types'
+import { subscribeToCmsUpdates } from '@/lib/cms-client-sync'
 
 type SiteContentContextValue = {
   content: SiteContent
@@ -51,6 +52,10 @@ export function SiteContentProvider({ children }: { children: React.ReactNode })
       })
       if (!response.ok) return
       const data: unknown = await response.json()
+      if (!data || typeof data !== 'object') return
+      const o = data as Record<string, unknown>
+      if ('error' in o && !Array.isArray(o.cases)) return
+      if (!o.pages || !Array.isArray(o.cases)) return
       setPayload(mergePayloadPatch(data))
     } catch {
       /* aborted or network — keep existing payload */
@@ -74,6 +79,13 @@ export function SiteContentProvider({ children }: { children: React.ReactNode })
     }
     document.addEventListener('visibilitychange', onVisible)
     return () => document.removeEventListener('visibilitychange', onVisible)
+  }, [fetchPayload])
+
+  /** Refetch when admin saves in this or another tab (admin is outside this provider). */
+  useEffect(() => {
+    return subscribeToCmsUpdates(() => {
+      void fetchPayload()
+    })
   }, [fetchPayload])
 
   const value = useMemo(

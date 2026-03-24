@@ -15,6 +15,7 @@ import type {
 import { defaultCmsPayload } from '@/lib/cms-types'
 import ImageUploader from '@/components/admin/ImageUploader'
 import CaseDetailEditor from '@/components/admin/CaseDetailEditor'
+import { notifyPublicCmsUpdated } from '@/lib/cms-client-sync'
 import {
   type ActionResult,
   addCaseAction,
@@ -61,6 +62,7 @@ export function AdminCmsDashboard({ initialPayload, initialTab }: Props) {
       if (r.ok) {
         setMessage('Saved.')
         router.refresh()
+        notifyPublicCmsUpdated()
       } else {
         setMessage(r.error ?? 'Error')
       }
@@ -108,7 +110,14 @@ export function AdminCmsDashboard({ initialPayload, initialTab }: Props) {
             <button
               type="button"
               className="rounded-lg border border-zinc-600 px-3 py-2 text-xs text-zinc-300 hover:border-zinc-500"
-              onClick={() => startTransition(() => void seedCmsAction().then((r) => setMessage(r.ok ? 'Seed OK (only if empty)' : r.error)))}
+              onClick={() =>
+                startTransition(() =>
+                  void seedCmsAction().then((r) => {
+                    setMessage(r.ok ? 'Seed OK (only if empty)' : r.error)
+                    if (r.ok) notifyPublicCmsUpdated()
+                  })
+                )
+              }
             >
               Seed defaults
             </button>
@@ -150,14 +159,20 @@ export function AdminCmsDashboard({ initialPayload, initialTab }: Props) {
             onAdd={() =>
               startTransition(() => {
                 void addServiceAction().then((r) => {
-                  if (r.ok && r.data) setPayload((p) => ({ ...p, services: r.data! }))
+                  if (r.ok && r.data) {
+                    setPayload((p) => ({ ...p, services: r.data! }))
+                    notifyPublicCmsUpdated()
+                  }
                 })
               })
             }
             onDelete={(id) =>
               startTransition(() => {
                 void deleteServiceAction(id).then((r) => {
-                  if (r.ok && r.data) setPayload((p) => ({ ...p, services: r.data! }))
+                  if (r.ok && r.data) {
+                    setPayload((p) => ({ ...p, services: r.data! }))
+                    notifyPublicCmsUpdated()
+                  }
                 })
               })
             }
@@ -175,14 +190,20 @@ export function AdminCmsDashboard({ initialPayload, initialTab }: Props) {
             onAdd={() =>
               startTransition(() => {
                 void addCaseAction().then((r) => {
-                  if (r.ok && r.data) setPayload((p) => ({ ...p, cases: r.data! }))
+                  if (r.ok && r.data) {
+                    setPayload((p) => ({ ...p, cases: r.data! }))
+                    notifyPublicCmsUpdated()
+                  }
                 })
               })
             }
             onDelete={(id) =>
               startTransition(() => {
                 void deleteCaseAction(id).then((r) => {
-                  if (r.ok && r.data) setPayload((p) => ({ ...p, cases: r.data! }))
+                  if (r.ok && r.data) {
+                    setPayload((p) => ({ ...p, cases: r.data! }))
+                    notifyPublicCmsUpdated()
+                  }
                 })
               })
             }
@@ -200,14 +221,20 @@ export function AdminCmsDashboard({ initialPayload, initialTab }: Props) {
             onAdd={() =>
               startTransition(() => {
                 void addConceptAction().then((r) => {
-                  if (r.ok && r.data) setPayload((p) => ({ ...p, concepts: r.data! }))
+                  if (r.ok && r.data) {
+                    setPayload((p) => ({ ...p, concepts: r.data! }))
+                    notifyPublicCmsUpdated()
+                  }
                 })
               })
             }
             onDelete={(id) =>
               startTransition(() => {
                 void deleteConceptAction(id).then((r) => {
-                  if (r.ok && r.data) setPayload((p) => ({ ...p, concepts: r.data! }))
+                  if (r.ok && r.data) {
+                    setPayload((p) => ({ ...p, concepts: r.data! }))
+                    notifyPublicCmsUpdated()
+                  }
                 })
               })
             }

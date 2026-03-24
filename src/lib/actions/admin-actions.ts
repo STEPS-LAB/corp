@@ -6,6 +6,7 @@ import {
   type CaseCMS,
   type ConceptCMS,
   type PagesContent,
+  type PublicCmsPayload,
   type ServiceCMS,
   emptyCasePageDetail,
 } from '@/lib/cms-types'
@@ -46,56 +47,78 @@ function revalidateCmsPaths() {
   }
 }
 
-export async function seedCmsAction(): Promise<ActionResult<{ seeded: boolean }>> {
+/** CMS case href is stored as `/cases/slug`; URL is `/[locale]/cases/slug`. */
+function revalidateCaseDetailByHref(href: string) {
+  const h = href.replace(/^\/+/, '')
+  if (!h.startsWith('cases/')) return
+  for (const loc of ['en', 'uk'] as const) {
+    revalidatePath(`/${loc}/${h}`, 'page')
+  }
+}
+
+function revalidateAllCaseDetails(cases: CaseCMS[]) {
+  for (const c of cases) {
+    if (c.href) revalidateCaseDetailByHref(c.href)
+  }
+}
+
+async function okWithFreshPayload(): Promise<{ ok: true; data: PublicCmsPayload }> {
+  return { ok: true, data: await getFullCmsPayload() }
+}
+
+export async function seedCmsAction(): Promise<ActionResult<{ seeded: boolean; payload: PublicCmsPayload }>> {
   const auth = await assertAdmin()
   if (!auth.ok) return auth
   try {
     const result = await seedCmsIfEmpty()
     revalidateCmsPaths()
-    return { ok: true, data: result }
+    const payload = await getFullCmsPayload()
+    revalidateAllCaseDetails(payload.cases)
+    return { ok: true, data: { seeded: result.seeded, payload } }
   } catch (e) {
     const msg = e instanceof Error ? e.message : 'Seed failed'
     return { ok: false, error: msg }
   }
 }
 
-export async function savePagesAction(pages: PagesContent): Promise<ActionResult> {
+export async function savePagesAction(pages: PagesContent): Promise<ActionResult<PublicCmsPayload>> {
   const auth = await assertAdmin()
   if (!auth.ok) return auth
   try {
     await setPagesToKv(pages)
     revalidateCmsPaths()
-    return { ok: true }
+    return okWithFreshPayload()
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : 'Save failed' }
   }
 }
 
-export async function saveServicesAction(services: ServiceCMS[]): Promise<ActionResult> {
+export async function saveServicesAction(services: ServiceCMS[]): Promise<ActionResult<PublicCmsPayload>> {
   const auth = await assertAdmin()
   if (!auth.ok) return auth
   try {
     await setServicesToKv(services)
     revalidateCmsPaths()
-    return { ok: true }
+    return okWithFreshPayload()
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : 'Save failed' }
   }
 }
 
-export async function saveCasesAction(cases: CaseCMS[]): Promise<ActionResult> {
+export async function saveCasesAction(cases: CaseCMS[]): Promise<ActionResult<PublicCmsPayload>> {
   const auth = await assertAdmin()
   if (!auth.ok) return auth
   try {
     await setCasesToKv(cases)
     revalidateCmsPaths()
-    return { ok: true }
+    revalidateAllCaseDetails(cases)
+    return okWithFreshPayload()
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : 'Save failed' }
   }
 }
 
-export async function saveConceptsAction(concepts: ConceptCMS[]): Promise<ActionResult> {
+export async function saveConceptsAction(concepts: ConceptCMS[]): Promise<ActionResult<PublicCmsPayload>> {
   const auth = await assertAdmin()
   if (!auth.ok) return auth
   try {
@@ -105,13 +128,13 @@ export async function saveConceptsAction(concepts: ConceptCMS[]): Promise<Action
       revalidatePath(`/en/concepts/${c.slug}`, 'page')
       revalidatePath(`/uk/concepts/${c.slug}`, 'page')
     }
-    return { ok: true }
+    return okWithFreshPayload()
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : 'Save failed' }
   }
 }
 
-export async function addServiceAction(): Promise<ActionResult<ServiceCMS[]>> {
+export async function addServiceAction(): Promise<ActionResult<PublicCmsPayload>> {
   const auth = await assertAdmin()
   if (!auth.ok) return auth
   const list = await getServicesFromKv()
@@ -129,19 +152,19 @@ export async function addServiceAction(): Promise<ActionResult<ServiceCMS[]>> {
   const merged = [...list, next]
   await setServicesToKv(merged)
   revalidateCmsPaths()
-  return { ok: true, data: merged }
+  return okWithFreshPayload()
 }
 
-export async function deleteServiceAction(id: string): Promise<ActionResult<ServiceCMS[]>> {
+export async function deleteServiceAction(id: string): Promise<ActionResult<PublicCmsPayload>> {
   const auth = await assertAdmin()
   if (!auth.ok) return auth
   const list = (await getServicesFromKv()).filter((s) => s.id !== id)
   await setServicesToKv(list)
   revalidateCmsPaths()
-  return { ok: true, data: list }
+  return okWithFreshPayload()
 }
 
-export async function addCaseAction(): Promise<ActionResult<CaseCMS[]>> {
+export async function addCaseAction(): Promise<ActionResult<PublicCmsPayload>> {
   const auth = await assertAdmin()
   if (!auth.ok) return auth
   const list = await getCasesFromKv()
@@ -160,19 +183,24 @@ export async function addCaseAction(): Promise<ActionResult<CaseCMS[]>> {
   const merged = [...list, next]
   await setCasesToKv(merged)
   revalidateCmsPaths()
-  return { ok: true, data: merged }
+  revalidateAllCaseDetails(merged)
+  return okWithFreshPayload()
 }
 
-export async function deleteCaseAction(id: string): Promise<ActionResult<CaseCMS[]>> {
+export async function deleteCaseAction(id: string): Promise<ActionResult<PublicCmsPayload>> {
   const auth = await assertAdmin()
   if (!auth.ok) return auth
-  const list = (await getCasesFromKv()).filter((c) => c.id !== id)
+  const prev = await getCasesFromKv()
+  const victim = prev.find((c) => c.id === id)
+  const list = prev.filter((c) => c.id !== id)
   await setCasesToKv(list)
   revalidateCmsPaths()
-  return { ok: true, data: list }
+  if (victim?.href) revalidateCaseDetailByHref(victim.href)
+  revalidateAllCaseDetails(list)
+  return okWithFreshPayload()
 }
 
-export async function addConceptAction(): Promise<ActionResult<ConceptCMS[]>> {
+export async function addConceptAction(): Promise<ActionResult<PublicCmsPayload>> {
   const auth = await assertAdmin()
   if (!auth.ok) return auth
   const list = await getConceptsFromKv()
@@ -198,10 +226,10 @@ export async function addConceptAction(): Promise<ActionResult<ConceptCMS[]>> {
   revalidateCmsPaths()
   revalidatePath(`/en/concepts/${slug}`, 'page')
   revalidatePath(`/uk/concepts/${slug}`, 'page')
-  return { ok: true, data: merged }
+  return okWithFreshPayload()
 }
 
-export async function deleteConceptAction(id: string): Promise<ActionResult<ConceptCMS[]>> {
+export async function deleteConceptAction(id: string): Promise<ActionResult<PublicCmsPayload>> {
   const auth = await assertAdmin()
   if (!auth.ok) return auth
   const list = await getConceptsFromKv()
@@ -213,7 +241,7 @@ export async function deleteConceptAction(id: string): Promise<ActionResult<Conc
     revalidatePath(`/en/concepts/${victim.slug}`, 'page')
     revalidatePath(`/uk/concepts/${victim.slug}`, 'page')
   }
-  return { ok: true, data: filtered }
+  return okWithFreshPayload()
 }
 
 export async function loadCmsPayloadAction(): Promise<ActionResult<Awaited<ReturnType<typeof getFullCmsPayload>>>> {

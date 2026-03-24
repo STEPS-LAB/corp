@@ -24,6 +24,7 @@ import {
   deleteCaseAction,
   deleteConceptAction,
   deleteServiceAction,
+  loadCmsPayloadAction,
   saveCasesAction,
   saveConceptsAction,
   savePagesAction,
@@ -56,10 +57,11 @@ export function AdminCmsDashboard({ initialPayload, initialTab }: Props) {
   const setPages = useCallback((p: PagesContent) => setPayload((prev) => ({ ...prev, pages: p })), [])
 
   const run = useCallback(
-    async (fn: () => Promise<ActionResult>) => {
+    async (fn: () => Promise<ActionResult<PublicCmsPayload>>) => {
       setMessage(null)
       const r = await fn()
       if (r.ok) {
+        if (r.data) setPayload(r.data)
         setMessage('Saved.')
         router.refresh()
         notifyPublicCmsUpdated()
@@ -112,9 +114,34 @@ export function AdminCmsDashboard({ initialPayload, initialTab }: Props) {
               className="rounded-lg border border-zinc-600 px-3 py-2 text-xs text-zinc-300 hover:border-zinc-500"
               onClick={() =>
                 startTransition(() =>
+                  void loadCmsPayloadAction().then((r) => {
+                    if (r.ok && r.data) {
+                      setPayload(r.data)
+                      setMessage('Reloaded from database.')
+                    } else {
+                      setMessage(r.ok ? 'Load failed' : r.error)
+                    }
+                  })
+                )
+              }
+            >
+              Reload from DB
+            </button>
+            <button
+              type="button"
+              className="rounded-lg border border-zinc-600 px-3 py-2 text-xs text-zinc-300 hover:border-zinc-500"
+              onClick={() =>
+                startTransition(() =>
                   void seedCmsAction().then((r) => {
-                    setMessage(r.ok ? 'Seed OK (only if empty)' : r.error)
-                    if (r.ok) notifyPublicCmsUpdated()
+                    if (r.ok && r.data) {
+                      setPayload(r.data.payload)
+                      setMessage(
+                        r.data.seeded ? 'Defaults seeded (was empty).' : 'KV already had data; editor synced from DB.'
+                      )
+                      notifyPublicCmsUpdated()
+                    } else {
+                      setMessage(r.ok ? 'Seed failed' : r.error)
+                    }
                   })
                 )
               }
@@ -160,7 +187,7 @@ export function AdminCmsDashboard({ initialPayload, initialTab }: Props) {
               startTransition(() => {
                 void addServiceAction().then((r) => {
                   if (r.ok && r.data) {
-                    setPayload((p) => ({ ...p, services: r.data! }))
+                    setPayload(r.data)
                     notifyPublicCmsUpdated()
                   }
                 })
@@ -170,7 +197,7 @@ export function AdminCmsDashboard({ initialPayload, initialTab }: Props) {
               startTransition(() => {
                 void deleteServiceAction(id).then((r) => {
                   if (r.ok && r.data) {
-                    setPayload((p) => ({ ...p, services: r.data! }))
+                    setPayload(r.data)
                     notifyPublicCmsUpdated()
                   }
                 })
@@ -191,7 +218,7 @@ export function AdminCmsDashboard({ initialPayload, initialTab }: Props) {
               startTransition(() => {
                 void addCaseAction().then((r) => {
                   if (r.ok && r.data) {
-                    setPayload((p) => ({ ...p, cases: r.data! }))
+                    setPayload(r.data)
                     notifyPublicCmsUpdated()
                   }
                 })
@@ -201,7 +228,7 @@ export function AdminCmsDashboard({ initialPayload, initialTab }: Props) {
               startTransition(() => {
                 void deleteCaseAction(id).then((r) => {
                   if (r.ok && r.data) {
-                    setPayload((p) => ({ ...p, cases: r.data! }))
+                    setPayload(r.data)
                     notifyPublicCmsUpdated()
                   }
                 })
@@ -222,7 +249,7 @@ export function AdminCmsDashboard({ initialPayload, initialTab }: Props) {
               startTransition(() => {
                 void addConceptAction().then((r) => {
                   if (r.ok && r.data) {
-                    setPayload((p) => ({ ...p, concepts: r.data! }))
+                    setPayload(r.data)
                     notifyPublicCmsUpdated()
                   }
                 })
@@ -232,7 +259,7 @@ export function AdminCmsDashboard({ initialPayload, initialTab }: Props) {
               startTransition(() => {
                 void deleteConceptAction(id).then((r) => {
                   if (r.ok && r.data) {
-                    setPayload((p) => ({ ...p, concepts: r.data! }))
+                    setPayload(r.data)
                     notifyPublicCmsUpdated()
                   }
                 })

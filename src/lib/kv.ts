@@ -1,3 +1,4 @@
+import { unstable_noStore as noStore } from 'next/cache'
 import { createClient } from 'redis'
 import { kv } from '@vercel/kv'
 import type {
@@ -348,6 +349,7 @@ export async function setConceptsToKv(concepts: ConceptCMS[]): Promise<void> {
 }
 
 export async function getFullCmsPayload(): Promise<PublicCmsPayload> {
+  noStore()
   try {
     const [pages, services, cases, concepts] = await Promise.all([
       getPagesFromKv(),

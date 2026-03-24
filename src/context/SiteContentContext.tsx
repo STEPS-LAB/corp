@@ -29,9 +29,10 @@ function mergePayloadPatch(server: unknown): PublicCmsPayload {
   const s = server as Partial<PublicCmsPayload>
   return {
     pages: s.pages ?? d.pages,
-    services: Array.isArray(s.services) && s.services.length > 0 ? s.services : d.services,
-    cases: Array.isArray(s.cases) && s.cases.length > 0 ? s.cases : d.cases,
-    concepts: Array.isArray(s.concepts) && s.concepts.length > 0 ? s.concepts : d.concepts,
+    // Empty arrays are valid CMS state (e.g. user deleted all cases). Do not fall back to bundled defaults.
+    services: Array.isArray(s.services) ? s.services : d.services,
+    cases: Array.isArray(s.cases) ? s.cases : d.cases,
+    concepts: Array.isArray(s.concepts) ? s.concepts : d.concepts,
   }
 }
 
@@ -45,7 +46,7 @@ export function SiteContentProvider({ children }: { children: React.ReactNode })
 
   const fetchPayload = useCallback(async (signal?: AbortSignal) => {
     try {
-      const response = await fetch('/api/content', {
+      const response = await fetch(`/api/content?_=${Date.now()}`, {
         method: 'GET',
         cache: 'no-store',
         signal,

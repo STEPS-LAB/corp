@@ -246,7 +246,8 @@ function sanitizeServiceItem(s: unknown, index: number): ServiceCMS {
 }
 
 function sanitizeServices(arr: unknown): ServiceCMS[] {
-  if (!Array.isArray(arr) || arr.length === 0) return DEFAULT_SERVICES_CMS
+  if (!Array.isArray(arr)) return DEFAULT_SERVICES_CMS
+  if (arr.length === 0) return []
   return arr.map((item, i) => sanitizeServiceItem(item, i))
 }
 
@@ -305,7 +306,8 @@ function sanitizeConceptItem(c: unknown, index: number): ConceptCMS {
 }
 
 function sanitizeConcepts(arr: unknown): ConceptCMS[] {
-  if (!Array.isArray(arr) || arr.length === 0) return DEFAULT_CONCEPTS_CMS
+  if (!Array.isArray(arr)) return DEFAULT_CONCEPTS_CMS
+  if (arr.length === 0) return []
   return arr.map((item, i) => sanitizeConceptItem(item, i))
 }
 

@@ -48,13 +48,6 @@ export default function HeroSection() {
             </LocalizedLink>
           </div>
         </div>
-        <div className="mt-10 max-w-xl">
-          <img
-            src={content.hero.heroImageUrl || content.images.hero}
-            alt="STEPS LAB hero"
-            className="w-full h-auto rounded-2xl border border-white/10"
-          />
-        </div>
         <div className="hero-alt-stats">
           <div className="stat-item">
             <div className="stat-number">2x</div>

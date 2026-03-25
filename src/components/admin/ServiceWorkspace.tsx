@@ -31,7 +31,7 @@ export function ServiceWorkspace({ initialService }: { initialService: ServiceCM
   const [L, setL] = useState<Locale>('en')
   const [msg, setMsg] = useState<string | null>(null)
   const [pending, startTransition] = useTransition()
-  const previewUrl = `/en${s.href.startsWith('/') ? s.href : `/${s.href}`}`
+  const previewUrl = `/${L}${s.href.startsWith('/') ? s.href : `/${s.href}`}`
 
   const save = useCallback(() => {
     setMsg(null)

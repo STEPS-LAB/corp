@@ -6,7 +6,6 @@ import { stripLeadingLocaleFromPath } from '@/lib/locale-path'
 import {
   ChevronDown,
   FolderOpen,
-  ImageIcon,
   LayoutDashboard,
   Layers,
   Briefcase,
@@ -64,15 +63,46 @@ export function AdminSidebar() {
           <div className="ml-1 space-y-0.5 border-l border-neutral-800 pl-2">
             <NavItem href="/admin/pages/home" icon={FolderOpen} label="Home" />
             <NavItem href="/admin/pages/about" icon={FolderOpen} label="About" />
-            <NavItem href="/admin/pages/contacts" icon={FolderOpen} label="Contacts" />
-            <NavItem href="/admin/pages/footer" icon={FolderOpen} label="Footer & template" />
+            <NavItem href="/admin/pages/contacts" icon={FolderOpen} label="Contact" />
           </div>
         </div>
         <div className={`my-2 border-t ${border}`} />
-        <NavItem href="/admin/services" icon={Layers} label="Services" />
-        <NavItem href="/admin/portfolio" icon={Briefcase} label="Portfolio" />
-        <NavItem href="/admin/lab" icon={FlaskConical} label="Lab" />
-        <NavItem href="/admin/media" icon={ImageIcon} label="Media" />
+        <div className="pt-2">
+          <p className="mb-1 flex items-center gap-1 px-3 text-[11px] font-medium uppercase tracking-wider text-neutral-600">
+            <Briefcase className="h-3 w-3" />
+            Portfolio
+          </p>
+          <div className="ml-1 space-y-0.5 border-l border-neutral-800 pl-2">
+            <NavItem href="/admin/portfolio" icon={FolderOpen} label="All Cases" />
+            <NavItem href="/admin/portfolio/landing" icon={FolderOpen} label="Portfolio Landing" />
+          </div>
+        </div>
+
+        <div className={`my-2 border-t ${border}`} />
+
+        <div className="pt-2">
+          <p className="mb-1 flex items-center gap-1 px-3 text-[11px] font-medium uppercase tracking-wider text-neutral-600">
+            <Layers className="h-3 w-3" />
+            Services
+          </p>
+          <div className="ml-1 space-y-0.5 border-l border-neutral-800 pl-2">
+            <NavItem href="/admin/services" icon={FolderOpen} label="All Services" />
+            <NavItem href="/admin/services/landing" icon={FolderOpen} label="Services Landing" />
+          </div>
+        </div>
+
+        <div className={`my-2 border-t ${border}`} />
+
+        <div className="pt-2">
+          <p className="mb-1 flex items-center gap-1 px-3 text-[11px] font-medium uppercase tracking-wider text-neutral-600">
+            <FlaskConical className="h-3 w-3" />
+            Lab
+          </p>
+          <div className="ml-1 space-y-0.5 border-l border-neutral-800 pl-2">
+            <NavItem href="/admin/lab" icon={FolderOpen} label="All Concepts" />
+            <NavItem href="/admin/lab/landing" icon={FolderOpen} label="Lab Landing" />
+          </div>
+        </div>
       </nav>
       <div className={`border-t ${border} p-3 text-[11px] text-neutral-600`}>
         <a href="/" className="inline-flex items-center gap-1 text-neutral-500 hover:text-neutral-300">

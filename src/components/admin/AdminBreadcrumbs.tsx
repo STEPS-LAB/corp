@@ -1,3 +1,6 @@
+/* eslint-disable react/no-unknown-property */
+'use client'
+
 import Link from 'next/link'
 
 export type Crumb = { label: string; href?: string }

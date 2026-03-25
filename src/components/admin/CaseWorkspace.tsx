@@ -49,7 +49,7 @@ export function CaseWorkspace({ initialCase }: { initialCase: CaseCMS }) {
     }))
   }, [])
 
-  const previewUrl = `/en${c.href.startsWith('/') ? c.href : `/${c.href}`}`
+  const previewUrl = `/${L}${c.href.startsWith('/') ? c.href : `/${c.href}`}`
 
   const save = useCallback(() => {
     setMsg(null)

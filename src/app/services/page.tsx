@@ -6,12 +6,18 @@ import Breadcrumbs from '@/components/Breadcrumbs'
 import { getBreadcrumbSchema, getServicesSchemaGraph } from '@/lib/schema'
 import en from '@/messages/en.json'
 import uk from '@/messages/uk.json'
+import { pickLang } from '@/lib/cms-types'
+import { getFullCmsPayload } from '@/lib/kv'
 
 const messages = { en, uk } as const
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getServerLocale()
-  const m = (messages[locale] as { pages: { services: { metaTitle: string; metaDescription: string } } }).pages.services
+  const payload = await getFullCmsPayload()
+  const m = {
+    metaTitle: pickLang(payload.servicesIndex.seo.metaTitle, locale),
+    metaDescription: pickLang(payload.servicesIndex.seo.metaDescription, locale),
+  }
   return {
     title: m.metaTitle,
     description: m.metaDescription,

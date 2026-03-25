@@ -3,8 +3,11 @@
 import { useLocale } from '@/context/LocaleContext'
 import { useSiteContent } from '@/context/SiteContentContext'
 import LocalizedLink from '@/components/LocalizedLink'
-import { pickLang } from '@/lib/cms-types'
-import type { ConceptCMS } from '@/lib/cms-types'
+import { pickLang, type ConceptCMS } from '@/lib/cms-types'
+
+type ConceptsSectionProps = {
+  variant?: 'home' | 'page'
+}
 
 function sortLatestThreeConcepts(items: ConceptCMS[]): ConceptCMS[] {
   return [...items]
@@ -12,11 +15,23 @@ function sortLatestThreeConcepts(items: ConceptCMS[]): ConceptCMS[] {
     .slice(0, 3)
 }
 
-export default function ConceptsSection() {
+export default function ConceptsSection({ variant = 'home' }: ConceptsSectionProps) {
   const { locale } = useLocale()
   const { payload } = useSiteContent()
-  const concepts = sortLatestThreeConcepts(payload.concepts)
-  const heading = pickLang(payload.pages.labels.conceptsHeading, locale)
+  const publishedConcepts = payload.concepts.filter((c) => c.status === 'published')
+  const latestThree = sortLatestThreeConcepts(publishedConcepts)
+
+  const featured =
+    variant === 'page' && payload.labIndex?.featuredIds?.length
+      ? payload.labIndex.featuredIds
+          .map((id) => publishedConcepts.find((c) => c.id === id))
+          .filter((c): c is ConceptCMS => Boolean(c))
+      : []
+
+  const concepts = variant === 'page' && featured.length ? featured : latestThree
+
+  const heading =
+    variant === 'page' ? pickLang(payload.labIndex.sectionTitle, locale) : pickLang(payload.pages.labels.conceptsHeading, locale)
   const viewAll = pickLang(payload.pages.labels.conceptsViewAll, locale)
 
   return (
@@ -34,11 +49,13 @@ export default function ConceptsSection() {
             </LocalizedLink>
           ))}
         </div>
-        <div className="mt-10">
-          <LocalizedLink href="/concepts" className="btn btn-secondary" aria-label="View all concepts">
-            {viewAll}
-          </LocalizedLink>
-        </div>
+        {variant === 'home' ? (
+          <div className="mt-10">
+            <LocalizedLink href="/concepts" className="btn btn-secondary" aria-label="View all concepts">
+              {viewAll}
+            </LocalizedLink>
+          </div>
+        ) : null}
       </div>
     </section>
   )

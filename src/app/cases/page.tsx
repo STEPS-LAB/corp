@@ -4,6 +4,8 @@ import { getAlternateLanguages } from '@/lib/hreflang'
 import Breadcrumbs from '@/components/Breadcrumbs'
 import JsonLd from '@/components/JsonLd'
 import { getBreadcrumbSchema } from '@/lib/schema'
+import { pickLang } from '@/lib/cms-types'
+import { getFullCmsPayload } from '@/lib/kv'
 import en from '@/messages/en.json'
 import uk from '@/messages/uk.json'
 
@@ -11,7 +13,11 @@ const messages = { en, uk } as const
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getServerLocale()
-  const m = (messages[locale] as { pages: { cases: { metaTitle: string; metaDescription: string } } }).pages.cases
+  const payload = await getFullCmsPayload()
+  const m = {
+    metaTitle: pickLang(payload.portfolioIndex.seo.metaTitle, locale),
+    metaDescription: pickLang(payload.portfolioIndex.seo.metaDescription, locale),
+  }
   return {
     title: m.metaTitle,
     description: m.metaDescription,

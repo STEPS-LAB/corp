@@ -132,11 +132,15 @@ export async function generateMetadata({
     const payload = await getCachedCmsPayload()
     const c = payload.cases.find((x) => x.href === caseHref)
     if (!c) notFound()
-    const title = pickLang(c.title, loc)
-    const desc = pickLang(c.description, loc).slice(0, 160)
+
+    const title =
+      pickLang(c.seo.metaTitle, loc) || `${pickLang(c.title, loc)} | STEPS LAB`
+    const rawDesc =
+      pickLang(c.seo.metaDescription, loc) || pickLang(c.description, loc)
+    const desc = rawDesc.slice(0, 160)
     const canonicalPath = `/${locale}${path === '/' ? '' : path}`
     return {
-      title: `${title} | STEPS LAB`,
+      title,
       description: desc,
       alternates: {
         canonical: canonicalPath,

@@ -6,6 +6,10 @@ import LocalizedLink from '@/components/LocalizedLink'
 import { pickLang } from '@/lib/cms-types'
 import type { CaseCMS } from '@/lib/cms-types'
 
+type CasesSectionProps = {
+  variant?: 'home' | 'page'
+}
+
 function sortLatestThreeCases(items: CaseCMS[]): CaseCMS[] {
   return [...items]
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
@@ -26,11 +30,25 @@ function caseCardImageUrl(c: CaseCMS): string {
   )
 }
 
-export default function CasesSection() {
+export default function CasesSection({ variant = 'home' }: CasesSectionProps) {
   const { locale } = useLocale()
   const { payload } = useSiteContent()
-  const cases = sortLatestThreeCases(payload.cases)
-  const sectionTitle = pickLang(payload.pages.labels.casesSectionTitle, locale)
+  const publishedCases = payload.cases.filter((c) => c.status === 'published')
+  const latestThree = sortLatestThreeCases(publishedCases)
+
+  const featured =
+    variant === 'page' && payload.portfolioIndex?.featuredIds?.length
+      ? payload.portfolioIndex.featuredIds
+          .map((id) => publishedCases.find((c) => c.id === id))
+          .filter((c): c is CaseCMS => Boolean(c))
+      : []
+
+  const cases = variant === 'page' && featured.length ? featured : latestThree
+
+  const sectionTitle =
+    variant === 'page'
+      ? pickLang(payload.portfolioIndex.sectionTitle, locale)
+      : pickLang(payload.pages.labels.casesSectionTitle, locale)
   const viewLabel = pickLang(payload.pages.labels.casesViewCase, locale)
 
   return (

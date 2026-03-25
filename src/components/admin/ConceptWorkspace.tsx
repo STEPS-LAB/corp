@@ -37,7 +37,7 @@ export function ConceptWorkspace({ initialConcept }: { initialConcept: ConceptCM
   const [msg, setMsg] = useState<string | null>(null)
   const [pending, startTransition] = useTransition()
 
-  const previewUrl = `/en/concepts/${c.slug}`
+  const previewUrl = `/${L}/concepts/${c.slug}`
 
   const save = useCallback(() => {
     setMsg(null)

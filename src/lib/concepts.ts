@@ -132,7 +132,7 @@ export async function getConceptsForLocale(locale: 'en' | 'uk'): Promise<Concept
     const cms = await getConceptsFromKv()
     if (cms.length > 0) {
       return cms
-        .filter(isCmsPublished)
+        .filter((c) => isCmsPublished(c.status))
         .slice()
         .sort((a, b) => a.order - b.order)
         .map((c) => conceptCmsToItem(c, locale))
@@ -146,7 +146,7 @@ export async function getConceptsForLocale(locale: 'en' | 'uk'): Promise<Concept
 export async function getConceptBySlug(locale: 'en' | 'uk', slug: string): Promise<ConceptItem | undefined> {
   try {
     const cms = await getConceptsFromKv()
-    const row = cms.filter(isCmsPublished).find((c) => c.slug === slug)
+    const row = cms.find((c) => c.slug === slug)
     if (row) return conceptCmsToItem(row, locale)
   } catch {
     /* fallback */

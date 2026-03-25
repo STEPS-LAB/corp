@@ -326,6 +326,34 @@ export async function deleteConceptAction(id: string): Promise<ActionResult<Publ
 
 export type CmsItemCollection = 'cases' | 'services' | 'concepts'
 
+/** Granular persistence alias (collection + id). */
+export async function saveItem(
+  collection: CmsItemCollection,
+  id: string,
+  data: CaseCMS | ServiceCMS | ConceptCMS
+): Promise<ActionResult<PublicCmsPayload>> {
+  const next = { ...(data as any), id } as CaseCMS | ServiceCMS | ConceptCMS
+  return saveCmsItemAction(collection, next)
+}
+
+/** Granular persistence alias (collection + id). */
+export async function deleteItem(
+  collection: CmsItemCollection,
+  id: string
+): Promise<ActionResult<PublicCmsPayload>> {
+  if (collection === 'cases') return deleteCaseAction(id)
+  if (collection === 'services') return deleteServiceAction(id)
+  return deleteConceptAction(id)
+}
+
+/** Granular page metadata alias (slug + page data). */
+export async function updatePageMetadata(
+  slug: CollectionLandingSlug,
+  data: CollectionLandingPage
+): Promise<ActionResult<PublicCmsPayload>> {
+  return saveCollectionLandingAction(slug, data)
+}
+
 export async function saveCmsItemAction(
   collection: CmsItemCollection,
   item: CaseCMS | ServiceCMS | ConceptCMS

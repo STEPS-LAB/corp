@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useMemo, useState, useTransition } from 'react'
+import { useEffect, useMemo, useState, useTransition } from 'react'
 import { Loader2, Plus, Search } from 'lucide-react'
 import type { ServiceCMS } from '@/lib/cms-types'
 import { pickLang } from '@/lib/cms-types'
@@ -24,13 +24,18 @@ function statusPill(status: string) {
 
 export function ServicesListClient({ initialServices }: { initialServices: ServiceCMS[] }) {
   const router = useRouter()
+  const [items, setItems] = useState<ServiceCMS[]>(initialServices)
   const [q, setQ] = useState('')
   const [status, setStatus] = useState<'all' | 'draft' | 'published'>('all')
   const [pending, startTransition] = useTransition()
 
+  useEffect(() => {
+    setItems(initialServices)
+  }, [initialServices])
+
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase()
-    return initialServices
+    return items
       .filter((s) => (status === 'all' ? true : s.status === status))
       .filter((s) => {
         if (!needle) return true
@@ -38,7 +43,7 @@ export function ServicesListClient({ initialServices }: { initialServices: Servi
         return t.includes(needle)
       })
       .sort((a, b) => a.order - b.order)
-  }, [initialServices, q, status])
+  }, [items, q, status])
 
   return (
     <main className="min-h-0 flex-1 overflow-y-auto">
@@ -58,7 +63,10 @@ export function ServicesListClient({ initialServices }: { initialServices: Servi
               onClick={() =>
                 startTransition(() => {
                   void createServiceDraftAction().then((r) => {
-                    if (r.ok && r.data) router.push(`/admin/services/edit/${r.data.id}`)
+                    if (r.ok && r.data) {
+                      router.push(`/admin/services/edit/${r.data.id}`)
+                      queueMicrotask(() => router.refresh())
+                    }
                   })
                 })
               }

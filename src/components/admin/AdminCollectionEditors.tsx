@@ -18,6 +18,7 @@ export function CollectionTab<T extends { id: string }>({
   renderFields,
   isPending,
   hideSaveBar,
+  deletingItemId,
 }: {
   title: string
   items: T[]
@@ -28,6 +29,8 @@ export function CollectionTab<T extends { id: string }>({
   renderFields: (item: T, index: number, update: (u: T) => void) => React.ReactNode
   isPending: boolean
   hideSaveBar?: boolean
+  /** When set, that row’s delete control shows a spinner and is disabled. */
+  deletingItemId?: string | null
 }) {
   const rowKeys = useStableRowKeys(items)
 
@@ -44,15 +47,23 @@ export function CollectionTab<T extends { id: string }>({
         </button>
       </div>
       {items.map((item, i) => (
-        <div key={rowKeys[i] ?? `row-${i}`} className="rounded-xl border border-neutral-800 bg-neutral-950/40 p-4">
+        <div
+          key={rowKeys[i] ?? `row-${i}`}
+          className={`rounded-xl border border-neutral-800 bg-neutral-950/40 p-4 ${deletingItemId === item.id ? 'opacity-60' : ''}`}
+        >
           <div className="mb-3 flex justify-end">
             <button
               type="button"
+              disabled={Boolean(deletingItemId)}
               onClick={() => onDelete(item.id)}
-              className="text-red-400 hover:text-red-300"
-              aria-label="Delete"
+              className="text-red-400 hover:text-red-300 disabled:pointer-events-none disabled:opacity-40"
+              aria-label={deletingItemId === item.id ? 'Deleting…' : 'Delete'}
             >
-              <Trash2 className="h-4 w-4" />
+              {deletingItemId === item.id ? (
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+              ) : (
+                <Trash2 className="h-4 w-4" />
+              )}
             </button>
           </div>
           {renderFields(item, i, (u) => setItems(items.map((x, j) => (j === i ? u : x))))}
@@ -234,6 +245,7 @@ export function ConceptsEditor({
   onDelete,
   isPending,
   hideSaveBar,
+  deletingItemId,
 }: {
   concepts: ConceptCMS[]
   setConcepts: (c: ConceptCMS[]) => void
@@ -243,6 +255,7 @@ export function ConceptsEditor({
   onDelete: (id: string) => void
   isPending: boolean
   hideSaveBar?: boolean
+  deletingItemId?: string | null
 }) {
   return (
     <CollectionTab<ConceptCMS>
@@ -254,6 +267,7 @@ export function ConceptsEditor({
       onDelete={onDelete}
       isPending={isPending}
       hideSaveBar={hideSaveBar}
+      deletingItemId={deletingItemId}
       renderFields={(concept, i, upd) => (
         <div className="grid gap-3 md:grid-cols-2">
           <AdminField label="Slug">

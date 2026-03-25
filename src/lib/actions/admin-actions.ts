@@ -73,6 +73,12 @@ function revalidateCmsPaths() {
     revalidatePath(`/${loc}/contacts`, 'page')
     revalidatePath(`/${loc}/approach`, 'page')
   }
+  /** Admin list pages cache RSC payloads; invalidate so deletes/adds show without a hard refresh. */
+  revalidatePath('/admin', 'layout')
+  revalidatePath('/admin/lab', 'page')
+  revalidatePath('/admin/portfolio', 'page')
+  revalidatePath('/admin/services', 'page')
+  revalidatePath('/admin/news', 'page')
 }
 
 function normalizePublicHref(href: string): string {

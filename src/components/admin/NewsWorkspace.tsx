@@ -33,6 +33,7 @@ export function NewsWorkspace({ initialNews }: { initialNews: NewsCMS }) {
   const [L, setL] = useState<Locale>('en')
   const [msg, setMsg] = useState<string | null>(null)
   const [pending, startTransition] = useTransition()
+  const [deletePending, setDeletePending] = useState(false)
   const previewUrl = localizePath(`/news/${n.slug}`, L)
 
   const save = useCallback(() => {
@@ -50,11 +51,14 @@ export function NewsWorkspace({ initialNews }: { initialNews: NewsCMS }) {
 
   const remove = useCallback(() => {
     if (!window.confirm('Delete this post?')) return
+    setDeletePending(true)
     startTransition(() => {
       void deleteNewsAction(n.id).then((r) => {
+        setDeletePending(false)
         if (r.ok) {
           notifyPublicCmsUpdated()
           router.push('/admin/news')
+          queueMicrotask(() => router.refresh())
         } else setMsg(r.error ?? 'Delete failed')
       })
     })
@@ -95,11 +99,12 @@ export function NewsWorkspace({ initialNews }: { initialNews: NewsCMS }) {
             </a>
             <button
               type="button"
+              disabled={deletePending}
               onClick={remove}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-red-900/50 px-3 py-2 text-xs text-red-300 hover:bg-red-950/40"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-red-900/50 px-3 py-2 text-xs text-red-300 hover:bg-red-950/40 disabled:opacity-50"
             >
-              <Trash2 className="h-3.5 w-3.5" />
-              Delete
+              {deletePending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
+              {deletePending ? 'Deleting…' : 'Delete'}
             </button>
             <button
               type="button"

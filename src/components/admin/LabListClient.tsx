@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useMemo, useState, useTransition } from 'react'
+import { useEffect, useMemo, useState, useTransition } from 'react'
 import { Loader2, Plus, Search } from 'lucide-react'
 import type { ConceptCMS } from '@/lib/cms-types'
 import { pickLang } from '@/lib/cms-types'
@@ -24,13 +24,18 @@ function statusPill(status: string) {
 
 export function LabListClient({ initialConcepts }: { initialConcepts: ConceptCMS[] }) {
   const router = useRouter()
+  const [items, setItems] = useState<ConceptCMS[]>(initialConcepts)
   const [q, setQ] = useState('')
   const [status, setStatus] = useState<'all' | 'draft' | 'published'>('all')
   const [pending, startTransition] = useTransition()
 
+  useEffect(() => {
+    setItems(initialConcepts)
+  }, [initialConcepts])
+
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase()
-    return initialConcepts
+    return items
       .filter((c) => (status === 'all' ? true : c.status === status))
       .filter((c) => {
         if (!needle) return true
@@ -38,7 +43,7 @@ export function LabListClient({ initialConcepts }: { initialConcepts: ConceptCMS
         return t.includes(needle)
       })
       .sort((a, b) => a.order - b.order)
-  }, [initialConcepts, q, status])
+  }, [items, q, status])
 
   return (
     <main className="min-h-0 flex-1 overflow-y-auto">
@@ -56,7 +61,10 @@ export function LabListClient({ initialConcepts }: { initialConcepts: ConceptCMS
               onClick={() =>
                 startTransition(() => {
                   void createConceptDraftAction().then((r) => {
-                    if (r.ok && r.data) router.push(`/admin/lab/edit/${r.data.id}`)
+                    if (r.ok && r.data) {
+                      router.push(`/admin/lab/edit/${r.data.id}`)
+                      queueMicrotask(() => router.refresh())
+                    }
                   })
                 })
               }

@@ -69,6 +69,7 @@ export function AdminCmsDashboard({ initialPayload, initialView }: Props) {
   const [editLocale, setEditLocale] = useState<Locale>('en')
   const [message, setMessage] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
+  const [deletingItemId, setDeletingItemId] = useState<string | null>(null)
   const baselineRef = useRef(JSON.stringify(initialPayload ?? defaultCmsPayload()))
   const L = editLocale
 
@@ -212,23 +213,30 @@ export function AdminCmsDashboard({ initialPayload, initialView }: Props) {
                 void addServiceAction().then((r) => {
                   if (r.ok && r.data) {
                     setPayload(r.data)
+                    syncBaseline(r.data)
                     notifyPublicCmsUpdated()
+                    router.refresh()
                   }
                 })
               })
             }
             onDelete={(id) =>
               startTransition(() => {
+                setDeletingItemId(id)
                 void deleteServiceAction(id).then((r) => {
+                  setDeletingItemId(null)
                   if (r.ok && r.data) {
                     setPayload(r.data)
+                    syncBaseline(r.data)
                     notifyPublicCmsUpdated()
+                    router.refresh()
                   }
                 })
               })
             }
             renderFields={(s, _i, upd) => <ServiceFields s={s} upd={upd} L={L} />}
             isPending={isPending}
+            deletingItemId={deletingItemId}
           />
         )}
 
@@ -244,23 +252,30 @@ export function AdminCmsDashboard({ initialPayload, initialView }: Props) {
                 void addCaseAction().then((r) => {
                   if (r.ok && r.data) {
                     setPayload(r.data)
+                    syncBaseline(r.data)
                     notifyPublicCmsUpdated()
+                    router.refresh()
                   }
                 })
               })
             }
             onDelete={(id) =>
               startTransition(() => {
+                setDeletingItemId(id)
                 void deleteCaseAction(id).then((r) => {
+                  setDeletingItemId(null)
                   if (r.ok && r.data) {
                     setPayload(r.data)
+                    syncBaseline(r.data)
                     notifyPublicCmsUpdated()
+                    router.refresh()
                   }
                 })
               })
             }
             renderFields={(c, _i, upd) => <CaseFields c={c} upd={upd} L={L} />}
             isPending={isPending}
+            deletingItemId={deletingItemId}
           />
         )}
 
@@ -276,22 +291,29 @@ export function AdminCmsDashboard({ initialPayload, initialView }: Props) {
                 void addConceptAction().then((r) => {
                   if (r.ok && r.data) {
                     setPayload(r.data)
+                    syncBaseline(r.data)
                     notifyPublicCmsUpdated()
+                    router.refresh()
                   }
                 })
               })
             }
             onDelete={(id) =>
               startTransition(() => {
+                setDeletingItemId(id)
                 void deleteConceptAction(id).then((r) => {
+                  setDeletingItemId(null)
                   if (r.ok && r.data) {
                     setPayload(r.data)
+                    syncBaseline(r.data)
                     notifyPublicCmsUpdated()
+                    router.refresh()
                   }
                 })
               })
             }
             isPending={isPending}
+            deletingItemId={deletingItemId}
           />
         )}
 

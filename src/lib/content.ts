@@ -6,6 +6,10 @@ export type ServiceItem = {
   price: string
 }
 
+export type SiteNavLinkFlat = { href: string; label: string }
+
+export type SiteFooterColumnFlat = { title: string; links: SiteNavLinkFlat[] }
+
 export type SiteContent = {
   hero: {
     title: string
@@ -24,6 +28,10 @@ export type SiteContent = {
     hero: string
     gallery: string[]
   }
+  /** Header nav + CTA (from `global:header` merged in flatten). */
+  headerNav: SiteNavLinkFlat[]
+  headerCtaText: string
+  headerCtaHref: string
   footer: {
     socialLinks: {
       linkedin: string
@@ -34,6 +42,8 @@ export type SiteContent = {
     phone: string
     copyrightText: string
   }
+  /** Optional multi-column footer menus from `global:footer`. */
+  footerColumns: SiteFooterColumnFlat[]
 }
 
 export const DEFAULT_SITE_CONTENT: SiteContent = {
@@ -96,6 +106,10 @@ export const DEFAULT_SITE_CONTENT: SiteContent = {
     phone: '+380000000000',
     copyrightText: 'STEPS LAB. All rights reserved.',
   },
+  headerNav: [],
+  headerCtaText: '',
+  headerCtaHref: '/contacts',
+  footerColumns: [],
 }
 
 function mergeContent(input: unknown): SiteContent {
@@ -127,6 +141,12 @@ function mergeContent(input: unknown): SiteContent {
         ...(candidate.footer?.socialLinks ?? {}),
       },
     },
+    headerNav: Array.isArray(candidate.headerNav) ? candidate.headerNav : DEFAULT_SITE_CONTENT.headerNav,
+    headerCtaText: candidate.headerCtaText ?? DEFAULT_SITE_CONTENT.headerCtaText,
+    headerCtaHref: candidate.headerCtaHref ?? DEFAULT_SITE_CONTENT.headerCtaHref,
+    footerColumns: Array.isArray(candidate.footerColumns)
+      ? candidate.footerColumns
+      : DEFAULT_SITE_CONTENT.footerColumns,
   }
 }
 

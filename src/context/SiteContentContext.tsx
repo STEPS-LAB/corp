@@ -36,6 +36,9 @@ function mergePayloadPatch(server: unknown): PublicCmsPayload {
     portfolioIndex: s.portfolioIndex ?? d.portfolioIndex,
     servicesIndex: s.servicesIndex ?? d.servicesIndex,
     labIndex: s.labIndex ?? d.labIndex,
+    siteHeader: s.siteHeader ?? d.siteHeader,
+    siteFooter: s.siteFooter ?? d.siteFooter,
+    approachPage: s.approachPage ?? d.approachPage,
   }
 }
 
@@ -59,7 +62,7 @@ export function SiteContentProvider({ children }: { children: React.ReactNode })
       if (!data || typeof data !== 'object') return
       const o = data as Record<string, unknown>
       if ('error' in o && !Array.isArray(o.cases)) return
-      if (!o.pages || !Array.isArray(o.cases)) return
+      if (!o.pages || !Array.isArray(o.cases) || !Array.isArray(o.services)) return
       setPayload(mergePayloadPatch(data))
     } catch {
       /* aborted or network — keep existing payload */

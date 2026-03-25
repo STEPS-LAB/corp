@@ -53,10 +53,6 @@ const routeMap: Record<string, RouteEntry> = {
   contact: { render: () => <ContactsPageContent /> },
   approach: {
     render: () => <ApproachPageContent />,
-    getMetadata: async () => {
-      const m = (en as { pages: { approach: { metaTitle: string; metaDescription: string } } }).pages.approach
-      return { title: m.metaTitle, description: m.metaDescription }
-    },
   },
   'services/ai-automation': { render: () => <AIAutomationPage />, getMetadata: generateAiMetadata },
   'services/mvp-startups': { render: () => <MVPStartupsPage />, getMetadata: generateMvpMetadata },
@@ -126,6 +122,23 @@ export async function generateMetadata({
   const loc = locale as 'en' | 'uk'
   const key = (slug ?? []).join('/')
   const path = key ? `/${key}` : '/'
+
+  if (key === 'approach') {
+    const payload = await getCachedCmsPayload()
+    const seo = payload.approachPage.seo
+    const fallback = getLocalizedMeta(locale, key)
+    const title = pickLang(seo.metaTitle, loc).trim() || fallback.title
+    const description = pickLang(seo.metaDescription, loc).trim() || fallback.description
+    const canonicalPath = `/${locale}${path === '/' ? '' : path}`
+    return {
+      title,
+      description,
+      alternates: {
+        canonical: canonicalPath,
+        languages: (await getAlternateLanguages(path)).languages,
+      },
+    }
+  }
 
   const caseHref = caseDetailHrefFromKey(key)
   if (caseHref) {

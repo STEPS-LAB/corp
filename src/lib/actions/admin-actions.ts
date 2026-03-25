@@ -3,12 +3,15 @@
 import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 import {
+  type ApproachPageCMS,
   type CaseCMS,
   type CollectionLandingPage,
   type ConceptCMS,
   type PagesContent,
   type PublicCmsPayload,
   type ServiceCMS,
+  type SiteFooterCMS,
+  type SiteHeaderCMS,
   DEFAULT_CASES_CMS,
   DEFAULT_CONCEPTS_CMS,
   DEFAULT_SERVICES_CMS,
@@ -27,11 +30,14 @@ import {
   getServicesFromKv,
   mergePagesOnto,
   seedCmsIfEmpty,
+  setApproachPageKv,
   setCasesToKv,
   setCollectionLandingPageKv,
   setConceptsToKv,
   setPagesToKv,
   setServicesToKv,
+  setSiteFooterKv,
+  setSiteHeaderKv,
   writeCaseItem,
   writeConceptItem,
   writeServiceItem,
@@ -121,6 +127,42 @@ export async function savePagesPatchAction(patch: unknown): Promise<ActionResult
   }
 }
 
+export async function saveSiteHeaderAction(header: SiteHeaderCMS): Promise<ActionResult<PublicCmsPayload>> {
+  const auth = await assertAdmin()
+  if (!auth.ok) return auth
+  try {
+    await setSiteHeaderKv(header)
+    revalidateCmsPaths()
+    return okWithFreshPayload()
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'Save failed' }
+  }
+}
+
+export async function saveSiteFooterAction(footer: SiteFooterCMS): Promise<ActionResult<PublicCmsPayload>> {
+  const auth = await assertAdmin()
+  if (!auth.ok) return auth
+  try {
+    await setSiteFooterKv(footer)
+    revalidateCmsPaths()
+    return okWithFreshPayload()
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'Save failed' }
+  }
+}
+
+export async function saveApproachPageAction(page: ApproachPageCMS): Promise<ActionResult<PublicCmsPayload>> {
+  const auth = await assertAdmin()
+  if (!auth.ok) return auth
+  try {
+    await setApproachPageKv(page)
+    revalidateCmsPaths()
+    return okWithFreshPayload()
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'Save failed' }
+  }
+}
+
 /** Atomically persist all four CMS collections (floating “Save all”). */
 export async function saveFullCmsPayloadAction(payload: PublicCmsPayload): Promise<ActionResult<PublicCmsPayload>> {
   const auth = await assertAdmin()
@@ -134,6 +176,9 @@ export async function saveFullCmsPayloadAction(payload: PublicCmsPayload): Promi
       setCollectionLandingPageKv(COLLECTION_PAGE_SLUGS.portfolioIndex, payload.portfolioIndex),
       setCollectionLandingPageKv(COLLECTION_PAGE_SLUGS.servicesIndex, payload.servicesIndex),
       setCollectionLandingPageKv(COLLECTION_PAGE_SLUGS.labIndex, payload.labIndex),
+      setSiteHeaderKv(payload.siteHeader),
+      setSiteFooterKv(payload.siteFooter),
+      setApproachPageKv(payload.approachPage),
     ])
     revalidateCmsPaths()
     revalidateAllCaseDetails(payload.cases)

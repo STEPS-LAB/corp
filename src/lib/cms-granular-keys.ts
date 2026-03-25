@@ -13,3 +13,10 @@ export const COLLECTION_PAGE_SLUGS = {
   servicesIndex: 'services-index',
   labIndex: 'lab-index',
 } as const
+
+/** Site-wide chrome + static route blobs (Redis JSON). */
+export const CMS_GLOBAL_KEYS = {
+  header: 'global:header',
+  footer: 'global:footer',
+  approach: 'page:approach',
+} as const

@@ -2,17 +2,24 @@ import { unstable_noStore as noStore } from 'next/cache'
 import { createClient } from 'redis'
 import { kv } from '@vercel/kv'
 import type {
+  ApproachPageCMS,
+  ApproachStepCMS,
   BilingualText,
   CaseCMS,
   CasePageDetail,
+  CmsNavLink,
   CollectionLandingPage,
   ConceptCMS,
+  FooterMenuColumnCMS,
   HeroStatItem,
   PagesContent,
   PublicCmsPayload,
   ServiceCMS,
+  SiteFooterCMS,
+  SiteHeaderCMS,
 } from '@/lib/cms-types'
 import {
+  DEFAULT_APPROACH_PAGE_CMS,
   DEFAULT_CASES_CMS,
   DEFAULT_CONCEPTS_CMS,
   DEFAULT_LAB_INDEX,
@@ -20,11 +27,13 @@ import {
   DEFAULT_PORTFOLIO_INDEX,
   DEFAULT_SERVICES_CMS,
   DEFAULT_SERVICES_INDEX,
+  DEFAULT_SITE_FOOTER_CMS,
+  DEFAULT_SITE_HEADER_CMS,
   KV_KEYS,
   defaultCmsPayload,
   slugFromCaseHref,
 } from '@/lib/cms-types'
-import { COLLECTION_PAGE_SLUGS, GRANULAR, type CmsCollection } from '@/lib/cms-granular-keys'
+import { CMS_GLOBAL_KEYS, COLLECTION_PAGE_SLUGS, GRANULAR, type CmsCollection } from '@/lib/cms-granular-keys'
 import { builtInCaseDetail } from '@/lib/cms-case-defaults'
 
 function hasRedisUrl(): boolean {
@@ -186,6 +195,138 @@ export async function getCollectionLandingPageKv(slug: string, fallback: Collect
 
 export async function setCollectionLandingPageKv(slug: string, data: CollectionLandingPage): Promise<void> {
   await setJson(GRANULAR.page(slug), data)
+}
+
+function sanitizeCmsNavLink(raw: unknown, def: CmsNavLink): CmsNavLink {
+  if (!raw || typeof raw !== 'object') return def
+  const x = raw as Partial<CmsNavLink>
+  return {
+    href: typeof x.href === 'string' ? x.href : def.href,
+    label: mb(def.label, x.label),
+  }
+}
+
+function sanitizeFooterColumn(raw: unknown, def: FooterMenuColumnCMS): FooterMenuColumnCMS {
+  if (!raw || typeof raw !== 'object') return def
+  const x = raw as Partial<FooterMenuColumnCMS>
+  const defLink = def.links[0] ?? { href: '/', label: { en: '', uk: '' } }
+  const links = Array.isArray(x.links)
+    ? x.links.map((l, i) => sanitizeCmsNavLink(l, def.links[i] ?? defLink))
+    : def.links
+  return {
+    title: mb(def.title, x.title),
+    links: links.length ? links : def.links,
+  }
+}
+
+export function sanitizeSiteHeader(raw: unknown): SiteHeaderCMS {
+  const d = DEFAULT_SITE_HEADER_CMS
+  if (!raw || typeof raw !== 'object') return d
+  const x = raw as Partial<SiteHeaderCMS>
+  const navLinks = Array.isArray(x.navLinks)
+    ? x.navLinks.map((l, i) => sanitizeCmsNavLink(l, d.navLinks[i] ?? d.navLinks[0]!))
+    : d.navLinks
+  const cta = x.cta && typeof x.cta === 'object' ? x.cta : d.cta
+  return {
+    logoUrl: typeof x.logoUrl === 'string' ? x.logoUrl : d.logoUrl,
+    navLinks: navLinks.length ? navLinks : d.navLinks,
+    cta: {
+      text: mb(d.cta.text, cta.text),
+      href: typeof cta.href === 'string' ? cta.href : d.cta.href,
+    },
+  }
+}
+
+export function sanitizeSiteFooter(raw: unknown): SiteFooterCMS {
+  const d = DEFAULT_SITE_FOOTER_CMS
+  if (!raw || typeof raw !== 'object') return d
+  const x = raw as Partial<SiteFooterCMS>
+  const social = x.socialLinks && typeof x.socialLinks === 'object' ? x.socialLinks : d.socialLinks
+  const columns = Array.isArray(x.columns)
+    ? x.columns.map((c, i) => sanitizeFooterColumn(c, d.columns[i] ?? d.columns[0]!))
+    : d.columns
+  return {
+    copyright: mb(d.copyright, x.copyright),
+    socialLinks: {
+      linkedin: typeof social.linkedin === 'string' ? social.linkedin : d.socialLinks.linkedin,
+      github: typeof social.github === 'string' ? social.github : d.socialLinks.github,
+      x: typeof social.x === 'string' ? social.x : d.socialLinks.x,
+    },
+    contactEmail: typeof x.contactEmail === 'string' ? x.contactEmail : d.contactEmail,
+    phone: typeof x.phone === 'string' ? x.phone : d.phone,
+    columns: columns.length ? columns : d.columns,
+  }
+}
+
+function sanitizeApproachStep(raw: unknown, def: ApproachStepCMS): ApproachStepCMS {
+  if (!raw || typeof raw !== 'object') return def
+  const x = raw as Partial<ApproachStepCMS>
+  return {
+    number: typeof x.number === 'string' ? x.number : def.number,
+    title: mb(def.title, x.title),
+    text: mb(def.text, x.text),
+  }
+}
+
+export function sanitizeApproachPage(raw: unknown): ApproachPageCMS {
+  const d = DEFAULT_APPROACH_PAGE_CMS
+  if (!raw || typeof raw !== 'object') return d
+  const x = raw as Partial<ApproachPageCMS>
+  const seo = x.seo && typeof x.seo === 'object' ? x.seo : d.seo
+  const steps = Array.isArray(x.steps)
+    ? x.steps.map((s, i) => sanitizeApproachStep(s, d.steps[i] ?? d.steps[0]!))
+    : d.steps
+  const whyBullets = Array.isArray(x.whyBullets)
+    ? x.whyBullets.map((b, i) => {
+        const bi = d.whyBullets[i] ?? { en: '', uk: '' }
+        if (!b || typeof b !== 'object') return bi
+        return mb(bi, b as Partial<BilingualText>)
+      })
+    : d.whyBullets
+  return {
+    seo: {
+      metaTitle: mb(d.seo.metaTitle, seo.metaTitle),
+      metaDescription: mb(d.seo.metaDescription, seo.metaDescription),
+    },
+    badge: mb(d.badge, x.badge),
+    heroTitleLine1: mb(d.heroTitleLine1, x.heroTitleLine1),
+    heroTitleLine2: mb(d.heroTitleLine2, x.heroTitleLine2),
+    heroDescription: mb(d.heroDescription, x.heroDescription),
+    sectionTitle: mb(d.sectionTitle, x.sectionTitle),
+    sectionSubtitle: mb(d.sectionSubtitle, x.sectionSubtitle),
+    steps: steps.length ? steps : d.steps,
+    whyTitle: mb(d.whyTitle, x.whyTitle),
+    whyBullets: whyBullets.length ? whyBullets : d.whyBullets,
+    whyQuote: mb(d.whyQuote, x.whyQuote),
+    whyImageUrl: typeof x.whyImageUrl === 'string' ? x.whyImageUrl : d.whyImageUrl,
+  }
+}
+
+export async function getSiteHeaderKv(): Promise<SiteHeaderCMS> {
+  const raw = await getJson<unknown>(CMS_GLOBAL_KEYS.header)
+  return sanitizeSiteHeader(raw)
+}
+
+export async function setSiteHeaderKv(data: SiteHeaderCMS): Promise<void> {
+  await setJson(CMS_GLOBAL_KEYS.header, sanitizeSiteHeader(data))
+}
+
+export async function getSiteFooterKv(): Promise<SiteFooterCMS> {
+  const raw = await getJson<unknown>(CMS_GLOBAL_KEYS.footer)
+  return sanitizeSiteFooter(raw)
+}
+
+export async function setSiteFooterKv(data: SiteFooterCMS): Promise<void> {
+  await setJson(CMS_GLOBAL_KEYS.footer, sanitizeSiteFooter(data))
+}
+
+export async function getApproachPageKv(): Promise<ApproachPageCMS> {
+  const raw = await getJson<unknown>(CMS_GLOBAL_KEYS.approach)
+  return sanitizeApproachPage(raw)
+}
+
+export async function setApproachPageKv(data: ApproachPageCMS): Promise<void> {
+  await setJson(CMS_GLOBAL_KEYS.approach, sanitizeApproachPage(data))
 }
 
 async function ensureGranularMigrated(collection: CmsCollection, legacyKey: string): Promise<void> {
@@ -671,7 +812,18 @@ export async function deleteConceptItem(conceptId: string): Promise<void> {
 export async function getFullCmsPayload(): Promise<PublicCmsPayload> {
   noStore()
   try {
-    const [pages, services, cases, concepts, portfolioIndex, servicesIndex, labIndex] = await Promise.all([
+    const [
+      pages,
+      services,
+      cases,
+      concepts,
+      portfolioIndex,
+      servicesIndex,
+      labIndex,
+      siteHeader,
+      siteFooter,
+      approachPage,
+    ] = await Promise.all([
       getPagesFromKv(),
       getServicesFromKv(),
       getCasesFromKv(),
@@ -679,8 +831,22 @@ export async function getFullCmsPayload(): Promise<PublicCmsPayload> {
       getCollectionLandingPageKv(COLLECTION_PAGE_SLUGS.portfolioIndex, DEFAULT_PORTFOLIO_INDEX),
       getCollectionLandingPageKv(COLLECTION_PAGE_SLUGS.servicesIndex, DEFAULT_SERVICES_INDEX),
       getCollectionLandingPageKv(COLLECTION_PAGE_SLUGS.labIndex, DEFAULT_LAB_INDEX),
+      getSiteHeaderKv(),
+      getSiteFooterKv(),
+      getApproachPageKv(),
     ])
-    return { pages, services, cases, concepts, portfolioIndex, servicesIndex, labIndex }
+    return {
+      pages,
+      services,
+      cases,
+      concepts,
+      portfolioIndex,
+      servicesIndex,
+      labIndex,
+      siteHeader,
+      siteFooter,
+      approachPage,
+    }
   } catch (e) {
     console.error('[kv] getFullCmsPayload', e)
     return defaultCmsPayload()
@@ -715,6 +881,9 @@ export async function seedCmsIfEmpty(): Promise<{ seeded: boolean }> {
     ...payload.cases.map((c) => setJson(GRANULAR.item('cases', c.id), c)),
     ...payload.services.map((s) => setJson(GRANULAR.item('services', s.id), s)),
     ...payload.concepts.map((c) => setJson(GRANULAR.item('concepts', c.id), c)),
+    setJson(CMS_GLOBAL_KEYS.header, payload.siteHeader),
+    setJson(CMS_GLOBAL_KEYS.footer, payload.siteFooter),
+    setJson(CMS_GLOBAL_KEYS.approach, payload.approachPage),
   ])
   return { seeded: true }
 }

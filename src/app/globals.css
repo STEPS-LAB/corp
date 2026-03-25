@@ -338,8 +338,10 @@
     display: inline-block;
   }
 
-  .logo:hover {
-    background-color: rgba(245, 246, 248, 0.05);
+  @media (hover: hover) and (pointer: fine) {
+    .logo:hover {
+      background-color: rgba(245, 246, 248, 0.05);
+    }
   }
 
   /* Nav link */
@@ -350,20 +352,34 @@
     text-decoration: none;
     transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     font-weight: 400;
-    padding: 8px 12px;
+    padding: 4px 8px;
+    line-height: 1.25;
     border-radius: 8px;
     font-family: var(--font-inter), 'Inter', sans-serif;
+    display: inline-block;
+    vertical-align: middle;
   }
 
-  .nav-link:hover {
-    opacity: 0.8;
-    background-color: rgba(245, 246, 248, 0.05);
+  @media (hover: hover) and (pointer: fine) {
+    .nav-link:hover {
+      opacity: 0.8;
+      background-color: rgba(245, 246, 248, 0.05);
+    }
   }
 
   /* Active nav link */
   .nav-link.active {
     opacity: 1;
     background-color: rgba(245, 246, 248, 0.1);
+  }
+
+  @media (hover: none), (pointer: coarse) {
+    .header .logo:active,
+    .header .nav-link:active,
+    .header .btn-consultation:active {
+      transform: scale(0.96);
+      transition: transform 0.12s ease;
+    }
   }
 
   /* Header */
@@ -454,12 +470,21 @@
     opacity: 0.7;
     transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     font-family: var(--font-inter), 'Inter', sans-serif;
+    display: inline-block;
+    line-height: 1.25;
+    padding: 2px 4px;
+    margin: -2px -4px;
+    border-radius: 6px;
+    width: fit-content;
+    max-width: 100%;
   }
 
-  .footer-alt-link:hover {
-    opacity: 1;
-    background-color: rgba(245, 246, 248, 0.05);
-    transform: translateY(-2px);
+  @media (hover: hover) and (pointer: fine) {
+    .footer-alt-link:hover {
+      opacity: 1;
+      background-color: rgba(245, 246, 248, 0.05);
+      transform: translateY(-1px);
+    }
   }
 
   /* Footer alt copyright */
@@ -1803,9 +1828,18 @@
   transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-.approach-alt-item:hover {
-  background-color: rgba(14, 14, 17, 0.02);
-  transform: translateY(-4px);
+@media (hover: hover) and (pointer: fine) {
+  .approach-alt-item:hover {
+    background-color: rgba(14, 14, 17, 0.02);
+    transform: translateY(-4px);
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .approach-alt-item:active {
+    transform: scale(0.98);
+    transition: transform 0.12s ease;
+  }
 }
 
 .approach-alt-number {
@@ -2055,10 +2089,19 @@
   box-shadow: 0 0 0 rgba(245, 246, 248, 0);
 }
 
-.why-steps-lab-alt-item:hover {
-  background-color: rgba(245, 246, 248, 0.03);
-  transform: translateX(8px);
-  box-shadow: 0 4px 16px rgba(245, 246, 248, 0.1);
+@media (hover: hover) and (pointer: fine) {
+  .why-steps-lab-alt-item:hover {
+    background-color: rgba(245, 246, 248, 0.03);
+    transform: translateX(8px);
+    box-shadow: 0 4px 16px rgba(245, 246, 248, 0.1);
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .why-steps-lab-alt-item:active {
+    transform: scale(0.98);
+    transition: transform 0.12s ease;
+  }
 }
 
 .why-steps-lab-alt-label {
@@ -2223,6 +2266,34 @@
   gap: 40px;
 }
 
+.footer-alt-content--cols {
+  grid-template-columns: minmax(120px, auto) minmax(0, 2fr) minmax(160px, auto);
+}
+
+.footer-alt-columns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px 48px;
+  align-content: flex-start;
+}
+
+.footer-alt-col-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-light);
+  opacity: 0.5;
+  margin-bottom: 12px;
+  font-family: var(--font-inter), 'Inter', sans-serif;
+}
+
+.footer-alt-col-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+}
+
 .footer-alt-logo {
   display: inline-flex;
   align-items: center;
@@ -2242,19 +2313,33 @@
   text-decoration: none;
   opacity: 0.7;
   transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  display: inline-flex;
+  display: inline-block;
   width: fit-content;
   line-height: 1.25;
+  padding: 2px 4px;
+  margin: -2px -4px;
+  border-radius: 6px;
+  max-width: 100%;
 }
 
-.footer-alt-link:hover {
-  opacity: 1;
-  transform: none;
+@media (hover: hover) and (pointer: fine) {
+  .footer-alt-link:hover {
+    opacity: 1;
+    background-color: rgba(245, 246, 248, 0.05);
+    transform: none;
+  }
 }
 
 .footer-alt-social {
   display: flex;
   gap: 24px;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .footer-alt .footer-alt-link:active {
+    transform: scale(0.96);
+    transition: transform 0.12s ease;
+  }
 }
 
 .footer-alt-copyright {

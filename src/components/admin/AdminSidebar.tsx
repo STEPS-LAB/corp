@@ -4,12 +4,13 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { stripLeadingLocaleFromPath } from '@/lib/locale-path'
 import {
+  Briefcase,
   ChevronDown,
+  FlaskConical,
   FolderOpen,
+  Globe,
   LayoutDashboard,
   Layers,
-  Briefcase,
-  FlaskConical,
   PanelLeft,
 } from 'lucide-react'
 
@@ -57,6 +58,17 @@ export function AdminSidebar() {
         <NavItem href="/admin" icon={LayoutDashboard} label="Dashboard" exact />
         <div className="pt-2">
           <p className="mb-1 flex items-center gap-1 px-3 text-[11px] font-medium uppercase tracking-wider text-neutral-600">
+            <Globe className="h-3 w-3" />
+            Global
+          </p>
+          <div className="ml-1 space-y-0.5 border-l border-neutral-800 pl-2">
+            <NavItem href="/admin/global/header" icon={FolderOpen} label="Header" />
+            <NavItem href="/admin/global/footer" icon={FolderOpen} label="Footer" />
+          </div>
+        </div>
+        <div className={`my-2 border-t ${border}`} />
+        <div className="pt-2">
+          <p className="mb-1 flex items-center gap-1 px-3 text-[11px] font-medium uppercase tracking-wider text-neutral-600">
             <PanelLeft className="h-3 w-3" />
             Pages
           </p>
@@ -64,6 +76,7 @@ export function AdminSidebar() {
             <NavItem href="/admin/pages/home" icon={FolderOpen} label="Home" />
             <NavItem href="/admin/pages/about" icon={FolderOpen} label="About" />
             <NavItem href="/admin/pages/contacts" icon={FolderOpen} label="Contact" />
+            <NavItem href="/admin/pages/approach" icon={FolderOpen} label="Approach" />
           </div>
         </div>
         <div className={`my-2 border-t ${border}`} />

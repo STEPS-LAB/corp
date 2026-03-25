@@ -251,6 +251,48 @@ export type CollectionLandingPage = {
   featuredIds: string[]
 }
 
+export type CmsNavLink = { href: string; label: BilingualText }
+
+export type SiteHeaderCMS = {
+  logoUrl: string
+  navLinks: CmsNavLink[]
+  cta: { text: BilingualText; href: string }
+}
+
+export type FooterMenuColumnCMS = {
+  title: BilingualText
+  links: CmsNavLink[]
+}
+
+export type SiteFooterCMS = {
+  copyright: BilingualText
+  socialLinks: { linkedin: string; github: string; x: string }
+  contactEmail: string
+  phone: string
+  columns: FooterMenuColumnCMS[]
+}
+
+export type ApproachStepCMS = {
+  number: string
+  title: BilingualText
+  text: BilingualText
+}
+
+export type ApproachPageCMS = {
+  seo: BilingualSEO
+  badge: BilingualText
+  heroTitleLine1: BilingualText
+  heroTitleLine2: BilingualText
+  heroDescription: BilingualText
+  sectionTitle: BilingualText
+  sectionSubtitle: BilingualText
+  steps: ApproachStepCMS[]
+  whyTitle: BilingualText
+  whyBullets: BilingualText[]
+  whyQuote: BilingualText
+  whyImageUrl: string
+}
+
 export type PublicCmsPayload = {
   pages: PagesContent
   services: ServiceCMS[]
@@ -259,6 +301,9 @@ export type PublicCmsPayload = {
   portfolioIndex: CollectionLandingPage
   servicesIndex: CollectionLandingPage
   labIndex: CollectionLandingPage
+  siteHeader: SiteHeaderCMS
+  siteFooter: SiteFooterCMS
+  approachPage: ApproachPageCMS
 }
 
 /** API + KV shape */
@@ -795,6 +840,109 @@ export const DEFAULT_CONCEPTS_CMS: ConceptCMS[] = [
   },
 ]
 
+export const DEFAULT_SITE_HEADER_CMS: SiteHeaderCMS = {
+  logoUrl: '/steps-lab_logo-w.webp',
+  navLinks: [
+    { href: '/', label: b('Home', 'Головна') },
+    { href: '/services', label: b('Services', 'Послуги') },
+    { href: '/cases', label: b('Cases', 'Кейси') },
+    { href: '/concepts', label: b('Concepts', 'Концепти') },
+    { href: '/blog', label: b('Blog', 'Блог') },
+    { href: '/about', label: b('About', 'Про нас') },
+    { href: '/contacts', label: b('Contact', 'Контакти') },
+  ],
+  cta: { text: b('Get consultation', 'Отримати консультацію'), href: '/contacts' },
+}
+
+export const DEFAULT_SITE_FOOTER_CMS: SiteFooterCMS = {
+  copyright: b('STEPS LAB. All rights reserved.', 'STEPS LAB. Усі права захищені.'),
+  socialLinks: {
+    linkedin: 'https://linkedin.com/company/stepslab',
+    github: '#',
+    x: '#',
+  },
+  contactEmail: 'stepslab.contact@gmail.com',
+  phone: '+380000000000',
+  columns: [
+    {
+      title: b('Navigate', 'Навігація'),
+      links: [
+        { href: '/', label: b('Home', 'Головна') },
+        { href: '/services', label: b('Services', 'Послуги') },
+        { href: '/approach', label: b('Approach', 'Підхід') },
+        { href: '/cases', label: b('Cases', 'Кейси') },
+        { href: '/concepts', label: b('Concepts', 'Концепти') },
+        { href: '/blog', label: b('Blog', 'Блог') },
+        { href: '/about', label: b('About', 'Про нас') },
+        { href: '/contacts', label: b('Contact', 'Контакти') },
+      ],
+    },
+  ],
+}
+
+export const DEFAULT_APPROACH_PAGE_CMS: ApproachPageCMS = {
+  seo: {
+    metaTitle: b(
+      'Approach to web development | STEPS LAB — development studio',
+      'Підхід до веб-розробки | STEPS LAB — студія розробки сайтів'
+    ),
+    metaDescription: b(
+      'How we work: logic, AI development, result-oriented. A transparent process development studio.',
+      'Як ми працюємо: логіка, AI-розробка, орієнтація на результат. Студія розробки сайтів з прозорим процесом.'
+    ),
+  },
+  badge: b('Approach', 'Підхід'),
+  heroTitleLine1: b('Our approach', 'Наш підхід'),
+  heroTitleLine2: b('to web development', 'до веб-розробки'),
+  heroDescription: b(
+    'A development studio that builds systems. Logic, AI development, results.',
+    'Студія розробки сайтів, яка будує системи. Логіка, AI-розробка, результат.'
+  ),
+  sectionTitle: b('Our approach to web development', 'Наш підхід до веб-розробки'),
+  sectionSubtitle: b(
+    'A development studio that builds systems and websites that work',
+    'Студія розробки, яка будує системи та сайти, що працюють'
+  ),
+  steps: [
+    {
+      number: '01',
+      title: b('Logic first', 'Логіка перед усім'),
+      text: b(
+        'Every solution in website development has a business rationale, not just a nice design.',
+        'Кожне рішення в розробці сайту має бізнес-обґрунтування, а не лише гарний дизайн.'
+      ),
+    },
+    {
+      number: '02',
+      title: b('AI development under control', 'AI-розробка під контролем'),
+      text: b(
+        'We use AI to speed up web development, but final decisions are always made by the team.',
+        'Використовуємо AI для прискорення веб-розробки, але фінальні рішення завжди за командою.'
+      ),
+    },
+    {
+      number: '03',
+      title: b('Result-oriented', 'Орієнтація на результат'),
+      text: b(
+        'Website development is about creating a tool for business growth, not just a page on the internet.',
+        'Розробка сайту — це створення інструменту для зростання бізнесу, а не просто сторінки в інтернеті.'
+      ),
+    },
+  ],
+  whyTitle: b('Why web studio STEPS LAB', 'Чому веб-студія STEPS LAB'),
+  whyBullets: [
+    b('Predictable development outcomes', 'Передбачувані результати розробки'),
+    b('Clear communication with the studio', 'Зрозуміла комунікація зі студією'),
+    b('No hype — only logic in development', 'Без хайпу — лише логіка в розробці'),
+    b('AI development without chaos', 'AI-розробка без хаосу'),
+  ],
+  whyQuote: b(
+    "We don't sell trends.\nA development studio that builds websites and systems that work.",
+    'Ми не продаємо тренди.\nСтудія розробки, яка будує сайти та системи, що працюють.'
+  ),
+  whyImageUrl: '',
+}
+
 export function defaultCmsPayload(): PublicCmsPayload {
   return {
     pages: DEFAULT_PAGES_CONTENT,
@@ -804,6 +952,9 @@ export function defaultCmsPayload(): PublicCmsPayload {
     portfolioIndex: DEFAULT_PORTFOLIO_INDEX,
     servicesIndex: DEFAULT_SERVICES_INDEX,
     labIndex: DEFAULT_LAB_INDEX,
+    siteHeader: DEFAULT_SITE_HEADER_CMS,
+    siteFooter: DEFAULT_SITE_FOOTER_CMS,
+    approachPage: DEFAULT_APPROACH_PAGE_CMS,
   }
 }
 
@@ -816,7 +967,11 @@ export function flattenToSiteContent(
   payload: PublicCmsPayload,
   locale: Locale
 ): SiteContent {
-  const { pages, services } = payload
+  const { pages, services, siteHeader, siteFooter } = payload
+  const logo =
+    siteHeader.logoUrl?.trim() ||
+    pages.images.logo ||
+    DEFAULT_SITE_HEADER_CMS.logoUrl
   return {
     hero: {
       title: pickLang(pages.hero.title, locale),
@@ -839,12 +994,29 @@ export function flattenToSiteContent(
       workflowDescription: pickLang(pages.aboutTech.workflowDescription, locale),
       teamExperience: pickLang(pages.aboutTech.teamExperience, locale),
     },
-    images: pages.images,
-    footer: {
-      socialLinks: pages.footer.socialLinks,
-      contactEmail: pages.footer.contactEmail,
-      phone: pages.footer.phone,
-      copyrightText: pickLang(pages.footer.copyrightText, locale),
+    images: {
+      ...pages.images,
+      logo,
     },
+    headerNav: (siteHeader.navLinks ?? []).map((l) => ({
+      href: l.href,
+      label: pickLang(l.label, locale),
+    })),
+    headerCtaText: pickLang(siteHeader.cta.text, locale),
+    headerCtaHref: siteHeader.cta.href || '/contacts',
+    footer: {
+      socialLinks: siteFooter.socialLinks ?? pages.footer.socialLinks,
+      contactEmail: siteFooter.contactEmail?.trim() || pages.footer.contactEmail,
+      phone: siteFooter.phone?.trim() || pages.footer.phone,
+      copyrightText:
+        pickLang(siteFooter.copyright, locale) || pickLang(pages.footer.copyrightText, locale),
+    },
+    footerColumns: (siteFooter.columns ?? []).map((col) => ({
+      title: pickLang(col.title, locale),
+      links: (col.links ?? []).map((l) => ({
+        href: l.href,
+        label: pickLang(l.label, locale),
+      })),
+    })),
   }
 }

@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useModal } from '@/hooks/useModal'
 import { useLocale } from '@/context/LocaleContext'
 import { useSiteContent } from '@/context/SiteContentContext'
@@ -27,15 +27,29 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  const navLinks = [
-    { href: '/', label: t('nav.home') },
-    { href: '/services', label: t('nav.services') },
-    { href: '/cases', label: t('nav.cases') },
-    { href: '/concepts', label: t('nav.concepts') },
-    { href: '/blog', label: t('nav.blog') },
-    { href: '/about', label: t('nav.about') },
-    { href: '/contacts', label: t('nav.contact') },
-  ]
+  const fallbackNav = useMemo(
+    () => [
+      { href: '/', label: t('nav.home') },
+      { href: '/services', label: t('nav.services') },
+      { href: '/approach', label: t('nav.approach') },
+      { href: '/cases', label: t('nav.cases') },
+      { href: '/concepts', label: t('nav.concepts') },
+      { href: '/blog', label: t('nav.blog') },
+      { href: '/about', label: t('nav.about') },
+      { href: '/contacts', label: t('nav.contact') },
+    ],
+    [t]
+  )
+
+  const navLinks =
+    content.headerNav.length > 0
+      ? content.headerNav.map((l) => ({ href: l.href, label: l.label }))
+      : fallbackNav
+
+  const ctaLabel = content.headerCtaText?.trim() || t('header.consultation')
+  const ctaPath =
+    (content.headerCtaHref || '/contacts').replace(/^\/(en|uk)(?=\/|$)/, '') || '/contacts'
+  const openConsultationModal = ctaPath === '/contacts' || ctaPath === '/contact'
 
   const isServiceOrCasePage = pathWithoutLocale.startsWith('/services/') || pathWithoutLocale.startsWith('/cases/')
   
@@ -67,12 +81,22 @@ export default function Header() {
             </nav>
             <div className="hidden md:flex items-center gap-4">
               <LanguageSelect />
-              <button
-                onClick={openModal}
-                className="btn-consultation px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-500 font-inter border-none cursor-pointer bg-accent text-text-light shadow-[0_4px_16px_rgba(58,91,255,0.3)] hover:bg-[#2d4ae6] hover:shadow-[0_6px_24px_rgba(58,91,255,0.4)] hover:-translate-y-0.5"
-              >
-                {t('header.consultation')}
-              </button>
+              {openConsultationModal ? (
+                <button
+                  type="button"
+                  onClick={openModal}
+                  className="btn-consultation px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-500 font-inter border-none cursor-pointer bg-accent text-text-light shadow-[0_4px_16px_rgba(58,91,255,0.3)] hover:bg-[#2d4ae6] hover:shadow-[0_6px_24px_rgba(58,91,255,0.4)] hover:-translate-y-0.5"
+                >
+                  {ctaLabel}
+                </button>
+              ) : (
+                <Link
+                  href={localizePath(ctaPath.startsWith('/') ? ctaPath : `/${ctaPath}`, locale)}
+                  className="btn-consultation inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-xl transition-all duration-500 font-inter border-none cursor-pointer bg-accent text-text-light shadow-[0_4px_16px_rgba(58,91,255,0.3)] hover:bg-[#2d4ae6] hover:shadow-[0_6px_24px_rgba(58,91,255,0.4)] hover:-translate-y-0.5 no-underline"
+                >
+                  {ctaLabel}
+                </Link>
+              )}
             </div>
             <div className="md:hidden flex items-center gap-2">
               <LanguageSelect />

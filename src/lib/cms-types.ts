@@ -10,6 +10,9 @@ export function b(en: string, uk: string): BilingualText {
   return { en, uk }
 }
 
+/** Hero stats row (value is short e.g. "2x", label is bilingual). */
+export type HeroStatItem = { value: string; label: BilingualText }
+
 /** Static pages / global sections (Hero, About, Footer UI copy). */
 export type PagesContent = {
   hero: {
@@ -18,6 +21,10 @@ export type PagesContent = {
     ctaText: BilingualText
     ctaLink: string
     heroImageUrl: string
+    /** Secondary link next to primary CTA (e.g. “View cases →”). */
+    viewCasesLabel: BilingualText
+    /** Typically three rows under hero copy. */
+    stats: HeroStatItem[]
   }
   aboutTech: {
     workflowDescription: BilingualText
@@ -36,10 +43,28 @@ export type PagesContent = {
   }
   /** Section headings and shared labels (optional overrides per locale). */
   labels: {
+    servicesSectionTitle: BilingualText
+    aboutSectionTitle: BilingualText
     casesSectionTitle: BilingualText
     conceptsHeading: BilingualText
     conceptsViewAll: BilingualText
     casesViewCase: BilingualText
+  }
+  /** Home — “Why STEPS LAB” block. */
+  homeWhy: {
+    title: BilingualText
+    /** Four lines; CMS order matches UI. */
+    bullets: BilingualText[]
+    quote: BilingualText
+  }
+  /** Home — tech logo strip title only (logo assets stay in /public). */
+  homeTechStack: {
+    title: BilingualText
+  }
+  /** Home — bottom CTA band above footer. */
+  homeFinalCta: {
+    title: BilingualText
+    buttonLabel: BilingualText
   }
   /** Shared headings on all case study inner pages. */
   casePageLabels: {
@@ -196,6 +221,12 @@ export const DEFAULT_PAGES_CONTENT: PagesContent = {
     ctaText: b('Start Project', 'Почати проєкт'),
     ctaLink: '/contacts',
     heroImageUrl: '/steps-lab_logo-w.webp',
+    viewCasesLabel: b('View cases →', 'Переглянути кейси →'),
+    stats: [
+      { value: '2x', label: b('Faster', 'Швидше') },
+      { value: 'AI', label: b('Development', 'Розробка') },
+      { value: '24/7', label: b('Support', 'Підтримка') },
+    ],
   },
   aboutTech: {
     workflowDescription: b(
@@ -223,10 +254,32 @@ export const DEFAULT_PAGES_CONTENT: PagesContent = {
     copyrightText: b('STEPS LAB. All rights reserved.', 'STEPS LAB. Усі права захищені.'),
   },
   labels: {
+    servicesSectionTitle: b('Web studio services', 'Послуги веб-студії'),
+    aboutSectionTitle: b('About the web studio', 'Про веб-студію'),
     casesSectionTitle: b('Website development cases', 'Кейси розробки сайтів'),
     conceptsHeading: b('Concepts', 'Концепти'),
     conceptsViewAll: b('View All Concepts', 'Переглянути всі концепти'),
     casesViewCase: b('View case →', 'Переглянути кейс →'),
+  },
+  homeWhy: {
+    title: b('Why web studio STEPS LAB', 'Чому веб-студія STEPS LAB'),
+    bullets: [
+      b('Predictable development outcomes', 'Передбачувані результати розробки'),
+      b('Clear communication with the studio', 'Зрозуміла комунікація зі студією'),
+      b('No hype — only logic in development', 'Без хайпу — лише логіка в розробці'),
+      b('AI development without chaos', 'AI-розробка без хаосу'),
+    ],
+    quote: b(
+      "We don't sell trends.\nA development studio that builds websites and systems that work.",
+      'Ми не продаємо тренди.\nСтудія розробки, яка будує сайти та системи, що працюють.'
+    ),
+  },
+  homeTechStack: {
+    title: b('Technologies We Use', 'Наш стек'),
+  },
+  homeFinalCta: {
+    title: b('Ready to discuss your project?', 'Готові обговорити проєкт?'),
+    buttonLabel: b('Get consultation', 'Отримати консультацію'),
   },
   casePageLabels: {
     aboutProject: b('About the project', 'Про проєкт'),

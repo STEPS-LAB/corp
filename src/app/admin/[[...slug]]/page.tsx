@@ -1,15 +1,14 @@
+import { redirect } from 'next/navigation'
 import { getFullCmsPayload } from '@/lib/kv'
 import { AdminCmsDashboard } from '@/components/admin/AdminCmsDashboard'
-
-function tabFromSlug(slug: string[] | undefined): string {
-  if (!slug?.length) return 'general'
-  return slug[0] ?? 'general'
-}
+import { ADMIN_LEGACY_SLUG_REDIRECTS, adminViewFromSlug } from '@/lib/admin-nav'
 
 export default async function AdminCmsPage({ params }: { params: Promise<{ slug?: string[] }> }) {
   const { slug } = await params
-  const initialTab = tabFromSlug(slug)
+  const s0 = slug?.[0]
+  if (s0 && ADMIN_LEGACY_SLUG_REDIRECTS[s0]) redirect(ADMIN_LEGACY_SLUG_REDIRECTS[s0])
+  const initialView = adminViewFromSlug(slug)
   const initialPayload = await getFullCmsPayload()
-
-  return <AdminCmsDashboard initialPayload={initialPayload} initialTab={initialTab} />
+  const remountKey = slug?.length ? slug.join('/') : 'dashboard'
+  return <AdminCmsDashboard key={remountKey} initialPayload={initialPayload} initialView={initialView} />
 }

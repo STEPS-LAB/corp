@@ -6,6 +6,7 @@ import type {
   CaseCMS,
   CasePageDetail,
   ConceptCMS,
+  HeroStatItem,
   PagesContent,
   PublicCmsPayload,
   ServiceCMS,
@@ -144,27 +145,46 @@ async function setJson<T>(key: string, value: T): Promise<void> {
   await kv.set(key, value)
 }
 
-function mergePages(partial: unknown): PagesContent {
-  const d = DEFAULT_PAGES_CONTENT
-  if (!partial || typeof partial !== 'object') return d
+function mergeHeroStats(patch: unknown, base: HeroStatItem[]): HeroStatItem[] {
+  if (!Array.isArray(patch)) return base
+  return patch.map((row, i) => {
+    const b = base[i] ?? { value: '', label: { en: '', uk: '' } }
+    if (!row || typeof row !== 'object') return b
+    const r = row as Partial<HeroStatItem> & { label?: Partial<BilingualText> }
+    return {
+      value: typeof r.value === 'string' ? r.value : b.value,
+      label: mb(b.label, r.label),
+    }
+  })
+}
+
+function mergeWhyBullets(patch: unknown, base: BilingualText[]): BilingualText[] {
+  if (!Array.isArray(patch)) return base
+  return patch.map((x, i) => {
+    const bi = base[i] ?? { en: '', uk: '' }
+    if (!x || typeof x !== 'object') return bi
+    return mb(bi, x as Partial<BilingualText>)
+  })
+}
+
+/** Merge partial JSON onto an existing pages document (for deep patches from admin). */
+export function mergePagesOnto(base: PagesContent, partial: unknown): PagesContent {
+  if (!partial || typeof partial !== 'object') return base
   const p = partial as Partial<PagesContent>
+  const d = base
   return {
     hero: {
-      title: { ...d.hero.title, ...(p.hero?.title ?? {}) },
-      subtitle: { ...d.hero.subtitle, ...(p.hero?.subtitle ?? {}) },
-      ctaText: { ...d.hero.ctaText, ...(p.hero?.ctaText ?? {}) },
+      title: mb(d.hero.title, p.hero?.title),
+      subtitle: mb(d.hero.subtitle, p.hero?.subtitle),
+      ctaText: mb(d.hero.ctaText, p.hero?.ctaText),
       ctaLink: p.hero?.ctaLink ?? d.hero.ctaLink,
       heroImageUrl: p.hero?.heroImageUrl ?? d.hero.heroImageUrl,
+      viewCasesLabel: mb(d.hero.viewCasesLabel, p.hero?.viewCasesLabel),
+      stats: mergeHeroStats(p.hero?.stats, d.hero.stats),
     },
     aboutTech: {
-      workflowDescription: {
-        ...d.aboutTech.workflowDescription,
-        ...(p.aboutTech?.workflowDescription ?? {}),
-      },
-      teamExperience: {
-        ...d.aboutTech.teamExperience,
-        ...(p.aboutTech?.teamExperience ?? {}),
-      },
+      workflowDescription: mb(d.aboutTech.workflowDescription, p.aboutTech?.workflowDescription),
+      teamExperience: mb(d.aboutTech.teamExperience, p.aboutTech?.teamExperience),
     },
     images: {
       logo: p.images?.logo ?? d.images.logo,
@@ -175,19 +195,27 @@ function mergePages(partial: unknown): PagesContent {
       socialLinks: { ...d.footer.socialLinks, ...(p.footer?.socialLinks ?? {}) },
       contactEmail: p.footer?.contactEmail ?? d.footer.contactEmail,
       phone: p.footer?.phone ?? d.footer.phone,
-      copyrightText: {
-        ...d.footer.copyrightText,
-        ...(p.footer?.copyrightText ?? {}),
-      },
+      copyrightText: mb(d.footer.copyrightText, p.footer?.copyrightText),
     },
     labels: {
-      casesSectionTitle: {
-        ...d.labels.casesSectionTitle,
-        ...(p.labels?.casesSectionTitle ?? {}),
-      },
-      conceptsHeading: { ...d.labels.conceptsHeading, ...(p.labels?.conceptsHeading ?? {}) },
-      conceptsViewAll: { ...d.labels.conceptsViewAll, ...(p.labels?.conceptsViewAll ?? {}) },
-      casesViewCase: { ...d.labels.casesViewCase, ...(p.labels?.casesViewCase ?? {}) },
+      servicesSectionTitle: mb(d.labels.servicesSectionTitle, p.labels?.servicesSectionTitle),
+      aboutSectionTitle: mb(d.labels.aboutSectionTitle, p.labels?.aboutSectionTitle),
+      casesSectionTitle: mb(d.labels.casesSectionTitle, p.labels?.casesSectionTitle),
+      conceptsHeading: mb(d.labels.conceptsHeading, p.labels?.conceptsHeading),
+      conceptsViewAll: mb(d.labels.conceptsViewAll, p.labels?.conceptsViewAll),
+      casesViewCase: mb(d.labels.casesViewCase, p.labels?.casesViewCase),
+    },
+    homeWhy: {
+      title: mb(d.homeWhy.title, p.homeWhy?.title),
+      bullets: mergeWhyBullets(p.homeWhy?.bullets, d.homeWhy.bullets),
+      quote: mb(d.homeWhy.quote, p.homeWhy?.quote),
+    },
+    homeTechStack: {
+      title: mb(d.homeTechStack.title, p.homeTechStack?.title),
+    },
+    homeFinalCta: {
+      title: mb(d.homeFinalCta.title, p.homeFinalCta?.title),
+      buttonLabel: mb(d.homeFinalCta.buttonLabel, p.homeFinalCta?.buttonLabel),
     },
     casePageLabels: {
       aboutProject: mb(d.casePageLabels.aboutProject, p.casePageLabels?.aboutProject),
@@ -227,6 +255,10 @@ function mergePages(partial: unknown): PagesContent {
       errorDefault: mb(d.contactPageContent.errorDefault, p.contactPageContent?.errorDefault),
     },
   }
+}
+
+function mergePages(partial: unknown): PagesContent {
+  return mergePagesOnto(DEFAULT_PAGES_CONTENT, partial)
 }
 
 function sanitizeServiceItem(s: unknown, index: number): ServiceCMS {
@@ -274,7 +306,8 @@ function sanitizeCaseItem(c: unknown, index: number): CaseCMS {
 }
 
 function sanitizeCases(arr: unknown): CaseCMS[] {
-  if (!Array.isArray(arr) || arr.length === 0) return DEFAULT_CASES_CMS
+  if (!Array.isArray(arr)) return DEFAULT_CASES_CMS
+  if (arr.length === 0) return []
   return arr.map((item, i) => sanitizeCaseItem(item, i))
 }
 

@@ -2,30 +2,30 @@
 
 import { useLocale } from '@/context/LocaleContext'
 import { useSiteContent } from '@/context/SiteContentContext'
+import { DEFAULT_PAGES_CONTENT, pickLang } from '@/lib/cms-types'
 import LocalizedLink from '@/components/LocalizedLink'
 
 export default function ServicesSection() {
-  const { t } = useLocale()
-  const { content } = useSiteContent()
-  const fallbackServices = [
-    { href: '/services/web-development', title: t('services.web_title'), description: t('services.web_text'), price: '' },
-    { href: '/services/ai-automation', title: t('services.ai_title'), description: t('services.ai_text'), price: '' },
-    { href: '/services/mvp-startups', title: t('services.mvp_title'), description: t('services.mvp_text'), price: '' },
-    { href: '/services/support-scaling', title: t('services.support_title'), description: t('services.support_text'), price: '' },
-  ]
-  const services = content.services.length > 0
-    ? content.services.map((service) => ({
-        href: `/services/${service.id}`,
-        title: service.title,
-        description: service.description,
-        price: service.price,
-      }))
-    : fallbackServices
+  const { locale } = useLocale()
+  const { payload } = useSiteContent()
+  const sectionTitle = pickLang(
+    payload.pages.labels?.servicesSectionTitle ?? DEFAULT_PAGES_CONTENT.labels.servicesSectionTitle,
+    locale
+  )
+  const services = payload.services
+    .slice()
+    .sort((a, b) => a.order - b.order)
+    .map((s) => ({
+      href: s.href.startsWith('/') ? s.href : `/${s.href}`,
+      title: pickLang(s.title, locale),
+      description: pickLang(s.description, locale),
+      price: pickLang(s.price, locale),
+    }))
 
   return (
     <section className="services-alt" id="services">
       <div className="container-custom">
-        <h2 className="section-title-alt">{t('services.sectionTitle')}</h2>
+        <h2 className="section-title-alt">{sectionTitle}</h2>
         <div className="services-alt-list">
           {services.map((service) => (
             <LocalizedLink

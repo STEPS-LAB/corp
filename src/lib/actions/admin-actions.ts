@@ -17,6 +17,7 @@ import {
   getFullCmsPayload,
   getPagesFromKv,
   getServicesFromKv,
+  mergePagesOnto,
   seedCmsIfEmpty,
   setCasesToKv,
   setConceptsToKv,
@@ -87,6 +88,44 @@ export async function savePagesAction(pages: PagesContent): Promise<ActionResult
   try {
     await setPagesToKv(pages)
     revalidateCmsPaths()
+    return okWithFreshPayload()
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'Save failed' }
+  }
+}
+
+/** Deep-merge a partial pages JSON document into the current KV pages blob. */
+export async function savePagesPatchAction(patch: unknown): Promise<ActionResult<PublicCmsPayload>> {
+  const auth = await assertAdmin()
+  if (!auth.ok) return auth
+  try {
+    const current = await getPagesFromKv()
+    const next = mergePagesOnto(current, patch)
+    await setPagesToKv(next)
+    revalidateCmsPaths()
+    return okWithFreshPayload()
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'Save failed' }
+  }
+}
+
+/** Atomically persist all four CMS collections (floating “Save all”). */
+export async function saveFullCmsPayloadAction(payload: PublicCmsPayload): Promise<ActionResult<PublicCmsPayload>> {
+  const auth = await assertAdmin()
+  if (!auth.ok) return auth
+  try {
+    await Promise.all([
+      setPagesToKv(payload.pages),
+      setServicesToKv(payload.services),
+      setCasesToKv(payload.cases),
+      setConceptsToKv(payload.concepts),
+    ])
+    revalidateCmsPaths()
+    revalidateAllCaseDetails(payload.cases)
+    for (const c of payload.concepts) {
+      revalidatePath(`/en/concepts/${c.slug}`, 'page')
+      revalidatePath(`/uk/concepts/${c.slug}`, 'page')
+    }
     return okWithFreshPayload()
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : 'Save failed' }

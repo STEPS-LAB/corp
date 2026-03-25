@@ -1,15 +1,17 @@
 'use client'
 
 import { useLocale } from '@/context/LocaleContext'
+import { useSiteContent } from '@/context/SiteContentContext'
+import { DEFAULT_PAGES_CONTENT, pickLang } from '@/lib/cms-types'
 
 export default function WhyStepsLabSection() {
-  const { t } = useLocale()
-  const items = [
-    { label: '01', textKey: 'why.1' },
-    { label: '02', textKey: 'why.2' },
-    { label: '03', textKey: 'why.3' },
-    { label: '04', textKey: 'why.4' },
-  ]
+  const { locale } = useLocale()
+  const { payload } = useSiteContent()
+  const hw = payload.pages.homeWhy
+  const title = hw?.title ?? { en: '', uk: '' }
+  const bullets = hw?.bullets?.length ? hw.bullets : DEFAULT_PAGES_CONTENT.homeWhy.bullets
+  const quote = hw?.quote ?? { en: '', uk: '' }
+  const labels = ['01', '02', '03', '04']
 
   return (
     <section className="why-steps-lab-alt">
@@ -24,18 +26,18 @@ export default function WhyStepsLabSection() {
         <div className="why-steps-lab-alt-grid-pattern"></div>
       </div>
       <div className="container-custom">
-        <h2 className="section-title-alt">{t('why.title')}</h2>
+        <h2 className="section-title-alt">{pickLang(title, locale)}</h2>
         <div className="why-steps-lab-alt-content">
           <div className="why-steps-lab-alt-list">
-            {items.map((item, index) => (
+            {bullets.map((b, index) => (
               <div key={index} className="why-steps-lab-alt-item">
-                <div className="why-steps-lab-alt-label">{item.label}</div>
-                <div className="why-steps-lab-alt-text">{t(item.textKey)}</div>
+                <div className="why-steps-lab-alt-label">{labels[index] ?? String(index + 1)}</div>
+                <div className="why-steps-lab-alt-text">{pickLang(b, locale)}</div>
               </div>
             ))}
           </div>
           <div className="why-steps-lab-alt-quote">
-            <p className="whitespace-pre-line">{t('why.quote')}</p>
+            <p className="whitespace-pre-line">{pickLang(quote, locale)}</p>
           </div>
         </div>
       </div>

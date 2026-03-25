@@ -2,6 +2,8 @@
 
 import Image from 'next/image'
 import { useLocale } from '@/context/LocaleContext'
+import { useSiteContent } from '@/context/SiteContentContext'
+import { DEFAULT_PAGES_CONTENT, pickLang } from '@/lib/cms-types'
 
 const TECH_LOGOS = [
   { src: '/tech/nextjs.svg', alt: 'Next.js logo', name: 'Next.js' },
@@ -14,7 +16,11 @@ const TECH_LOGOS = [
 
 export default function TechStackSection() {
   const { locale } = useLocale()
-  const title = locale === 'uk' ? 'Наш стек' : 'Technologies We Use'
+  const { payload } = useSiteContent()
+  const title = pickLang(
+    payload.pages.homeTechStack?.title ?? DEFAULT_PAGES_CONTENT.homeTechStack.title,
+    locale
+  )
 
   return (
     <section className="tech-stack-section" aria-label={title}>

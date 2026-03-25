@@ -3,13 +3,23 @@
 import { useModal } from '@/hooks/useModal'
 import { useLocale } from '@/context/LocaleContext'
 import { useSiteContent } from '@/context/SiteContentContext'
+import { pickLang } from '@/lib/cms-types'
 import LocalizedLink from '@/components/LocalizedLink'
 import ScrollIndicator from './ScrollIndicator'
 
 export default function HeroSection() {
   const { openModal } = useModal()
-  const { t } = useLocale()
-  const { content } = useSiteContent()
+  const { locale } = useLocale()
+  const { content, payload } = useSiteContent()
+  const viewCases = pickLang(payload.pages.hero.viewCasesLabel, locale)
+  const stats =
+    payload.pages.hero.stats?.length > 0
+      ? payload.pages.hero.stats
+      : [
+          { value: '2x', label: { en: 'Faster', uk: 'Швидше' } },
+          { value: 'AI', label: { en: 'Development', uk: 'Розробка' } },
+          { value: '24/7', label: { en: 'Support', uk: 'Підтримка' } },
+        ]
 
   return (
     <section className="hero-alt">
@@ -41,26 +51,20 @@ export default function HeroSection() {
               onClick={openModal}
               className="btn btn-primary btn-large"
             >
-              {content.hero.ctaText || t('hero.cta')}
+              {content.hero.ctaText}
             </button>
             <LocalizedLink href={content.hero.ctaLink || '/cases'} className="btn-link">
-              {t('hero.viewCases')}
+              {viewCases}
             </LocalizedLink>
           </div>
         </div>
         <div className="hero-alt-stats">
-          <div className="stat-item">
-            <div className="stat-number">2x</div>
-            <div className="stat-label">{t('hero.statFaster')}</div>
-          </div>
-          <div className="stat-item">
-            <div className="stat-number">AI</div>
-            <div className="stat-label">{t('hero.statDev')}</div>
-          </div>
-          <div className="stat-item">
-            <div className="stat-number">24/7</div>
-            <div className="stat-label">{t('hero.statSupport')}</div>
-          </div>
+          {stats.map((row, i) => (
+            <div key={i} className="stat-item">
+              <div className="stat-number">{row.value}</div>
+              <div className="stat-label">{pickLang(row.label, locale)}</div>
+            </div>
+          ))}
         </div>
       </div>
       <ScrollIndicator />

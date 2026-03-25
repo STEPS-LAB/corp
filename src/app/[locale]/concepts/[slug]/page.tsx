@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import HeroBackground from '@/components/HeroBackground'
 import ScrollIndicator from '@/components/ScrollIndicator'
 import LocalizedLink from '@/components/LocalizedLink'
+import ConceptConceptLinksCard from '@/components/ConceptConceptLinksCard'
 import { getConceptBySlug, getConceptTexts } from '@/lib/concepts'
 import { getAlternateLanguages } from '@/lib/hreflang'
 import { SITE_URL } from '@/lib/constants'
@@ -106,6 +107,7 @@ export default async function ConceptDetailPage({
                   ))}
                 </ul>
               </div>
+              <ConceptConceptLinksCard locale={locale as 'en' | 'uk'} links={concept.conceptLinks} />
             </div>
           </div>
 

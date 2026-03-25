@@ -2,16 +2,20 @@
 
 export function AdminField({
   label,
+  hint,
   className = '',
   children,
 }: {
   label: string
+  /** Short helper under the label (muted). */
+  hint?: string
   className?: string
   children: React.ReactNode
 }) {
   return (
     <label className={`block text-sm text-neutral-400 ${className}`}>
       {label}
+      {hint ? <span className="mb-1.5 mt-0.5 block text-xs font-normal text-neutral-600">{hint}</span> : null}
       {children}
     </label>
   )

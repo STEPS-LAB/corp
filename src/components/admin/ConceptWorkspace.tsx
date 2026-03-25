@@ -329,22 +329,56 @@ export function ConceptWorkspace({ initialConcept }: { initialConcept: ConceptCM
                 }
               />
             </AdminField>
-            <div className="space-y-2">
-              <p className="text-xs font-medium text-neutral-500">Project links</p>
+            <div className="space-y-4 rounded-xl border border-neutral-800 bg-neutral-950/40 p-4">
+              <div>
+                <h2 className="text-sm font-medium text-neutral-200">Project links</h2>
+                <p className="mt-1 text-xs leading-relaxed text-neutral-500">
+                  <span className="text-neutral-400">Посилання на проєкт</span> — bilingual link labels for the public
+                  concept page. Use the language toggle (EN/UK) to edit each locale. URL is shared for both languages.
+                </p>
+              </div>
               {c.projectLinks.map((pl, i) => (
-                <div key={`pl-${i}`} className="grid gap-2 rounded-lg border border-neutral-800 p-3 md:grid-cols-2">
-                  <input
-                    className={adminInputClass}
-                    value={pl.label[L]}
-                    onChange={(e) =>
-                      updLink(i, { ...pl, label: { ...pl.label, [L]: e.target.value } })
+                <div key={`pl-${i}`} className="space-y-3 rounded-lg border border-neutral-800 bg-black/20 p-3">
+                  <AdminField
+                    label={`Link text (${L === 'en' ? 'EN' : 'UK'})`}
+                    hint={
+                      L === 'en'
+                        ? 'e.g. View live demo — shown on /en/concepts/...'
+                        : 'наприклад, Переглянути демо — на /uk/concepts/...'
                     }
-                  />
-                  <input
-                    className={adminInputClass}
-                    value={pl.url}
-                    onChange={(e) => updLink(i, { ...pl, url: e.target.value })}
-                  />
+                  >
+                    <input
+                      className={adminInputClass}
+                      placeholder={L === 'en' ? 'e.g. View live demo' : 'наприклад, Переглянути демо'}
+                      value={pl.text[L]}
+                      onChange={(e) =>
+                        updLink(i, { ...pl, text: { ...pl.text, [L]: e.target.value } })
+                      }
+                    />
+                  </AdminField>
+                  <AdminField label="URL" hint="Full address including https:// — same for EN and UK.">
+                    <input
+                      className={adminInputClass + ' font-mono text-xs'}
+                      placeholder="https://example.com"
+                      inputMode="url"
+                      autoComplete="url"
+                      value={pl.url}
+                      onChange={(e) => updLink(i, { ...pl, url: e.target.value })}
+                    />
+                  </AdminField>
+                  <button
+                    type="button"
+                    className="text-xs text-red-400/90 hover:text-red-300"
+                    onClick={() =>
+                      setC((p) => ({
+                        ...p,
+                        projectLinks: p.projectLinks.filter((_, j) => j !== i),
+                        updatedAt: new Date().toISOString(),
+                      }))
+                    }
+                  >
+                    Remove link
+                  </button>
                 </div>
               ))}
               <button
@@ -353,7 +387,7 @@ export function ConceptWorkspace({ initialConcept }: { initialConcept: ConceptCM
                 onClick={() =>
                   setC((p) => ({
                     ...p,
-                    projectLinks: [...p.projectLinks, { label: { en: '', uk: '' }, url: '' }],
+                    projectLinks: [...p.projectLinks, { text: { en: '', uk: '' }, url: '' }],
                     updatedAt: new Date().toISOString(),
                   }))
                 }

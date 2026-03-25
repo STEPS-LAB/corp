@@ -700,9 +700,10 @@ function parseProjectLinks(raw: unknown): CaseCMS['projectLinks'] {
   return raw
     .map((p) => {
       if (!p || typeof p !== 'object') return null
-      const o = p as { label?: Partial<BilingualText>; url?: string }
+      const o = p as { text?: Partial<BilingualText>; label?: Partial<BilingualText>; url?: string }
+      const t = o.text ?? o.label
       return {
-        label: { en: o.label?.en ?? '', uk: o.label?.uk ?? '' },
+        text: { en: t?.en ?? '', uk: t?.uk ?? '' },
         url: typeof o.url === 'string' ? o.url : '',
       }
     })

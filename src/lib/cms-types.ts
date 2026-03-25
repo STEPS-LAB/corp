@@ -164,8 +164,9 @@ export type TestimonialBlock = {
   role: BilingualText
 }
 
+/** Case/concept “project links”: visible anchor text per locale + absolute URL. */
 export type ProjectLink = {
-  label: BilingualText
+  text: BilingualText
   url: string
 }
 

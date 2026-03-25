@@ -5,6 +5,11 @@ import { pickLang } from '@/lib/cms-types'
 import { isCmsPublished } from '@/lib/cms-types'
 import { getConceptsFromKv } from '@/lib/kv'
 
+export type ConceptLinkDisplay = {
+  text: string
+  url: string
+}
+
 export type ConceptItem = {
   slug: string
   title: string
@@ -16,6 +21,8 @@ export type ConceptItem = {
   mobileImage: string
   oldDesktopImage: string
   oldMobileImage: string
+  /** Resolved for active locale; non-empty text + valid URL only. */
+  conceptLinks: ConceptLinkDisplay[]
 }
 
 const BASE_ITEMS = [
@@ -107,11 +114,20 @@ export function getConcepts(locale: 'en' | 'uk'): ConceptItem[] {
       description: localized.description,
       improvements: localized.improvements,
       technologies: concepts.technologies,
+      conceptLinks: [],
     }
   })
 }
 
 export function conceptCmsToItem(row: ConceptCMS, locale: 'en' | 'uk'): ConceptItem {
+  const conceptLinks = (row.projectLinks ?? [])
+    .map((pl) => {
+      const text = pickLang(pl.text, locale).trim()
+      const url = (pl.url ?? '').trim()
+      return { text, url }
+    })
+    .filter((x) => x.text && x.url)
+
   return {
     slug: row.slug,
     title: pickLang(row.title, locale),
@@ -123,6 +139,7 @@ export function conceptCmsToItem(row: ConceptCMS, locale: 'en' | 'uk'): ConceptI
     mobileImage: row.mobileImage || `/concepts/${row.slug}-mobile.png`,
     oldDesktopImage: row.oldDesktopImage || row.desktopImage || `/concepts/${row.slug}-desktop.png`,
     oldMobileImage: row.oldMobileImage || row.mobileImage || `/concepts/${row.slug}-mobile.png`,
+    conceptLinks,
   }
 }
 

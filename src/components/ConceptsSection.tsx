@@ -9,17 +9,15 @@ type ConceptsSectionProps = {
   variant?: 'home' | 'page'
 }
 
-function sortLatestThreeConcepts(items: ConceptCMS[]): ConceptCMS[] {
-  return [...items]
-    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
-    .slice(0, 3)
+function sortConceptsByLatest(items: ConceptCMS[]): ConceptCMS[] {
+  return [...items].sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
 }
 
 export default function ConceptsSection({ variant = 'home' }: ConceptsSectionProps) {
   const { locale } = useLocale()
   const { payload } = useSiteContent()
   const publishedConcepts = payload.concepts.filter((c) => c.status === 'published')
-  const latestThree = sortLatestThreeConcepts(publishedConcepts)
+  const sorted = sortConceptsByLatest(publishedConcepts)
 
   const featured =
     variant === 'page' && payload.labIndex?.featuredIds?.length
@@ -28,7 +26,7 @@ export default function ConceptsSection({ variant = 'home' }: ConceptsSectionPro
           .filter((c): c is ConceptCMS => Boolean(c))
       : []
 
-  const concepts = variant === 'page' && featured.length ? featured : latestThree
+  const concepts = variant === 'page' && featured.length ? featured : sorted
 
   const heading =
     variant === 'page' ? pickLang(payload.labIndex.sectionTitle, locale) : pickLang(payload.pages.labels.conceptsHeading, locale)

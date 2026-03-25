@@ -11,6 +11,7 @@ import {
   Globe,
   LayoutDashboard,
   Layers,
+  Newspaper,
   PanelLeft,
 } from 'lucide-react'
 
@@ -101,6 +102,19 @@ export function AdminSidebar() {
           <div className="ml-1 space-y-0.5 border-l border-neutral-800 pl-2">
             <NavItem href="/admin/services" icon={FolderOpen} label="All Services" />
             <NavItem href="/admin/services/landing" icon={FolderOpen} label="Services Landing" />
+          </div>
+        </div>
+
+        <div className={`my-2 border-t ${border}`} />
+
+        <div className="pt-2">
+          <p className="mb-1 flex items-center gap-1 px-3 text-[11px] font-medium uppercase tracking-wider text-neutral-600">
+            <Newspaper className="h-3 w-3" />
+            News
+          </p>
+          <div className="ml-1 space-y-0.5 border-l border-neutral-800 pl-2">
+            <NavItem href="/admin/news" icon={FolderOpen} label="All news" />
+            <NavItem href="/admin/news/landing" icon={FolderOpen} label="News landing" />
           </div>
         </div>
 

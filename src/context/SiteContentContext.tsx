@@ -33,9 +33,11 @@ function mergePayloadPatch(server: unknown): PublicCmsPayload {
     services: Array.isArray(s.services) ? s.services : d.services,
     cases: Array.isArray(s.cases) ? s.cases : d.cases,
     concepts: Array.isArray(s.concepts) ? s.concepts : d.concepts,
+    news: Array.isArray(s.news) ? s.news : d.news,
     portfolioIndex: s.portfolioIndex ?? d.portfolioIndex,
     servicesIndex: s.servicesIndex ?? d.servicesIndex,
     labIndex: s.labIndex ?? d.labIndex,
+    newsIndex: s.newsIndex ?? d.newsIndex,
     siteHeader: s.siteHeader ?? d.siteHeader,
     siteFooter: s.siteFooter ?? d.siteFooter,
     approachPage: s.approachPage ?? d.approachPage,
@@ -62,7 +64,7 @@ export function SiteContentProvider({ children }: { children: React.ReactNode })
       if (!data || typeof data !== 'object') return
       const o = data as Record<string, unknown>
       if ('error' in o && !Array.isArray(o.cases)) return
-      if (!o.pages || !Array.isArray(o.cases) || !Array.isArray(o.services)) return
+      if (!o.pages || !Array.isArray(o.cases) || !Array.isArray(o.services) || !Array.isArray(o.news)) return
       setPayload(mergePayloadPatch(data))
     } catch {
       /* aborted or network — keep existing payload */

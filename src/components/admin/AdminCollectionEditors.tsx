@@ -124,6 +124,47 @@ export function ServiceFields({
           onChange={(e) => upd({ ...s, order: Number(e.target.value), updatedAt: new Date().toISOString() })}
         />
       </AdminField>
+      <AdminField label="Cover (detail)" className="md:col-span-2">
+        <ImageUploader
+          value={s.coverImageUrl ?? ''}
+          onUrlChange={(url) => upd({ ...s, coverImageUrl: url, updatedAt: new Date().toISOString() })}
+        />
+      </AdminField>
+      <AdminField label="Gallery URLs (one per line)" className="md:col-span-2">
+        <textarea
+          className={adminInputClass + ' min-h-16 font-mono text-xs'}
+          value={(s.galleryImages ?? []).join('\n')}
+          onChange={(e) =>
+            upd({
+              ...s,
+              galleryImages: e.target.value
+                .split('\n')
+                .map((x) => x.trim())
+                .filter(Boolean),
+              updatedAt: new Date().toISOString(),
+            })
+          }
+        />
+      </AdminField>
+      <AdminField label={`Tech stack (${L}) one per line`} className="md:col-span-2">
+        <textarea
+          className={adminInputClass + ' min-h-16 font-mono text-xs'}
+          value={(s.techStackLines[L] ?? []).join('\n')}
+          onChange={(e) =>
+            upd({
+              ...s,
+              techStackLines: {
+                ...s.techStackLines,
+                [L]: e.target.value
+                  .split('\n')
+                  .map((x) => x.trim())
+                  .filter(Boolean),
+              },
+              updatedAt: new Date().toISOString(),
+            })
+          }
+        />
+      </AdminField>
     </div>
   )
 }

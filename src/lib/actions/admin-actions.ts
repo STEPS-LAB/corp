@@ -7,6 +7,7 @@ import {
   type CaseCMS,
   type CollectionLandingPage,
   type ConceptCMS,
+  type NewsCMS,
   type PagesContent,
   type PublicCmsPayload,
   type ServiceCMS,
@@ -16,16 +17,19 @@ import {
   DEFAULT_CONCEPTS_CMS,
   DEFAULT_SERVICES_CMS,
   emptyCasePageDetail,
+  emptySeo,
 } from '@/lib/cms-types'
 import { COLLECTION_PAGE_SLUGS } from '@/lib/cms-granular-keys'
 import { getAdminCookieName, verifyAdminToken } from '@/lib/admin-auth'
 import {
   deleteCaseItem,
   deleteConceptItem,
+  deleteNewsItem,
   deleteServiceItem,
   getCasesFromKv,
   getConceptsFromKv,
   getFullCmsPayload,
+  getNewsFromKv,
   getPagesFromKv,
   getServicesFromKv,
   mergePagesOnto,
@@ -34,12 +38,14 @@ import {
   setCasesToKv,
   setCollectionLandingPageKv,
   setConceptsToKv,
+  setNewsToKv,
   setPagesToKv,
   setServicesToKv,
   setSiteFooterKv,
   setSiteHeaderKv,
   writeCaseItem,
   writeConceptItem,
+  writeNewsItem,
   writeServiceItem,
 } from '@/lib/kv'
 
@@ -61,8 +67,35 @@ function revalidateCmsPaths() {
     revalidatePath(`/${loc}/concepts`, 'layout')
     revalidatePath(`/${loc}/cases`, 'layout')
     revalidatePath(`/${loc}/services`, 'page')
+    revalidatePath(`/${loc}/news`, 'page')
     revalidatePath(`/${loc}/about`, 'page')
     revalidatePath(`/${loc}/contacts`, 'page')
+  }
+}
+
+function normalizePublicHref(href: string): string {
+  const t = href.trim()
+  return t.startsWith('/') ? t : `/${t}`
+}
+
+function revalidateServiceDetailByHref(href: string) {
+  const h = normalizePublicHref(href).replace(/^\/+/, '')
+  if (!h.startsWith('services/')) return
+  for (const loc of ['en', 'uk'] as const) {
+    revalidatePath(`/${loc}/${h}`, 'page')
+  }
+}
+
+function revalidateAllServiceDetails(services: ServiceCMS[]) {
+  for (const s of services) {
+    if (s.href) revalidateServiceDetailByHref(s.href)
+  }
+}
+
+function revalidateNewsDetailBySlug(slug: string) {
+  if (!slug.trim()) return
+  for (const loc of ['en', 'uk'] as const) {
+    revalidatePath(`/${loc}/news/${slug}`, 'page')
   }
 }
 
@@ -93,6 +126,7 @@ export async function seedCmsAction(): Promise<ActionResult<{ seeded: boolean; p
     revalidateCmsPaths()
     const payload = await getFullCmsPayload()
     revalidateAllCaseDetails(payload.cases)
+    revalidateAllServiceDetails(payload.services)
     return { ok: true, data: { seeded: result.seeded, payload } }
   } catch (e) {
     const msg = e instanceof Error ? e.message : 'Seed failed'
@@ -173,18 +207,24 @@ export async function saveFullCmsPayloadAction(payload: PublicCmsPayload): Promi
       setServicesToKv(payload.services),
       setCasesToKv(payload.cases),
       setConceptsToKv(payload.concepts),
+      setNewsToKv(payload.news),
       setCollectionLandingPageKv(COLLECTION_PAGE_SLUGS.portfolioIndex, payload.portfolioIndex),
       setCollectionLandingPageKv(COLLECTION_PAGE_SLUGS.servicesIndex, payload.servicesIndex),
       setCollectionLandingPageKv(COLLECTION_PAGE_SLUGS.labIndex, payload.labIndex),
+      setCollectionLandingPageKv(COLLECTION_PAGE_SLUGS.newsIndex, payload.newsIndex),
       setSiteHeaderKv(payload.siteHeader),
       setSiteFooterKv(payload.siteFooter),
       setApproachPageKv(payload.approachPage),
     ])
     revalidateCmsPaths()
     revalidateAllCaseDetails(payload.cases)
+    revalidateAllServiceDetails(payload.services)
     for (const c of payload.concepts) {
       revalidatePath(`/en/concepts/${c.slug}`, 'page')
       revalidatePath(`/uk/concepts/${c.slug}`, 'page')
+    }
+    for (const n of payload.news) {
+      revalidateNewsDetailBySlug(n.slug)
     }
     return okWithFreshPayload()
   } catch (e) {
@@ -198,6 +238,7 @@ export async function saveServicesAction(services: ServiceCMS[]): Promise<Action
   try {
     await setServicesToKv(services)
     revalidateCmsPaths()
+    revalidateAllServiceDetails(services)
     return okWithFreshPayload()
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : 'Save failed' }
@@ -257,6 +298,7 @@ export async function addServiceAction(): Promise<ActionResult<PublicCmsPayload>
   const merged = [...list, next]
   await setServicesToKv(merged)
   revalidateCmsPaths()
+  revalidateAllServiceDetails(merged)
   return okWithFreshPayload()
 }
 
@@ -264,8 +306,11 @@ export async function deleteServiceAction(id: string): Promise<ActionResult<Publ
   const auth = await assertAdmin()
   if (!auth.ok) return auth
   try {
+    const prev = await getServicesFromKv()
+    const victim = prev.find((s) => s.id === id)
     await deleteServiceItem(id)
     revalidateCmsPaths()
+    if (victim?.href) revalidateServiceDetailByHref(victim.href)
     return okWithFreshPayload()
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : 'Delete failed' }
@@ -414,8 +459,10 @@ export async function saveCmsItemAction(
       return okWithFreshPayload()
     }
     if (collection === 'services') {
-      await writeServiceItem(item as ServiceCMS)
+      const svc = item as ServiceCMS
+      await writeServiceItem(svc)
       revalidateCmsPaths()
+      revalidateServiceDetailByHref(svc.href)
       return okWithFreshPayload()
     }
     const con = item as ConceptCMS
@@ -488,9 +535,66 @@ export async function createServiceDraftAction(): Promise<ActionResult<{ id: str
     }
     await writeServiceItem(next)
     revalidateCmsPaths()
+    revalidateServiceDetailByHref(next.href)
     return { ok: true, data: { id } }
   } catch (e) {
     return { ok: false, error: e instanceof Error ? e.message : 'Create failed' }
+  }
+}
+
+export async function createNewsDraftAction(): Promise<ActionResult<{ id: string }>> {
+  const auth = await assertAdmin()
+  if (!auth.ok) return auth
+  try {
+    const list = await getNewsFromKv()
+    const id = `news-${crypto.randomUUID().slice(0, 8)}`
+    const slug = `post-${id.slice(-8)}`
+    const next: NewsCMS = {
+      id,
+      slug,
+      title: { en: 'New post', uk: 'Новий пост' },
+      publishedAt: new Date().toISOString().slice(0, 10),
+      coverImageUrl: '',
+      content: { en: '', uk: '' },
+      seo: emptySeo(),
+      status: 'draft',
+      order: list.length,
+      updatedAt: new Date().toISOString(),
+    }
+    await writeNewsItem(next)
+    revalidateCmsPaths()
+    revalidateNewsDetailBySlug(slug)
+    return { ok: true, data: { id } }
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'Create failed' }
+  }
+}
+
+export async function deleteNewsAction(id: string): Promise<ActionResult<PublicCmsPayload>> {
+  const auth = await assertAdmin()
+  if (!auth.ok) return auth
+  try {
+    const list = await getNewsFromKv()
+    const victim = list.find((n) => n.id === id)
+    await deleteNewsItem(id)
+    revalidateCmsPaths()
+    if (victim) revalidateNewsDetailBySlug(victim.slug)
+    return okWithFreshPayload()
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'Delete failed' }
+  }
+}
+
+export async function saveNewsItemAction(item: NewsCMS): Promise<ActionResult<PublicCmsPayload>> {
+  const auth = await assertAdmin()
+  if (!auth.ok) return auth
+  try {
+    await writeNewsItem({ ...item, updatedAt: new Date().toISOString() })
+    revalidateCmsPaths()
+    revalidateNewsDetailBySlug(item.slug)
+    return okWithFreshPayload()
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'Save failed' }
   }
 }
 
@@ -549,6 +653,10 @@ export async function saveCollectionLandingAction(
     if (slug === COLLECTION_PAGE_SLUGS.labIndex) {
       revalidatePath('/en/concepts', 'layout')
       revalidatePath('/uk/concepts', 'layout')
+    }
+    if (slug === COLLECTION_PAGE_SLUGS.newsIndex) {
+      revalidatePath('/en/news', 'page')
+      revalidatePath('/uk/news', 'page')
     }
     return okWithFreshPayload()
   } catch (e) {

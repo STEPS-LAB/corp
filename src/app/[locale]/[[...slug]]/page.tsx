@@ -16,14 +16,9 @@ import { generateMetadata as generateBlogMetadata } from '@/app/blog/page'
 import BlogPageContent from '@/app/blog/BlogPageContent'
 import ContactsPageContent from '@/app/contacts/ContactsPageContent'
 import ApproachPageContent from '@/app/approach/ApproachPageContent'
-import { generateMetadata as generateAiMetadata } from '@/app/services/ai-automation/page'
-import AIAutomationPage from '@/app/services/ai-automation/page'
-import { generateMetadata as generateMvpMetadata } from '@/app/services/mvp-startups/page'
-import MVPStartupsPage from '@/app/services/mvp-startups/page'
-import { generateMetadata as generateSupportMetadata } from '@/app/services/support-scaling/page'
-import SupportScalingPage from '@/app/services/support-scaling/page'
-import { generateMetadata as generateWebMetadata } from '@/app/services/web-development/page'
-import WebDevelopmentPage from '@/app/services/web-development/page'
+import ServiceDetailContent from '@/components/ServiceDetailContent'
+import NewsListingContent from '@/components/NewsListingContent'
+import NewsArticleContent from '@/components/NewsArticleContent'
 import en from '@/messages/en.json'
 import uk from '@/messages/uk.json'
 
@@ -34,6 +29,20 @@ function caseDetailHrefFromKey(key: string): string | null {
   const rest = key.slice('cases/'.length)
   if (!rest || rest.includes('//')) return null
   return `/${key}`
+}
+
+function serviceDetailHrefFromKey(key: string): string | null {
+  if (key === 'services' || !key.startsWith('services/')) return null
+  const rest = key.slice('services/'.length)
+  if (!rest || rest.includes('//') || rest.includes('/')) return null
+  return `/${key}`
+}
+
+function newsDetailSlugFromKey(key: string): string | null {
+  if (key === 'news' || !key.startsWith('news/')) return null
+  const rest = key.slice('news/'.length)
+  if (!rest || rest.includes('/')) return null
+  return rest
 }
 
 export const dynamic = 'force-dynamic'
@@ -49,15 +58,12 @@ const routeMap: Record<string, RouteEntry> = {
   cases: { render: () => <CasesPageContent />, getMetadata: generateCasesMetadata },
   about: { render: () => <AboutPageContent />, getMetadata: generateAboutMetadata },
   blog: { render: () => <BlogPageContent />, getMetadata: generateBlogMetadata },
+  news: { render: () => <NewsListingContent /> },
   contacts: { render: () => <ContactsPageContent /> },
   contact: { render: () => <ContactsPageContent /> },
   approach: {
     render: () => <ApproachPageContent />,
   },
-  'services/ai-automation': { render: () => <AIAutomationPage />, getMetadata: generateAiMetadata },
-  'services/mvp-startups': { render: () => <MVPStartupsPage />, getMetadata: generateMvpMetadata },
-  'services/support-scaling': { render: () => <SupportScalingPage />, getMetadata: generateSupportMetadata },
-  'services/web-development': { render: () => <WebDevelopmentPage />, getMetadata: generateWebMetadata },
 }
 
 function getLocalizedMeta(locale: 'en' | 'uk', key: string): Pick<Metadata, 'title' | 'description'> {
@@ -112,6 +118,12 @@ function getLocalizedMeta(locale: 'en' | 'uk', key: string): Pick<Metadata, 'tit
   }
 }
 
+function normalizeHref(href: string): string {
+  const t = href.trim()
+  if (!t) return ''
+  return t.startsWith('/') ? t : `/${t}`
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -162,6 +174,66 @@ export async function generateMetadata({
     }
   }
 
+  const serviceHref = serviceDetailHrefFromKey(key)
+  if (serviceHref) {
+    const payload = await getCachedCmsPayload()
+    const svc = payload.services.find((s) => normalizeHref(s.href) === normalizeHref(serviceHref))
+    if (!svc || svc.status !== 'published') notFound()
+    const fallback = getLocalizedMeta(locale, key)
+    const title = pickLang(svc.seo.metaTitle, loc).trim() || `${pickLang(svc.title, loc)} | STEPS LAB` || fallback.title
+    const rawDesc =
+      pickLang(svc.seo.metaDescription, loc).trim() ||
+      pickLang(svc.description, loc).trim() ||
+      fallback.description ||
+      ''
+    const desc = rawDesc.slice(0, 160)
+    const canonicalPath = `/${locale}${path === '/' ? '' : path}`
+    return {
+      title,
+      description: desc,
+      alternates: {
+        canonical: canonicalPath,
+        languages: (await getAlternateLanguages(path)).languages,
+      },
+    }
+  }
+
+  const newsSlug = newsDetailSlugFromKey(key)
+  if (newsSlug) {
+    const payload = await getCachedCmsPayload()
+    const post = payload.news.find((n) => n.slug === newsSlug && n.status === 'published')
+    if (!post) notFound()
+    const title = pickLang(post.seo.metaTitle, loc).trim() || `${pickLang(post.title, loc)} | STEPS LAB`
+    const rawDesc = pickLang(post.seo.metaDescription, loc).trim() || pickLang(post.content, loc) || ''
+    const desc = rawDesc.slice(0, 160)
+    const canonicalPath = `/${locale}${path === '/' ? '' : path}`
+    return {
+      title,
+      description: desc,
+      alternates: {
+        canonical: canonicalPath,
+        languages: (await getAlternateLanguages(path)).languages,
+      },
+    }
+  }
+
+  if (key === 'news') {
+    const payload = await getCachedCmsPayload()
+    const seo = payload.newsIndex.seo
+    const title = pickLang(seo.metaTitle, loc).trim() || (loc === 'uk' ? 'Новини — STEPS LAB' : 'News — STEPS LAB')
+    const description =
+      pickLang(seo.metaDescription, loc).trim() ||
+      (loc === 'uk' ? 'Оновлення та статті від STEPS LAB.' : 'Updates and articles from STEPS LAB.')
+    return {
+      title,
+      description,
+      alternates: {
+        canonical: `/${locale}${path}`,
+        languages: (await getAlternateLanguages(path)).languages,
+      },
+    }
+  }
+
   const route = routeMap[key]
   if (!route) return {}
 
@@ -197,6 +269,22 @@ export default async function LocalizedPage({
     const found = payload.cases.some((c) => c.href === caseHref)
     if (!found) notFound()
     return <CaseStudyContent caseHref={caseHref} />
+  }
+
+  const serviceHref = serviceDetailHrefFromKey(key)
+  if (serviceHref) {
+    const payload = await getCachedCmsPayload()
+    const svc = payload.services.find((s) => normalizeHref(s.href) === normalizeHref(serviceHref))
+    if (!svc || svc.status !== 'published') notFound()
+    return <ServiceDetailContent service={svc} />
+  }
+
+  const newsSlug = newsDetailSlugFromKey(key)
+  if (newsSlug) {
+    const payload = await getCachedCmsPayload()
+    const post = payload.news.find((n) => n.slug === newsSlug && n.status === 'published')
+    if (!post) notFound()
+    return <NewsArticleContent post={post} />
   }
 
   const route = routeMap[key]

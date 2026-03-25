@@ -184,6 +184,28 @@ export type ServiceCMS = {
   /** Optional pricing / process note blocks. */
   pricingNote: BilingualText
   processSteps: { en: string[]; uk: string[] }
+  /** Hero / cover image (Vercel Blob URL). */
+  coverImageUrl: string
+  /** Extra images for the detail page gallery. */
+  galleryImages: string[]
+  /** Sidebar “technologies” list per locale. */
+  techStackLines: { en: string[]; uk: string[] }
+  seo: BilingualSEO
+  status: PublishStatus
+  order: number
+  updatedAt: string
+}
+
+/** News / blog post (Redis JSON). */
+export type NewsCMS = {
+  id: string
+  /** URL segment after /news/ */
+  slug: string
+  title: BilingualText
+  publishedAt: string
+  coverImageUrl: string
+  /** Markdown per locale. */
+  content: BilingualText
   seo: BilingualSEO
   status: PublishStatus
   order: number
@@ -298,9 +320,11 @@ export type PublicCmsPayload = {
   services: ServiceCMS[]
   cases: CaseCMS[]
   concepts: ConceptCMS[]
+  news: NewsCMS[]
   portfolioIndex: CollectionLandingPage
   servicesIndex: CollectionLandingPage
   labIndex: CollectionLandingPage
+  newsIndex: CollectionLandingPage
   siteHeader: SiteHeaderCMS
   siteFooter: SiteFooterCMS
   approachPage: ApproachPageCMS
@@ -312,6 +336,7 @@ export const KV_KEYS = {
   services: 'content:services',
   cases: 'content:cases',
   concepts: 'content:concepts',
+  news: 'content:news',
 } as const
 
 const iso = () => new Date().toISOString()
@@ -391,6 +416,25 @@ export const DEFAULT_LAB_INDEX: CollectionLandingPage = {
     metaDescription: b(
       'Design concepts and product explorations from STEPS LAB.',
       'Дизайн-концепти та продуктові досліди STEPS LAB.'
+    ),
+  },
+  featuredIds: [],
+}
+
+export const DEFAULT_NEWS_INDEX: CollectionLandingPage = {
+  badge: b('News', 'Новини'),
+  heroTitleLine1: b('STEPS LAB', 'STEPS LAB'),
+  heroTitleLine2: b('Insights', 'Огляди'),
+  heroDescription: b(
+    'Notes on AI-supported engineering, performance, and product delivery.',
+    'Нотатки про AI-інженерію, performance та продуктовий delivery.'
+  ),
+  sectionTitle: b('Latest', 'Останні'),
+  seo: {
+    metaTitle: b('News — STEPS LAB', 'Новини — STEPS LAB'),
+    metaDescription: b(
+      'Updates and articles from STEPS LAB.',
+      'Оновлення та статті від STEPS LAB.'
     ),
   },
   featuredIds: [],
@@ -528,6 +572,9 @@ const defaultServiceExtras = () => ({
   benefits: { en: [] as string[], uk: [] as string[] },
   pricingNote: b('', ''),
   processSteps: { en: [] as string[], uk: [] as string[] },
+  coverImageUrl: '',
+  galleryImages: [] as string[],
+  techStackLines: { en: [] as string[], uk: [] as string[] },
   seo: emptySeo(),
   status: 'published' as PublishStatus,
 })
@@ -949,9 +996,11 @@ export function defaultCmsPayload(): PublicCmsPayload {
     services: DEFAULT_SERVICES_CMS,
     cases: DEFAULT_CASES_CMS,
     concepts: DEFAULT_CONCEPTS_CMS,
+    news: [],
     portfolioIndex: DEFAULT_PORTFOLIO_INDEX,
     servicesIndex: DEFAULT_SERVICES_INDEX,
     labIndex: DEFAULT_LAB_INDEX,
+    newsIndex: DEFAULT_NEWS_INDEX,
     siteHeader: DEFAULT_SITE_HEADER_CMS,
     siteFooter: DEFAULT_SITE_FOOTER_CMS,
     approachPage: DEFAULT_APPROACH_PAGE_CMS,

@@ -176,7 +176,7 @@ export function AdminCmsDashboard({ initialPayload, initialView }: Props) {
                 ['Services', String(payload.services.length)],
                 ['Portfolio cases', String(payload.cases.length)],
                 ['Lab concepts', String(payload.concepts.length)],
-                ['Gallery images', String(payload.pages.images.gallery.length)],
+                ['News posts', String(payload.news.length)],
               ].map(([k, v]) => (
                 <div key={k} className="rounded-xl border border-neutral-800 bg-neutral-950/60 px-4 py-3">
                   <p className="text-xs uppercase tracking-wider text-neutral-500">{k}</p>

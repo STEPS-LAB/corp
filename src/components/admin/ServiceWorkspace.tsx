@@ -10,6 +10,7 @@ import { deleteServiceAction, loadCmsPayloadAction, saveCmsItemAction } from '@/
 import { notifyPublicCmsUpdated } from '@/lib/cms-client-sync'
 import { AdminBreadcrumbs } from '@/components/admin/AdminBreadcrumbs'
 import { CmsLocaleBar } from '@/components/admin/CmsLocaleBar'
+import ImageUploader from '@/components/admin/ImageUploader'
 import { AdminField, adminInputClass } from '@/components/admin/admin-ui'
 
 function statusPill(status: string) {
@@ -60,6 +61,8 @@ export function ServiceWorkspace({ initialService }: { initialService: ServiceCM
 
   const benefitsText = s.benefits[L].join('\n')
   const processText = s.processSteps[L].join('\n')
+  const galleryText = (s.galleryImages ?? []).join('\n')
+  const techStackText = (s.techStackLines[L] ?? []).join('\n')
 
   return (
     <main className="min-h-0 flex-1 overflow-y-auto">
@@ -297,6 +300,53 @@ export function ServiceWorkspace({ initialService }: { initialService: ServiceCM
                     seo: {
                       ...p.seo,
                       metaDescription: { ...p.seo.metaDescription, [L]: e.target.value },
+                    },
+                    updatedAt: new Date().toISOString(),
+                  }))
+                }
+              />
+            </AdminField>
+          </div>
+        </div>
+
+        <div className="mt-10 space-y-4 border-t border-neutral-800 pt-10">
+          <h2 className="text-sm font-medium text-neutral-400">Media & tech stack</h2>
+          <div className="grid gap-6 lg:grid-cols-2">
+            <AdminField label="Cover image (detail hero)">
+              <ImageUploader
+                value={s.coverImageUrl ?? ''}
+                onUrlChange={(url) => setS((p) => ({ ...p, coverImageUrl: url, updatedAt: new Date().toISOString() }))}
+              />
+            </AdminField>
+            <AdminField label="Gallery image URLs (one per line)">
+              <textarea
+                className={adminInputClass + ' min-h-28'}
+                value={galleryText}
+                onChange={(e) =>
+                  setS((p) => ({
+                    ...p,
+                    galleryImages: e.target.value
+                      .split('\n')
+                      .map((x) => x.trim())
+                      .filter(Boolean),
+                    updatedAt: new Date().toISOString(),
+                  }))
+                }
+              />
+            </AdminField>
+            <AdminField label={`Technology lines (${L}) one per line`} className="lg:col-span-2">
+              <textarea
+                className={adminInputClass + ' min-h-24'}
+                value={techStackText}
+                onChange={(e) =>
+                  setS((p) => ({
+                    ...p,
+                    techStackLines: {
+                      ...p.techStackLines,
+                      [L]: e.target.value
+                        .split('\n')
+                        .map((x) => x.trim())
+                        .filter(Boolean),
                     },
                     updatedAt: new Date().toISOString(),
                   }))

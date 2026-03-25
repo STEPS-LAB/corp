@@ -12,6 +12,7 @@ import type {
   ConceptCMS,
   FooterMenuColumnCMS,
   HeroStatItem,
+  NewsCMS,
   PagesContent,
   PublicCmsPayload,
   ServiceCMS,
@@ -23,6 +24,7 @@ import {
   DEFAULT_CASES_CMS,
   DEFAULT_CONCEPTS_CMS,
   DEFAULT_LAB_INDEX,
+  DEFAULT_NEWS_INDEX,
   DEFAULT_PAGES_CONTENT,
   DEFAULT_PORTFOLIO_INDEX,
   DEFAULT_SERVICES_CMS,
@@ -31,6 +33,7 @@ import {
   DEFAULT_SITE_HEADER_CMS,
   KV_KEYS,
   defaultCmsPayload,
+  emptySeo,
   slugFromCaseHref,
 } from '@/lib/cms-types'
 import { CMS_GLOBAL_KEYS, COLLECTION_PAGE_SLUGS, GRANULAR, type CmsCollection } from '@/lib/cms-granular-keys'
@@ -361,6 +364,40 @@ async function ensureGranularMigrated(collection: CmsCollection, legacyKey: stri
   for (const c of list) await setJson(GRANULAR.item('concepts', c.id), c)
 }
 
+async function ensureNewsMigrated(): Promise<void> {
+  const idx = await getJson<string[]>(GRANULAR.index('news'))
+  if (idx !== null) return
+  const raw = await getJson<unknown>(KV_KEYS.news)
+  if (raw == null || !Array.isArray(raw) || raw.length === 0) {
+    await setJson(GRANULAR.index('news'), [])
+    return
+  }
+  const list = raw.map((item, i) => sanitizeNewsItem(item, i))
+  await setJson(
+    GRANULAR.index('news'),
+    list
+      .slice()
+      .sort((a, b) => a.order - b.order)
+      .map((n) => n.id)
+  )
+  for (const n of list) await setJson(GRANULAR.item('news', n.id), n)
+}
+
+async function syncNewsLegacyFromGranular(): Promise<void> {
+  const idx = await getJson<string[]>(GRANULAR.index('news'))
+  if (!idx || idx.length === 0) {
+    await setJson(KV_KEYS.news, [])
+    return
+  }
+  const items: NewsCMS[] = []
+  for (const id of idx) {
+    const raw = await getJson<unknown>(GRANULAR.item('news', id))
+    if (raw) items.push(sanitizeNewsItem(raw, 0))
+  }
+  items.sort((a, b) => a.order - b.order)
+  await setJson(KV_KEYS.news, items)
+}
+
 async function syncLegacyBlobFromGranular(
   collection: CmsCollection,
   legacyKey: string,
@@ -497,13 +534,14 @@ function mergePages(partial: unknown): PagesContent {
 }
 
 function sanitizeServiceItem(s: unknown, index: number): ServiceCMS {
-  const d = DEFAULT_SERVICES_CMS[index] ?? DEFAULT_SERVICES_CMS[0]
-  if (!s || typeof s !== 'object') return { ...d, id: d?.id ?? `svc-${index}` }
+  const fallback = DEFAULT_SERVICES_CMS[index] ?? DEFAULT_SERVICES_CMS[0]
+  if (!s || typeof s !== 'object') return { ...fallback, id: fallback.id }
   const x = s as Partial<ServiceCMS>
-  const def = d ?? DEFAULT_SERVICES_CMS[0]
+  const id = typeof x.id === 'string' && x.id.length > 0 ? x.id : fallback.id
+  const def = DEFAULT_SERVICES_CMS.find((d) => d.id === id) ?? fallback
   const seo = x.seo ?? def.seo
   return {
-    id: x.id ?? def.id,
+    id,
     href: x.href ?? def.href,
     icon_name: x.icon_name ?? def.icon_name,
     title: { ...def.title, ...(x.title ?? {}) },
@@ -519,6 +557,12 @@ function sanitizeServiceItem(s: unknown, index: number): ServiceCMS {
       en: Array.isArray(x.processSteps?.en) ? x.processSteps.en : def.processSteps.en,
       uk: Array.isArray(x.processSteps?.uk) ? x.processSteps.uk : def.processSteps.uk,
     },
+    coverImageUrl: typeof x.coverImageUrl === 'string' ? x.coverImageUrl : def.coverImageUrl ?? '',
+    galleryImages: Array.isArray(x.galleryImages) ? x.galleryImages : def.galleryImages ?? [],
+    techStackLines: {
+      en: Array.isArray(x.techStackLines?.en) ? x.techStackLines.en : def.techStackLines?.en ?? [],
+      uk: Array.isArray(x.techStackLines?.uk) ? x.techStackLines.uk : def.techStackLines?.uk ?? [],
+    },
     seo: {
       metaTitle: mb(def.seo.metaTitle, seo?.metaTitle),
       metaDescription: mb(def.seo.metaDescription, seo?.metaDescription),
@@ -526,6 +570,42 @@ function sanitizeServiceItem(s: unknown, index: number): ServiceCMS {
     status: x.status === 'draft' || x.status === 'published' ? x.status : def.status,
     order: typeof x.order === 'number' ? x.order : def.order,
     updatedAt: typeof x.updatedAt === 'string' ? x.updatedAt : def.updatedAt,
+  }
+}
+
+const isoDate = () => new Date().toISOString()
+
+function sanitizeNewsItem(n: unknown, index: number): NewsCMS {
+  const base: NewsCMS = {
+    id: `news-${index}`,
+    slug: `post-${index}`,
+    title: { en: '', uk: '' },
+    publishedAt: isoDate().slice(0, 10),
+    coverImageUrl: '',
+    content: { en: '', uk: '' },
+    seo: emptySeo(),
+    status: 'draft',
+    order: index,
+    updatedAt: isoDate(),
+  }
+  if (!n || typeof n !== 'object') return base
+  const x = n as Partial<NewsCMS>
+  const id = typeof x.id === 'string' && x.id.length > 0 ? x.id : base.id
+  const seo = x.seo ?? base.seo
+  return {
+    id,
+    slug: typeof x.slug === 'string' && x.slug.length > 0 ? x.slug : base.slug,
+    title: { ...base.title, ...(x.title ?? {}) },
+    publishedAt: typeof x.publishedAt === 'string' ? x.publishedAt : base.publishedAt,
+    coverImageUrl: typeof x.coverImageUrl === 'string' ? x.coverImageUrl : '',
+    content: { ...base.content, ...(x.content ?? {}) },
+    seo: {
+      metaTitle: mb(base.seo.metaTitle, seo?.metaTitle),
+      metaDescription: mb(base.seo.metaDescription, seo?.metaDescription),
+    },
+    status: x.status === 'draft' || x.status === 'published' ? x.status : base.status,
+    order: typeof x.order === 'number' ? x.order : base.order,
+    updatedAt: typeof x.updatedAt === 'string' ? x.updatedAt : base.updatedAt,
   }
 }
 
@@ -809,6 +889,57 @@ export async function deleteConceptItem(conceptId: string): Promise<void> {
   await syncLegacyBlobFromGranular('concepts', KV_KEYS.concepts, (raw) => sanitizeConceptItem(raw, 0))
 }
 
+export async function getNewsFromKv(): Promise<NewsCMS[]> {
+  await ensureNewsMigrated()
+  const idx = await getJson<string[]>(GRANULAR.index('news'))
+  if (idx && idx.length > 0) {
+    const out: NewsCMS[] = []
+    for (const id of idx) {
+      const raw = await getJson<unknown>(GRANULAR.item('news', id))
+      if (raw) out.push(sanitizeNewsItem(raw, 0))
+    }
+    return out.sort((a, b) => a.order - b.order)
+  }
+  const raw = await getJson<unknown>(KV_KEYS.news)
+  if (!Array.isArray(raw) || raw.length === 0) return []
+  return raw.map((item, i) => sanitizeNewsItem(item, i))
+}
+
+export async function setNewsToKv(news: NewsCMS[]): Promise<void> {
+  await setJson(KV_KEYS.news, news)
+  const ids = news.slice().sort((a, b) => a.order - b.order).map((n) => n.id)
+  await setJson(GRANULAR.index('news'), ids)
+  for (const n of news) {
+    await setJson(GRANULAR.item('news', n.id), n)
+  }
+}
+
+export async function getNewsById(newsId: string): Promise<NewsCMS | null> {
+  await ensureNewsMigrated()
+  const raw = await getJson<unknown>(GRANULAR.item('news', newsId))
+  if (raw) return sanitizeNewsItem(raw, 0)
+  const legacy = await getJson<unknown>(KV_KEYS.news)
+  if (!Array.isArray(legacy)) return null
+  const found = legacy.find((row) => row && typeof row === 'object' && (row as { id?: string }).id === newsId)
+  return found ? sanitizeNewsItem(found, 0) : null
+}
+
+export async function writeNewsItem(item: NewsCMS): Promise<void> {
+  await setJson(GRANULAR.item('news', item.id), item)
+  let idx = (await getJson<string[]>(GRANULAR.index('news'))) ?? []
+  if (!idx.includes(item.id)) idx = [...idx, item.id]
+  await setJson(GRANULAR.index('news'), idx)
+  await syncNewsLegacyFromGranular()
+}
+
+export async function deleteNewsItem(newsId: string): Promise<void> {
+  await deleteKvKey(GRANULAR.item('news', newsId))
+  let idx = (await getJson<string[]>(GRANULAR.index('news'))) ?? []
+  idx = idx.filter((x) => x !== newsId)
+  await setJson(GRANULAR.index('news'), idx)
+  await syncNewsLegacyFromGranular()
+}
+
 export async function getFullCmsPayload(): Promise<PublicCmsPayload> {
   noStore()
   try {
@@ -817,9 +948,11 @@ export async function getFullCmsPayload(): Promise<PublicCmsPayload> {
       services,
       cases,
       concepts,
+      news,
       portfolioIndex,
       servicesIndex,
       labIndex,
+      newsIndex,
       siteHeader,
       siteFooter,
       approachPage,
@@ -828,9 +961,11 @@ export async function getFullCmsPayload(): Promise<PublicCmsPayload> {
       getServicesFromKv(),
       getCasesFromKv(),
       getConceptsFromKv(),
+      getNewsFromKv(),
       getCollectionLandingPageKv(COLLECTION_PAGE_SLUGS.portfolioIndex, DEFAULT_PORTFOLIO_INDEX),
       getCollectionLandingPageKv(COLLECTION_PAGE_SLUGS.servicesIndex, DEFAULT_SERVICES_INDEX),
       getCollectionLandingPageKv(COLLECTION_PAGE_SLUGS.labIndex, DEFAULT_LAB_INDEX),
+      getCollectionLandingPageKv(COLLECTION_PAGE_SLUGS.newsIndex, DEFAULT_NEWS_INDEX),
       getSiteHeaderKv(),
       getSiteFooterKv(),
       getApproachPageKv(),
@@ -840,9 +975,11 @@ export async function getFullCmsPayload(): Promise<PublicCmsPayload> {
       services,
       cases,
       concepts,
+      news,
       portfolioIndex,
       servicesIndex,
       labIndex,
+      newsIndex,
       siteHeader,
       siteFooter,
       approachPage,
@@ -863,9 +1000,11 @@ export async function seedCmsIfEmpty(): Promise<{ seeded: boolean }> {
     setJson(KV_KEYS.services, payload.services),
     setJson(KV_KEYS.cases, payload.cases),
     setJson(KV_KEYS.concepts, payload.concepts),
+    setJson(KV_KEYS.news, payload.news),
     setJson(GRANULAR.page(COLLECTION_PAGE_SLUGS.portfolioIndex), payload.portfolioIndex),
     setJson(GRANULAR.page(COLLECTION_PAGE_SLUGS.servicesIndex), payload.servicesIndex),
     setJson(GRANULAR.page(COLLECTION_PAGE_SLUGS.labIndex), payload.labIndex),
+    setJson(GRANULAR.page(COLLECTION_PAGE_SLUGS.newsIndex), payload.newsIndex),
     setJson(
       GRANULAR.index('cases'),
       payload.cases.map((c) => c.id)
@@ -878,9 +1017,14 @@ export async function seedCmsIfEmpty(): Promise<{ seeded: boolean }> {
       GRANULAR.index('concepts'),
       payload.concepts.map((c) => c.id)
     ),
+    setJson(
+      GRANULAR.index('news'),
+      payload.news.map((n) => n.id)
+    ),
     ...payload.cases.map((c) => setJson(GRANULAR.item('cases', c.id), c)),
     ...payload.services.map((s) => setJson(GRANULAR.item('services', s.id), s)),
     ...payload.concepts.map((c) => setJson(GRANULAR.item('concepts', c.id), c)),
+    ...payload.news.map((n) => setJson(GRANULAR.item('news', n.id), n)),
     setJson(CMS_GLOBAL_KEYS.header, payload.siteHeader),
     setJson(CMS_GLOBAL_KEYS.footer, payload.siteFooter),
     setJson(CMS_GLOBAL_KEYS.approach, payload.approachPage),

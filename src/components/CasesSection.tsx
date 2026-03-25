@@ -10,10 +10,8 @@ type CasesSectionProps = {
   variant?: 'home' | 'page'
 }
 
-function sortLatestThreeCases(items: CaseCMS[]): CaseCMS[] {
-  return [...items]
-    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
-    .slice(0, 3)
+function sortCasesByLatest(items: CaseCMS[]): CaseCMS[] {
+  return [...items].sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
 }
 
 /** Homepage strip uses card preview; fall back to first inner image if set. */
@@ -34,7 +32,7 @@ export default function CasesSection({ variant = 'home' }: CasesSectionProps) {
   const { locale } = useLocale()
   const { payload } = useSiteContent()
   const publishedCases = payload.cases.filter((c) => c.status === 'published')
-  const latestThree = sortLatestThreeCases(publishedCases)
+  const sorted = sortCasesByLatest(publishedCases)
 
   const featured =
     variant === 'page' && payload.portfolioIndex?.featuredIds?.length
@@ -43,7 +41,7 @@ export default function CasesSection({ variant = 'home' }: CasesSectionProps) {
           .filter((c): c is CaseCMS => Boolean(c))
       : []
 
-  const cases = variant === 'page' && featured.length ? featured : latestThree
+  const cases = variant === 'page' && featured.length ? featured : sorted
 
   const sectionTitle =
     variant === 'page'

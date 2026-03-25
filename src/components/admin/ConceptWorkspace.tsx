@@ -16,6 +16,7 @@ import { AdminBreadcrumbs } from '@/components/admin/AdminBreadcrumbs'
 import { CmsLocaleBar } from '@/components/admin/CmsLocaleBar'
 import { AdminField, adminInputClass } from '@/components/admin/admin-ui'
 import ImageUploader from '@/components/admin/ImageUploader'
+import { ConceptSetOfImagesEditor } from '@/components/admin/ConceptSetOfImagesEditor'
 
 function statusPill(status: string) {
   const pub = status === 'published'
@@ -281,22 +282,13 @@ export function ConceptWorkspace({ initialConcept }: { initialConcept: ConceptCM
                 }
               />
             </AdminField>
-            <AdminField label="Desktop">
-              <ImageUploader
-                value={c.desktopImage}
-                onUrlChange={(url) =>
-                  setC((p) => ({ ...p, desktopImage: url, updatedAt: new Date().toISOString() }))
-                }
-              />
-            </AdminField>
-            <AdminField label="Mobile">
-              <ImageUploader
-                value={c.mobileImage}
-                onUrlChange={(url) =>
-                  setC((p) => ({ ...p, mobileImage: url, updatedAt: new Date().toISOString() }))
-                }
-              />
-            </AdminField>
+            <ConceptSetOfImagesEditor
+              sets={c.setOfImages ?? []}
+              L={L}
+              onChange={(setOfImages) =>
+                setC((p) => ({ ...p, setOfImages, updatedAt: new Date().toISOString() }))
+              }
+            />
             <AdminField label="Gallery URLs (one per line)">
               <textarea
                 className={adminInputClass + ' min-h-24 font-mono text-xs'}

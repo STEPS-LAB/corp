@@ -1,13 +1,19 @@
 import en from '@/messages/en.json'
 import uk from '@/messages/uk.json'
 import type { ConceptCMS } from '@/lib/cms-types'
-import { pickLang } from '@/lib/cms-types'
+import { pickLang, projectLinksForLocale } from '@/lib/cms-types'
 import { isCmsPublished } from '@/lib/cms-types'
 import { getConceptsFromKv } from '@/lib/kv'
 
 export type ConceptLinkDisplay = {
   text: string
   url: string
+}
+
+export type ConceptPreviewSet = {
+  desktopUrl: string
+  mobileUrl: string
+  alt: string
 }
 
 export type ConceptItem = {
@@ -17,10 +23,8 @@ export type ConceptItem = {
   description: string
   technologies: string[]
   improvements: string[]
-  desktopImage: string
-  mobileImage: string
-  oldDesktopImage: string
-  oldMobileImage: string
+  /** Locale-resolved preview image sets for the detail gallery. */
+  previewSets: ConceptPreviewSet[]
   /** Resolved for active locale; non-empty text + valid URL only. */
   conceptLinks: ConceptLinkDisplay[]
 }
@@ -30,36 +34,26 @@ const BASE_ITEMS = [
     slug: 'ribas-karpaty',
     desktopImage: '/concepts/ribas-karpaty-desktop.png',
     mobileImage: '/concepts/ribas-karpaty-mobile.png',
-    oldDesktopImage: '/concepts/ribas-karpaty-desktop.png',
-    oldMobileImage: '/concepts/ribas-karpaty-mobile.png',
   },
   {
     slug: 'amstelski',
     desktopImage: '/concepts/amstelski-desktop.png',
     mobileImage: '/concepts/amstelski-mobile.png',
-    oldDesktopImage: '/concepts/amstelski-desktop.png',
-    oldMobileImage: '/concepts/amstelski-mobile.png',
   },
   {
     slug: 'chudodievo',
     desktopImage: '/concepts/chudodievo-desktop.png',
     mobileImage: '/concepts/chudodievo-mobile.png',
-    oldDesktopImage: '/concepts/chudodievo-desktop.png',
-    oldMobileImage: '/concepts/chudodievo-mobile.png',
   },
   {
     slug: 'kosmodent',
     desktopImage: '/concepts/kosmodent-desktop.png',
     mobileImage: '/concepts/kosmodent-mobile.png',
-    oldDesktopImage: '/concepts/kosmodent-desktop.png',
-    oldMobileImage: '/concepts/kosmodent-mobile.png',
   },
   {
     slug: 'asklepiy',
     desktopImage: '/concepts/asklepiy-desktop.png',
     mobileImage: '/concepts/asklepiy-mobile.png',
-    oldDesktopImage: '/concepts/asklepiy-desktop.png',
-    oldMobileImage: '/concepts/asklepiy-mobile.png',
   },
 ] as const
 
@@ -76,12 +70,7 @@ type ConceptsMessageShape = {
     detailBack: string
     detailCompareTitle: string
     detailTechTitle: string
-    oldVersionTitle: string
-    newVersionTitle: string
-    oldCaptionMobile: string
-    oldCaptionDesktop: string
-    newCaptionMobile: string
-    newCaptionDesktop: string
+    shortPreviewTitle?: string
     technologies: string[]
     items: Record<
       string,
@@ -100,7 +89,12 @@ function getMessages(locale: 'en' | 'uk') {
 }
 
 export function getConceptTexts(locale: 'en' | 'uk') {
-  return getMessages(locale).concepts
+  const m = getMessages(locale).concepts
+  return {
+    ...m,
+    shortPreviewTitle:
+      m.shortPreviewTitle ?? (locale === 'uk' ? "Коротке прев'ю концепту" : 'Short concept preview'),
+  }
 }
 
 export function getConcepts(locale: 'en' | 'uk'): ConceptItem[] {
@@ -108,38 +102,49 @@ export function getConcepts(locale: 'en' | 'uk'): ConceptItem[] {
   return BASE_ITEMS.map((item) => {
     const localized = concepts.items[item.slug]
     return {
-      ...item,
+      slug: item.slug,
       title: localized.title,
       shortDescription: localized.shortDescription,
       description: localized.description,
       improvements: localized.improvements,
       technologies: concepts.technologies,
+      previewSets: [
+        {
+          desktopUrl: item.desktopImage,
+          mobileUrl: item.mobileImage,
+          alt: localized.title,
+        },
+      ],
       conceptLinks: [],
     }
   })
 }
 
 export function conceptCmsToItem(row: ConceptCMS, locale: 'en' | 'uk'): ConceptItem {
-  const conceptLinks = (row.projectLinks ?? [])
-    .map((pl) => {
-      const text = pickLang(pl.text, locale).trim()
-      const url = (pl.url ?? '').trim()
-      return { text, url }
+  const title = pickLang(row.title, locale)
+  const previewSets: ConceptPreviewSet[] = (row.setOfImages ?? [])
+    .map((s) => {
+      const d = (s.desktopImageUrl ?? '').trim()
+      const m = (s.mobileImageUrl ?? '').trim()
+      if (!d && !m) return null
+      const altRaw = pickLang(s.altText, locale).trim()
+      return {
+        desktopUrl: d || m,
+        mobileUrl: m || d,
+        alt: altRaw || title,
+      }
     })
-    .filter((x) => x.text && x.url)
+    .filter(Boolean) as ConceptPreviewSet[]
 
   return {
     slug: row.slug,
-    title: pickLang(row.title, locale),
+    title,
     shortDescription: pickLang(row.shortDescription, locale),
     description: pickLang(row.description, locale),
     technologies: row.technologies[locale].length ? row.technologies[locale] : row.technologies.en,
     improvements: row.improvements[locale].length ? row.improvements[locale] : row.improvements.en,
-    desktopImage: row.desktopImage || `/concepts/${row.slug}-desktop.png`,
-    mobileImage: row.mobileImage || `/concepts/${row.slug}-mobile.png`,
-    oldDesktopImage: row.oldDesktopImage || row.desktopImage || `/concepts/${row.slug}-desktop.png`,
-    oldMobileImage: row.oldMobileImage || row.mobileImage || `/concepts/${row.slug}-mobile.png`,
-    conceptLinks,
+    previewSets,
+    conceptLinks: projectLinksForLocale(row.projectLinks, locale),
   }
 }
 

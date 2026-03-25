@@ -65,7 +65,6 @@ export default async function ConceptDetailPage({
             </div>
             <h1 className="hero-alt-title">
               <span className="hero-alt-title-line">{concept.title}</span>
-              <span className="hero-alt-title-line">{copy.detailHeroLine2}</span>
             </h1>
             <p className="hero-alt-description">{concept.shortDescription}</p>
             <LocalizedLink
@@ -111,99 +110,62 @@ export default async function ConceptDetailPage({
             </div>
           </div>
 
-          <div className="mt-20">
-            <h3 className="text-2xl md:text-3xl font-semibold font-manrope mb-8">{copy.oldVersionTitle}</h3>
-            <div className="grid gap-10 md:grid-cols-2">
-              <div>
-                <div className="relative aspect-[9/19.5] max-w-[320px] mx-auto rounded-[42px] border border-slate-300/80 bg-slate-200/40 overflow-hidden">
-                  <Image
-                    src={concept.oldMobileImage}
-                    alt={`${concept.title} old mobile version`}
-                    fill
-                    className="object-cover opacity-35"
-                  />
-                </div>
-                <p className="mt-4 text-slate-500 text-sm">{copy.oldCaptionMobile}</p>
-              </div>
-              <div>
-                <div className="relative aspect-[16/10] rounded-2xl border border-slate-300/80 bg-slate-200/40 overflow-hidden">
-                  <Image
-                    src={concept.oldDesktopImage}
-                    alt={`${concept.title} old desktop version`}
-                    fill
-                    className="object-cover opacity-35"
-                  />
-                </div>
-                <p className="mt-4 text-slate-500 text-sm">{copy.oldCaptionDesktop}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-20">
-            <h3 className="text-2xl md:text-3xl font-semibold font-manrope mb-8">{copy.newVersionTitle}</h3>
-            <div className="grid gap-10 lg:grid-cols-2">
-              <div>
-                <div className="mockup-shell mockup-shell-phone">
-                  <Image src="/concepts/iphone-frame.png" alt="iPhone device mockup" fill className="mockup-frame" />
-                  <div className="mockup-screen mockup-screen-phone">
-                    <Image
-                      src={concept.mobileImage}
-                      alt={`${concept.title} new mobile concept screenshot`}
-                      fill
-                      className="mockup-image"
-                    />
+          {concept.previewSets.length > 0 ? (
+            <div className="mt-20">
+              <h3 className="text-2xl md:text-3xl font-semibold font-manrope mb-10">{copy.shortPreviewTitle}</h3>
+              <div className="space-y-16 md:space-y-24">
+                {concept.previewSets.map((set, idx) => (
+                  <div
+                    key={`${set.desktopUrl}-${set.mobileUrl}-${idx}`}
+                    className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-12 lg:items-start"
+                  >
+                    <div className="min-w-0">
+                      <div className="mockup-shell mockup-shell-laptop">
+                        <Image
+                          src="/concepts/macbook-frame.png"
+                          alt=""
+                          fill
+                          className="mockup-frame pointer-events-none"
+                          sizes="(max-width: 1024px) 100vw, 50vw"
+                        />
+                        <div className="mockup-screen mockup-screen-laptop">
+                          <Image
+                            src={set.desktopUrl}
+                            alt={set.alt}
+                            fill
+                            className="mockup-image"
+                            sizes="(max-width: 1024px) 100vw, 50vw"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="min-w-0 flex justify-center lg:justify-start">
+                      <div className="w-full max-w-[320px]">
+                        <div className="mockup-shell mockup-shell-phone">
+                          <Image
+                            src="/concepts/iphone-frame.png"
+                            alt=""
+                            fill
+                            className="mockup-frame pointer-events-none"
+                            sizes="(max-width: 1024px) 280px, 320px"
+                          />
+                          <div className="mockup-screen mockup-screen-phone">
+                            <Image
+                              src={set.mobileUrl}
+                              alt={set.alt}
+                              fill
+                              className="mockup-image"
+                              sizes="(max-width: 1024px) 280px, 320px"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <p className="mt-4 text-slate-600 text-sm">{copy.newCaptionMobile}</p>
-              </div>
-              <div>
-                <div className="mockup-shell mockup-shell-phone">
-                  <Image src="/concepts/iphone-frame.png" alt="iPhone device mockup" fill className="mockup-frame" />
-                  <div className="mockup-screen mockup-screen-phone">
-                    <Image
-                      src={concept.mobileImage}
-                      alt={`${concept.title} new mobile concept screenshot second`}
-                      fill
-                      className="mockup-image"
-                    />
-                  </div>
-                </div>
-                <p className="mt-4 text-slate-600 text-sm">{copy.newCaptionMobile}</p>
+                ))}
               </div>
             </div>
-          </div>
-
-          <div className="mt-16 grid gap-10 lg:grid-cols-2">
-            <div>
-              <div className="mockup-shell mockup-shell-laptop">
-                <Image src="/concepts/macbook-frame.png" alt="MacBook device mockup" fill className="mockup-frame" />
-                <div className="mockup-screen mockup-screen-laptop">
-                  <Image
-                    src={concept.desktopImage}
-                    alt={`${concept.title} new desktop concept screenshot`}
-                    fill
-                    className="mockup-image"
-                  />
-                </div>
-              </div>
-              <p className="mt-4 text-slate-600 text-sm">{copy.newCaptionDesktop}</p>
-            </div>
-
-            <div>
-              <div className="mockup-shell mockup-shell-laptop">
-                <Image src="/concepts/macbook-frame.png" alt="MacBook device mockup" fill className="mockup-frame" />
-                <div className="mockup-screen mockup-screen-laptop">
-                  <Image
-                    src={concept.desktopImage}
-                    alt={`${concept.title} new desktop concept screenshot second`}
-                    fill
-                    className="mockup-image"
-                  />
-                </div>
-              </div>
-              <p className="mt-4 text-slate-600 text-sm">{copy.newCaptionDesktop}</p>
-            </div>
-          </div>
+          ) : null}
         </div>
       </section>
     </>

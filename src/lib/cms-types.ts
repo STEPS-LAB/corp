@@ -170,6 +170,13 @@ export type ProjectLink = {
   url: string
 }
 
+/** Concept detail — desktop + mobile pair with bilingual alt (short preview gallery). */
+export type ConceptImageSet = {
+  desktopImageUrl: string
+  mobileImageUrl: string
+  altText: BilingualText
+}
+
 /** Service detail — “Project types” (Типи проєктів): card title + body per item. */
 export type ServiceProjectTypeCard = {
   title: BilingualText
@@ -269,10 +276,8 @@ export type ConceptCMS = {
   description: BilingualText
   improvements: { en: string[]; uk: string[] }
   technologies: { en: string[]; uk: string[] }
-  desktopImage: string
-  mobileImage: string
-  oldDesktopImage: string
-  oldMobileImage: string
+  /** Desktop + mobile preview sets for the concept detail gallery. */
+  setOfImages: ConceptImageSet[]
   thumbnailUrl: string
   galleryImages: string[]
   testimonial: TestimonialBlock
@@ -768,10 +773,13 @@ export const DEFAULT_CONCEPTS_CMS: ConceptCMS[] = [
       ],
     },
     technologies: { en: techEn, uk: techEn },
-    desktopImage: '/concepts/ribas-karpaty-desktop.png',
-    mobileImage: '/concepts/ribas-karpaty-mobile.png',
-    oldDesktopImage: '/concepts/ribas-karpaty-desktop.png',
-    oldMobileImage: '/concepts/ribas-karpaty-mobile.png',
+    setOfImages: [
+      {
+        desktopImageUrl: '/concepts/ribas-karpaty-desktop.png',
+        mobileImageUrl: '/concepts/ribas-karpaty-mobile.png',
+        altText: b('', ''),
+      },
+    ],
     order: 0,
     updatedAt: iso(),
     ...defaultConceptExtras(),
@@ -801,10 +809,13 @@ export const DEFAULT_CONCEPTS_CMS: ConceptCMS[] = [
       ],
     },
     technologies: { en: techEn, uk: techEn },
-    desktopImage: '/concepts/amstelski-desktop.png',
-    mobileImage: '/concepts/amstelski-mobile.png',
-    oldDesktopImage: '/concepts/amstelski-desktop.png',
-    oldMobileImage: '/concepts/amstelski-mobile.png',
+    setOfImages: [
+      {
+        desktopImageUrl: '/concepts/amstelski-desktop.png',
+        mobileImageUrl: '/concepts/amstelski-mobile.png',
+        altText: b('', ''),
+      },
+    ],
     order: 1,
     updatedAt: iso(),
     ...defaultConceptExtras(),
@@ -834,10 +845,13 @@ export const DEFAULT_CONCEPTS_CMS: ConceptCMS[] = [
       ],
     },
     technologies: { en: techEn, uk: techEn },
-    desktopImage: '/concepts/chudodievo-desktop.png',
-    mobileImage: '/concepts/chudodievo-mobile.png',
-    oldDesktopImage: '/concepts/chudodievo-desktop.png',
-    oldMobileImage: '/concepts/chudodievo-mobile.png',
+    setOfImages: [
+      {
+        desktopImageUrl: '/concepts/chudodievo-desktop.png',
+        mobileImageUrl: '/concepts/chudodievo-mobile.png',
+        altText: b('', ''),
+      },
+    ],
     order: 2,
     updatedAt: iso(),
     ...defaultConceptExtras(),
@@ -867,10 +881,13 @@ export const DEFAULT_CONCEPTS_CMS: ConceptCMS[] = [
       ],
     },
     technologies: { en: techEn, uk: techEn },
-    desktopImage: '/concepts/kosmodent-desktop.png',
-    mobileImage: '/concepts/kosmodent-mobile.png',
-    oldDesktopImage: '/concepts/kosmodent-desktop.png',
-    oldMobileImage: '/concepts/kosmodent-mobile.png',
+    setOfImages: [
+      {
+        desktopImageUrl: '/concepts/kosmodent-desktop.png',
+        mobileImageUrl: '/concepts/kosmodent-mobile.png',
+        altText: b('', ''),
+      },
+    ],
     order: 3,
     updatedAt: iso(),
     ...defaultConceptExtras(),
@@ -900,10 +917,13 @@ export const DEFAULT_CONCEPTS_CMS: ConceptCMS[] = [
       ],
     },
     technologies: { en: techEn, uk: techEn },
-    desktopImage: '/concepts/asklepiy-desktop.png',
-    mobileImage: '/concepts/asklepiy-mobile.png',
-    oldDesktopImage: '/concepts/asklepiy-desktop.png',
-    oldMobileImage: '/concepts/asklepiy-mobile.png',
+    setOfImages: [
+      {
+        desktopImageUrl: '/concepts/asklepiy-desktop.png',
+        mobileImageUrl: '/concepts/asklepiy-mobile.png',
+        altText: b('', ''),
+      },
+    ],
     order: 4,
     updatedAt: iso(),
     ...defaultConceptExtras(),
@@ -1032,6 +1052,19 @@ export function defaultCmsPayload(): PublicCmsPayload {
 
 export function pickLang(text: BilingualText, locale: Locale): string {
   return text[locale] || text.en || ''
+}
+
+/** Resolved project/case/concept links for the active locale (non-empty text + URL only). */
+export function projectLinksForLocale(
+  links: ProjectLink[] | undefined,
+  locale: Locale
+): { text: string; url: string }[] {
+  return (links ?? [])
+    .map((pl) => ({
+      text: pickLang(pl.text, locale).trim(),
+      url: (pl.url ?? '').trim(),
+    }))
+    .filter((x) => x.text && x.url)
 }
 
 /** Flatten CMS pages + services into legacy `SiteContent` for existing section components. */

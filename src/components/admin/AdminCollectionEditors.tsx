@@ -2,8 +2,9 @@
 
 import { useStableRowKeys } from '@/hooks/useStableRowKeys'
 import type { Locale } from '@/lib/i18n'
-import type { CaseCMS, ConceptCMS, ServiceCMS } from '@/lib/cms-types'
+import type { CaseCMS, ConceptCMS, ProjectLink, ServiceCMS } from '@/lib/cms-types'
 import ImageUploader from '@/components/admin/ImageUploader'
+import { ConceptSetOfImagesEditor } from '@/components/admin/ConceptSetOfImagesEditor'
 import CaseDetailEditor from '@/components/admin/CaseDetailEditor'
 import { AdminField, adminInputClass } from '@/components/admin/admin-ui'
 import { Loader2, Plus, Trash2 } from 'lucide-react'
@@ -228,6 +229,71 @@ export function CaseFields({ c, upd, L }: { c: CaseCMS; upd: (u: CaseCMS) => voi
           onChange={(e) => upd({ ...c, order: Number(e.target.value), updatedAt: new Date().toISOString() })}
         />
       </AdminField>
+      <div className="md:col-span-2 space-y-3 rounded-xl border border-neutral-800 bg-neutral-950/40 p-4">
+        <h3 className="text-sm font-medium text-neutral-200">Project links</h3>
+        <p className="text-xs text-neutral-500">
+          Link text (bilingual via EN/UK toggle) and URL (shared). Shown as Case Links on the public case detail page.
+        </p>
+        {(c.projectLinks ?? []).map((pl, i) => (
+          <div key={`case-pl-${i}`} className="space-y-2 rounded-lg border border-neutral-800 bg-black/20 p-3">
+            <AdminField label={`Link text (${L === 'en' ? 'EN' : 'UK'})`}>
+              <input
+                className={adminInputClass}
+                value={pl.text[L]}
+                onChange={(e) => {
+                  const next: ProjectLink = { ...pl, text: { ...pl.text, [L]: e.target.value } }
+                  upd({
+                    ...c,
+                    projectLinks: (c.projectLinks ?? []).map((p, j) => (j === i ? next : p)),
+                    updatedAt: new Date().toISOString(),
+                  })
+                }}
+              />
+            </AdminField>
+            <AdminField label="URL">
+              <input
+                className={adminInputClass + ' font-mono text-xs'}
+                value={pl.url}
+                onChange={(e) =>
+                  upd({
+                    ...c,
+                    projectLinks: (c.projectLinks ?? []).map((p, j) =>
+                      j === i ? { ...p, url: e.target.value } : p
+                    ),
+                    updatedAt: new Date().toISOString(),
+                  })
+                }
+              />
+            </AdminField>
+            <button
+              type="button"
+              className="text-xs text-red-400/90 hover:text-red-300"
+              onClick={() =>
+                upd({
+                  ...c,
+                  projectLinks: (c.projectLinks ?? []).filter((_, j) => j !== i),
+                  updatedAt: new Date().toISOString(),
+                })
+              }
+            >
+              Remove link
+            </button>
+          </div>
+        ))}
+        <button
+          type="button"
+          className="text-xs text-neutral-400 hover:text-white"
+          onClick={() =>
+            upd({
+              ...c,
+              projectLinks: [...(c.projectLinks ?? []), { text: { en: '', uk: '' }, url: '' }],
+              updatedAt: new Date().toISOString(),
+            })
+          }
+        >
+          + Add link
+        </button>
+      </div>
       <details className="md:col-span-2 rounded-xl border border-neutral-800 bg-black/40 p-4 open:pb-6">
         <summary className="cursor-pointer text-sm font-medium text-neutral-200">Full case page</summary>
         <CaseDetailEditor detail={c.detail} L={L} onChange={(detail) => upd({ ...c, detail })} />
@@ -337,18 +403,13 @@ export function ConceptsEditor({
               }
             />
           </AdminField>
-          <AdminField label="Desktop" className="md:col-span-2">
-            <ImageUploader value={concept.desktopImage} onUrlChange={(url) => upd({ ...concept, desktopImage: url })} />
-          </AdminField>
-          <AdminField label="Mobile" className="md:col-span-2">
-            <ImageUploader value={concept.mobileImage} onUrlChange={(url) => upd({ ...concept, mobileImage: url })} />
-          </AdminField>
-          <AdminField label="Old desktop" className="md:col-span-2">
-            <ImageUploader value={concept.oldDesktopImage} onUrlChange={(url) => upd({ ...concept, oldDesktopImage: url })} />
-          </AdminField>
-          <AdminField label="Old mobile" className="md:col-span-2">
-            <ImageUploader value={concept.oldMobileImage} onUrlChange={(url) => upd({ ...concept, oldMobileImage: url })} />
-          </AdminField>
+          <div className="md:col-span-2">
+            <ConceptSetOfImagesEditor
+              sets={concept.setOfImages ?? []}
+              L={L}
+              onChange={(setOfImages) => upd({ ...concept, setOfImages, updatedAt: new Date().toISOString() })}
+            />
+          </div>
           <AdminField label="Order">
             <input
               type="number"

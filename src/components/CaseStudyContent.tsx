@@ -6,7 +6,8 @@ import { useModal } from '@/hooks/useModal'
 import { useLocale } from '@/context/LocaleContext'
 import { useSiteContent } from '@/context/SiteContentContext'
 import { localizePath } from '@/lib/locale-path'
-import { pickLang, type CasePageDetail } from '@/lib/cms-types'
+import ConceptConceptLinksCard from '@/components/ConceptConceptLinksCard'
+import { pickLang, projectLinksForLocale, type CasePageDetail } from '@/lib/cms-types'
 
 type CaseVariant = 'ecommerce' | 'saas' | 'corporate'
 
@@ -75,6 +76,7 @@ export default function CaseStudyContent({ caseHref }: Props) {
   }
 
   const d: CasePageDetail = caseItem.detail
+  const caseLinks = projectLinksForLocale(caseItem.projectLinks, L)
 
   const ctaLabel = pickLang(payload.pages.hero.ctaText, L) || t('hero.cta')
 
@@ -190,6 +192,11 @@ export default function CaseStudyContent({ caseHref }: Props) {
                   ))}
                 </ul>
               </div>
+              {caseLinks.length > 0 ? (
+                <div className="case-sidebar-card">
+                  <ConceptConceptLinksCard locale={L} links={caseLinks} placement="case" />
+                </div>
+              ) : null}
             </div>
           </div>
         </div>

@@ -10,6 +10,7 @@ import type {
   CmsNavLink,
   CollectionLandingPage,
   ConceptCMS,
+  ConceptImageSet,
   FooterMenuColumnCMS,
   HeroStatItem,
   NewsCMS,
@@ -758,13 +759,50 @@ function sanitizeCases(arr: unknown): CaseCMS[] {
   return arr.map((item, i) => sanitizeCaseItem(item, i))
 }
 
+function normalizeConceptImageSet(o: unknown): ConceptImageSet | null {
+  if (!o || typeof o !== 'object') return null
+  const s = o as {
+    desktopImageUrl?: string
+    mobileImageUrl?: string
+    altText?: Partial<BilingualText>
+  }
+  const d = typeof s.desktopImageUrl === 'string' ? s.desktopImageUrl : ''
+  const m = typeof s.mobileImageUrl === 'string' ? s.mobileImageUrl : ''
+  if (!d.trim() && !m.trim()) return null
+  const at = s.altText && typeof s.altText === 'object' ? s.altText : {}
+  return {
+    desktopImageUrl: d,
+    mobileImageUrl: m,
+    altText: {
+      en: typeof at.en === 'string' ? at.en : '',
+      uk: typeof at.uk === 'string' ? at.uk : '',
+    },
+  }
+}
+
+/** Prefer `setOfImages`; fall back to legacy single desktop/mobile fields from older Redis payloads. */
+function parseConceptImageSets(raw: unknown, legacy: { desktop?: string; mobile?: string }): ConceptImageSet[] {
+  if (Array.isArray(raw)) {
+    const parsed = raw.map(normalizeConceptImageSet).filter(Boolean) as ConceptImageSet[]
+    if (parsed.length > 0) return parsed
+  }
+  const ld = legacy.desktop?.trim() || ''
+  const lm = legacy.mobile?.trim() || ''
+  if (ld || lm) {
+    return [{ desktopImageUrl: ld, mobileImageUrl: lm || ld, altText: { en: '', uk: '' } }]
+  }
+  /** No sets and no legacy URLs — avoid injecting unrelated defaults when list order ≠ built-in seed order. */
+  return []
+}
+
 function sanitizeConceptItem(c: unknown, index: number): ConceptCMS {
   const d = DEFAULT_CONCEPTS_CMS[index] ?? DEFAULT_CONCEPTS_CMS[0]
   if (!c || typeof c !== 'object') return { ...d, id: d?.id ?? `concept-${index}` }
-  const x = c as Partial<ConceptCMS>
+  const x = c as Partial<ConceptCMS> & { desktopImage?: string; mobileImage?: string }
   const def = d ?? DEFAULT_CONCEPTS_CMS[0]
   const t = x.testimonial ?? def.testimonial
   const seo = x.seo ?? def.seo
+  const setOfImages = parseConceptImageSets(x.setOfImages, { desktop: x.desktopImage, mobile: x.mobileImage })
   return {
     id: x.id ?? def.id,
     slug: x.slug ?? def.slug,
@@ -780,10 +818,7 @@ function sanitizeConceptItem(c: unknown, index: number): ConceptCMS {
       en: Array.isArray(x.technologies?.en) ? x.technologies.en : def.technologies.en,
       uk: Array.isArray(x.technologies?.uk) ? x.technologies.uk : def.technologies.uk,
     },
-    desktopImage: x.desktopImage ?? def.desktopImage,
-    mobileImage: x.mobileImage ?? def.mobileImage,
-    oldDesktopImage: x.oldDesktopImage ?? def.oldDesktopImage,
-    oldMobileImage: x.oldMobileImage ?? def.oldMobileImage,
+    setOfImages,
     thumbnailUrl: x.thumbnailUrl ?? def.thumbnailUrl,
     galleryImages: Array.isArray(x.galleryImages) ? x.galleryImages : def.galleryImages,
     testimonial: {

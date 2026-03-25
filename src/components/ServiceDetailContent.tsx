@@ -46,15 +46,26 @@ export default function ServiceDetailContent({ service }: Props) {
         ? [p('whatWeDo_p1'), p('whatWeDo_p2')].filter(Boolean)
         : []
 
-  const projectTypesTitle = ns ? p('projectTypes') : pickLang({ en: 'Project types', uk: 'Типи проєктів' }, L)
-  const workProcessTitle = ns ? p('process') : pickLang({ en: 'Work process', uk: 'Процес роботи' }, L)
-  const resultsHeading = ns ? p('results') : pickLang({ en: 'Results', uk: 'Результати' }, L)
-  const techTitle = ns ? p('technologies') : pickLang({ en: 'Technologies', uk: 'Технології' }, L)
-  const summaryTitle = pickLang({ en: 'Summary', uk: 'Підсумок' }, L)
-
   const cmsProjectTypes = hasProjectTypeContent(service, L) ? service.projectTypes : []
   const showLegacyCards = cmsProjectTypes.length === 0 && ns
   const cmsSteps = hasWorkProcessContent(service, L) ? service.workProcess : []
+  const showWorkProcess = cmsSteps.length > 0 || Boolean(ns)
+
+  const projectTypesTitle =
+    cmsProjectTypes.length > 0
+      ? pickLang({ en: 'Project types', uk: 'Типи проєктів' }, L)
+      : ns
+        ? p('projectTypes')
+        : pickLang({ en: 'Project types', uk: 'Типи проєктів' }, L)
+  const workProcessTitle =
+    cmsSteps.length > 0
+      ? pickLang({ en: 'Work process', uk: 'Процес роботи' }, L)
+      : ns
+        ? p('process')
+        : pickLang({ en: 'Work process', uk: 'Процес роботи' }, L)
+  const resultsHeading = ns ? p('results') : pickLang({ en: 'Results', uk: 'Результати' }, L)
+  const techTitle = ns ? p('technologies') : pickLang({ en: 'Technologies', uk: 'Технології' }, L)
+  const summaryTitle = pickLang({ en: 'Summary', uk: 'Підсумок' }, L)
 
   const techLines =
     (service.techStackLines[L] ?? []).map((x) => x.trim()).filter(Boolean).length > 0
@@ -117,7 +128,7 @@ export default function ServiceDetailContent({ service }: Props) {
                   <h2 className="mb-8 font-manrope text-3xl font-semibold tracking-[-1.5px] text-slate-900 md:text-4xl lg:text-[48px]">
                     {projectTypesTitle}
                   </h2>
-                  <div className="mb-20 flex flex-col gap-6">
+                  <div className="mb-20 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
                     {cmsProjectTypes.map((card, i) => {
                       const ct = pickLang(card.title, L).trim()
                       const cd = pickLang(card.description, L).trim()
@@ -143,7 +154,7 @@ export default function ServiceDetailContent({ service }: Props) {
                   <h2 className="mb-8 font-manrope text-3xl font-semibold tracking-[-1.5px] text-slate-900 md:text-4xl lg:text-[48px]">
                     {projectTypesTitle}
                   </h2>
-                  <div className="mb-20 flex flex-col gap-6">
+                  <div className="mb-20 grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
                     {LEGACY_SERVICE_FEATURES[ns].map((f, i) => (
                       <div
                         key={i}
@@ -159,47 +170,51 @@ export default function ServiceDetailContent({ service }: Props) {
                 </>
               ) : null}
 
-              <h2 className="mb-10 font-manrope text-3xl font-semibold tracking-[-1.5px] text-slate-900 md:text-4xl lg:text-[48px]">
-                {workProcessTitle}
-              </h2>
-              <div className="mb-20 flex flex-col gap-12">
-                {cmsSteps.length > 0
-                  ? cmsSteps.map((step, index) => {
-                      const st = pickLang(step.title, L).trim()
-                      const sd = pickLang(step.description, L).trim()
-                      if (!st && !sd) return null
-                      return (
-                        <div key={index} className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-8">
-                          <div className="flex h-11 min-w-[3.25rem] shrink-0 items-center justify-center rounded-lg bg-sky-100/80 px-3 font-manrope text-sm font-medium tracking-wide text-sky-800">
-                            {String(index + 1).padStart(2, '0')}
-                          </div>
-                          <div className="min-w-0 flex-1 pt-0.5">
-                            {st ? (
-                              <h3 className="mb-2 font-manrope text-lg font-semibold text-slate-900 md:text-xl">
-                                {st}
-                              </h3>
-                            ) : null}
-                            {sd ? <p className="text-base leading-relaxed text-slate-600">{sd}</p> : null}
-                          </div>
-                        </div>
-                      )
-                    })
-                  : ns
-                    ? legacyProcessKeys(ns).map((item, index) => (
-                        <div key={index} className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-8">
-                          <div className="flex h-11 min-w-[3.25rem] shrink-0 items-center justify-center rounded-lg bg-sky-100/80 px-3 font-manrope text-sm font-medium tracking-wide text-sky-800">
-                            {item.number}
-                          </div>
-                          <div className="min-w-0 flex-1 pt-0.5">
-                            <h3 className="mb-2 font-manrope text-lg font-semibold text-slate-900 md:text-xl">
-                              {t(item.titleKey)}
-                            </h3>
-                            <p className="text-base leading-relaxed text-slate-600">{t(item.textKey)}</p>
-                          </div>
-                        </div>
-                      ))
-                    : null}
-              </div>
+              {showWorkProcess ? (
+                <>
+                  <h2 className="mb-10 font-manrope text-3xl font-semibold tracking-[-1.5px] text-slate-900 md:text-4xl lg:text-[48px]">
+                    {workProcessTitle}
+                  </h2>
+                  <div className="mb-20 flex flex-col gap-12">
+                    {cmsSteps.length > 0
+                      ? cmsSteps.map((step, index) => {
+                          const st = pickLang(step.title, L).trim()
+                          const sd = pickLang(step.description, L).trim()
+                          if (!st && !sd) return null
+                          return (
+                            <div key={index} className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-8">
+                              <div className="flex h-11 min-w-[3.25rem] shrink-0 items-center justify-center rounded-lg bg-sky-100/80 px-3 font-manrope text-sm font-medium tracking-wide text-sky-800">
+                                {String(index + 1).padStart(2, '0')}
+                              </div>
+                              <div className="min-w-0 flex-1 pt-0.5">
+                                {st ? (
+                                  <h3 className="mb-2 font-manrope text-lg font-semibold text-slate-900 md:text-xl">
+                                    {st}
+                                  </h3>
+                                ) : null}
+                                {sd ? <p className="text-base leading-relaxed text-slate-600">{sd}</p> : null}
+                              </div>
+                            </div>
+                          )
+                        })
+                      : ns
+                        ? legacyProcessKeys(ns).map((item, index) => (
+                            <div key={index} className="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-8">
+                              <div className="flex h-11 min-w-[3.25rem] shrink-0 items-center justify-center rounded-lg bg-sky-100/80 px-3 font-manrope text-sm font-medium tracking-wide text-sky-800">
+                                {item.number}
+                              </div>
+                              <div className="min-w-0 flex-1 pt-0.5">
+                                <h3 className="mb-2 font-manrope text-lg font-semibold text-slate-900 md:text-xl">
+                                  {t(item.titleKey)}
+                                </h3>
+                                <p className="text-base leading-relaxed text-slate-600">{t(item.textKey)}</p>
+                              </div>
+                            </div>
+                          ))
+                        : null}
+                  </div>
+                </>
+              ) : null}
 
               {service.resultsMetrics.length > 0 ? (
                 <>

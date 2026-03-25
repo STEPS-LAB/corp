@@ -1,14 +1,11 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocale } from '@/context/LocaleContext'
 import { DEFAULT_SITE_CONTENT, type SiteContent } from '@/lib/content'
-import {
-  type PublicCmsPayload,
-  defaultCmsPayload,
-  flattenToSiteContent,
-} from '@/lib/cms-types'
+import { type PublicCmsPayload, defaultCmsPayload, flattenToSiteContent } from '@/lib/cms-types'
+import { mergePayloadPatch } from '@/lib/merge-cms-payload'
 import { subscribeToCmsUpdates } from '@/lib/cms-client-sync'
 
 type SiteContentContextValue = {
@@ -20,35 +17,21 @@ type SiteContentContextValue = {
 const SiteContentContext = createContext<SiteContentContextValue>({
   content: DEFAULT_SITE_CONTENT,
   payload: defaultCmsPayload(),
-  isLoading: true,
+  isLoading: false,
 })
 
-function mergePayloadPatch(server: unknown): PublicCmsPayload {
-  const d = defaultCmsPayload()
-  if (!server || typeof server !== 'object') return d
-  const s = server as Partial<PublicCmsPayload>
-  return {
-    pages: s.pages ?? d.pages,
-    // Empty arrays are valid CMS state (e.g. user deleted all cases). Do not fall back to bundled defaults.
-    services: Array.isArray(s.services) ? s.services : d.services,
-    cases: Array.isArray(s.cases) ? s.cases : d.cases,
-    concepts: Array.isArray(s.concepts) ? s.concepts : d.concepts,
-    news: Array.isArray(s.news) ? s.news : d.news,
-    portfolioIndex: s.portfolioIndex ?? d.portfolioIndex,
-    servicesIndex: s.servicesIndex ?? d.servicesIndex,
-    labIndex: s.labIndex ?? d.labIndex,
-    newsIndex: s.newsIndex ?? d.newsIndex,
-    siteHeader: s.siteHeader ?? d.siteHeader,
-    siteFooter: s.siteFooter ?? d.siteFooter,
-    approachPage: s.approachPage ?? d.approachPage,
-  }
-}
-
-export function SiteContentProvider({ children }: { children: React.ReactNode }) {
+export function SiteContentProvider({
+  children,
+  initialPayload,
+}: {
+  children: React.ReactNode
+  initialPayload: PublicCmsPayload
+}) {
   const { locale } = useLocale()
   const pathname = usePathname()
-  const [payload, setPayload] = useState<PublicCmsPayload>(defaultCmsPayload())
-  const [isLoading, setIsLoading] = useState(true)
+  const [payload, setPayload] = useState<PublicCmsPayload>(() => mergePayloadPatch(initialPayload))
+  const [isLoading, setIsLoading] = useState(false)
+  const skipNextPathnameFetchRef = useRef(true)
 
   const content = useMemo(() => flattenToSiteContent(payload, locale), [payload, locale])
 
@@ -73,9 +56,16 @@ export function SiteContentProvider({ children }: { children: React.ReactNode })
     }
   }, [])
 
-  /** Refetch on route / locale change — client state was not updated after admin Save until navigation. */
+  /**
+   * First paint uses `initialPayload` from the server layout (Redis) so hardcoded defaults never flash.
+   * Subsequent pathname changes refetch so in-app navigation stays in sync after CMS edits.
+   */
   useEffect(() => {
     const controller = new AbortController()
+    if (skipNextPathnameFetchRef.current) {
+      skipNextPathnameFetchRef.current = false
+      return () => controller.abort()
+    }
     void fetchPayload(controller.signal)
     return () => controller.abort()
   }, [pathname, fetchPayload])

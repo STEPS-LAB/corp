@@ -63,6 +63,7 @@ async function assertAdmin(): Promise<ActionResult> {
 function revalidateCmsPaths() {
   const locales = ['en', 'uk'] as const
   for (const loc of locales) {
+    revalidatePath(`/${loc}`, 'layout')
     revalidatePath(`/${loc}`, 'page')
     revalidatePath(`/${loc}/concepts`, 'layout')
     revalidatePath(`/${loc}/cases`, 'layout')
@@ -70,6 +71,7 @@ function revalidateCmsPaths() {
     revalidatePath(`/${loc}/news`, 'page')
     revalidatePath(`/${loc}/about`, 'page')
     revalidatePath(`/${loc}/contacts`, 'page')
+    revalidatePath(`/${loc}/approach`, 'page')
   }
 }
 

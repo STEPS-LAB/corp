@@ -7,6 +7,7 @@ import JsonLd from '@/components/SEO/JsonLd'
 import { ModalProvider } from '@/hooks/useModal'
 import { LocaleProvider } from '@/context/LocaleContext'
 import { SiteContentProvider } from '@/context/SiteContentContext'
+import { getFullCmsPayload } from '@/lib/kv'
 import { getAlternateLanguages } from '@/lib/hreflang'
 import { SITE_URL } from '@/lib/constants'
 import { getOrganizationSchema, getWebsiteSchema } from '@/lib/schema'
@@ -63,6 +64,8 @@ export default async function LocaleLayout({
     notFound()
   }
 
+  const cmsPayload = await getFullCmsPayload()
+
   return (
     <>
       <JsonLd
@@ -72,7 +75,7 @@ export default async function LocaleLayout({
         }}
       />
       <LocaleProvider initialLocale={locale as Locale}>
-        <SiteContentProvider>
+        <SiteContentProvider initialPayload={cmsPayload}>
           <ModalProvider>
             <Header />
             <main className="relative min-w-0 w-full max-w-full overflow-x-clip">{children}</main>

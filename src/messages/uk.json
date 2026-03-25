@@ -5,9 +5,12 @@
     "approach": "Підхід",
     "cases": "Кейси",
     "concepts": "Концепти",
-    "blog": "Блог",
+    "news": "Новини",
     "about": "Про нас",
     "contact": "Контакти"
+  },
+  "common": {
+    "loadMore": "Завантажити ще"
   },
   "header": {
     "consultation": "Консультація"

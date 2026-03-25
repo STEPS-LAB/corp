@@ -16,6 +16,9 @@ import type {
   PagesContent,
   PublicCmsPayload,
   ServiceCMS,
+  ServiceProcessStep,
+  ServiceProjectTypeCard,
+  ServiceResultMetric,
   SiteFooterCMS,
   SiteHeaderCMS,
 } from '@/lib/cms-types'
@@ -533,10 +536,92 @@ function mergePages(partial: unknown): PagesContent {
   return mergePagesOnto(DEFAULT_PAGES_CONTENT, partial)
 }
 
+type LegacyServiceBlob = Partial<ServiceCMS> & {
+  benefits?: { en?: string[]; uk?: string[] }
+  processSteps?: { en?: string[]; uk?: string[] }
+}
+
+function sanitizeServiceProjectTypeCard(row: unknown): ServiceProjectTypeCard | null {
+  if (!row || typeof row !== 'object') return null
+  const r = row as Partial<{ title?: Partial<BilingualText>; description?: Partial<BilingualText> }>
+  const t = r.title ?? {}
+  const d = r.description ?? {}
+  return {
+    title: { en: typeof t.en === 'string' ? t.en : '', uk: typeof t.uk === 'string' ? t.uk : '' },
+    description: { en: typeof d.en === 'string' ? d.en : '', uk: typeof d.uk === 'string' ? d.uk : '' },
+  }
+}
+
+function migrateProjectTypes(x: LegacyServiceBlob, def: ServiceCMS): ServiceProjectTypeCard[] {
+  const raw = (x as { projectTypes?: unknown }).projectTypes
+  if (Array.isArray(raw) && raw.length > 0) {
+    const cards = raw.map(sanitizeServiceProjectTypeCard).filter(Boolean) as ServiceProjectTypeCard[]
+    if (cards.length) return cards
+  }
+  const ben = x.benefits
+  if (ben && (Array.isArray(ben.en) || Array.isArray(ben.uk))) {
+    const en = Array.isArray(ben.en) ? ben.en : []
+    const uk = Array.isArray(ben.uk) ? ben.uk : []
+    const n = Math.max(en.length, uk.length)
+    return Array.from({ length: n }, (_, i) => ({
+      title: { en: en[i] ?? '', uk: uk[i] ?? '' },
+      description: { en: '', uk: '' },
+    }))
+  }
+  return def.projectTypes
+}
+
+function sanitizeServiceProcessStep(row: unknown): ServiceProcessStep | null {
+  if (!row || typeof row !== 'object') return null
+  const r = row as Partial<{ title?: Partial<BilingualText>; description?: Partial<BilingualText> }>
+  const t = r.title ?? {}
+  const d = r.description ?? {}
+  return {
+    title: { en: typeof t.en === 'string' ? t.en : '', uk: typeof t.uk === 'string' ? t.uk : '' },
+    description: { en: typeof d.en === 'string' ? d.en : '', uk: typeof d.uk === 'string' ? d.uk : '' },
+  }
+}
+
+function migrateWorkProcess(x: LegacyServiceBlob, def: ServiceCMS): ServiceProcessStep[] {
+  const raw = (x as { workProcess?: unknown }).workProcess
+  if (Array.isArray(raw) && raw.length > 0) {
+    const steps = raw.map(sanitizeServiceProcessStep).filter(Boolean) as ServiceProcessStep[]
+    if (steps.length) return steps
+  }
+  const ps = x.processSteps
+  if (ps && (Array.isArray(ps.en) || Array.isArray(ps.uk))) {
+    const en = Array.isArray(ps.en) ? ps.en : []
+    const uk = Array.isArray(ps.uk) ? ps.uk : []
+    const n = Math.max(en.length, uk.length)
+    return Array.from({ length: n }, (_, i) => ({
+      title: { en: en[i] ?? '', uk: uk[i] ?? '' },
+      description: { en: '', uk: '' },
+    }))
+  }
+  return def.workProcess
+}
+
+function sanitizeServiceResultMetric(row: unknown): ServiceResultMetric | null {
+  if (!row || typeof row !== 'object') return null
+  const r = row as Partial<{ label?: Partial<BilingualText>; value?: string }>
+  const l = r.label ?? {}
+  return {
+    label: { en: typeof l.en === 'string' ? l.en : '', uk: typeof l.uk === 'string' ? l.uk : '' },
+    value: typeof r.value === 'string' ? r.value : '',
+  }
+}
+
+function migrateResultsMetrics(x: LegacyServiceBlob, def: ServiceCMS): ServiceResultMetric[] {
+  const raw = (x as { resultsMetrics?: unknown }).resultsMetrics
+  if (!Array.isArray(raw) || raw.length === 0) return def.resultsMetrics
+  const out = raw.map(sanitizeServiceResultMetric).filter(Boolean) as ServiceResultMetric[]
+  return out.length ? out : def.resultsMetrics
+}
+
 function sanitizeServiceItem(s: unknown, index: number): ServiceCMS {
   const fallback = DEFAULT_SERVICES_CMS[index] ?? DEFAULT_SERVICES_CMS[0]
   if (!s || typeof s !== 'object') return { ...fallback, id: fallback.id }
-  const x = s as Partial<ServiceCMS>
+  const x = s as LegacyServiceBlob
   const id = typeof x.id === 'string' && x.id.length > 0 ? x.id : fallback.id
   const def = DEFAULT_SERVICES_CMS.find((d) => d.id === id) ?? fallback
   const seo = x.seo ?? def.seo
@@ -548,15 +633,10 @@ function sanitizeServiceItem(s: unknown, index: number): ServiceCMS {
     description: { ...def.description, ...(x.description ?? {}) },
     longDescription: mb(def.longDescription, x.longDescription),
     price: { ...def.price, ...(x.price ?? {}) },
-    benefits: {
-      en: Array.isArray(x.benefits?.en) ? x.benefits.en : def.benefits.en,
-      uk: Array.isArray(x.benefits?.uk) ? x.benefits.uk : def.benefits.uk,
-    },
+    projectTypes: migrateProjectTypes(x, def),
     pricingNote: mb(def.pricingNote, x.pricingNote),
-    processSteps: {
-      en: Array.isArray(x.processSteps?.en) ? x.processSteps.en : def.processSteps.en,
-      uk: Array.isArray(x.processSteps?.uk) ? x.processSteps.uk : def.processSteps.uk,
-    },
+    workProcess: migrateWorkProcess(x, def),
+    resultsMetrics: migrateResultsMetrics(x, def),
     coverImageUrl: typeof x.coverImageUrl === 'string' ? x.coverImageUrl : def.coverImageUrl ?? '',
     galleryImages: Array.isArray(x.galleryImages) ? x.galleryImages : def.galleryImages ?? [],
     techStackLines: {

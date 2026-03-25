@@ -45,7 +45,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
       { href: '/approach', label: t('nav.approach') },
       { href: '/cases', label: t('nav.cases') },
       { href: '/concepts', label: t('nav.concepts') },
-      { href: '/blog', label: t('nav.blog') },
+      { href: '/news', label: t('nav.news') },
       { href: '/about', label: t('nav.about') },
       { href: '/contacts', label: t('nav.contact') },
     ],

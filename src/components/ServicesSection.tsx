@@ -5,13 +5,14 @@ import { useSiteContent } from '@/context/SiteContentContext'
 import { DEFAULT_PAGES_CONTENT, pickLang } from '@/lib/cms-types'
 import LocalizedLink from '@/components/LocalizedLink'
 import type { ServiceCMS } from '@/lib/cms-types'
+import { useLoadMoreList } from '@/hooks/useLoadMoreList'
 
 type ServicesSectionProps = {
   variant?: 'home' | 'page'
 }
 
 export default function ServicesSection({ variant = 'home' }: ServicesSectionProps) {
-  const { locale } = useLocale()
+  const { locale, t } = useLocale()
   const { payload } = useSiteContent()
 
   const publishedServices = payload.services.filter((s) => s.status === 'published')
@@ -26,6 +27,7 @@ export default function ServicesSection({ variant = 'home' }: ServicesSectionPro
   const ordered = publishedServices.slice().sort((a, b) => a.order - b.order)
 
   const services = variant === 'page' && servicesForPage.length ? servicesForPage : ordered
+  const { visible, hasMore, loadMore } = useLoadMoreList(services)
 
   const sectionTitle =
     variant === 'page' && payload.servicesIndex
@@ -35,14 +37,12 @@ export default function ServicesSection({ variant = 'home' }: ServicesSectionPro
           locale
         )
 
-  const mapped = services
-    .slice()
-    .map((s) => ({
-      href: s.href.startsWith('/') ? s.href : `/${s.href}`,
-      title: pickLang(s.title, locale),
-      description: pickLang(s.description, locale),
-      price: pickLang(s.price, locale),
-    }))
+  const mapped = visible.map((s) => ({
+    href: s.href.startsWith('/') ? s.href : `/${s.href}`,
+    title: pickLang(s.title, locale),
+    description: pickLang(s.description, locale),
+    price: pickLang(s.price, locale),
+  }))
 
   return (
     <section className="services-alt" id="services">
@@ -64,6 +64,13 @@ export default function ServicesSection({ variant = 'home' }: ServicesSectionPro
             </LocalizedLink>
           ))}
         </div>
+        {hasMore ? (
+          <div className="mt-10 flex justify-center">
+            <button type="button" onClick={loadMore} className="btn btn-secondary">
+              {t('common.loadMore')}
+            </button>
+          </div>
+        ) : null}
       </div>
     </section>
   )

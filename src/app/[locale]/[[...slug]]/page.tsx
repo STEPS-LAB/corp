@@ -12,8 +12,6 @@ import { generateMetadata as generateCasesMetadata } from '@/app/cases/page'
 import CasesPageContent from '@/app/cases/CasesPageContent'
 import { generateMetadata as generateAboutMetadata } from '@/app/about/page'
 import AboutPageContent from '@/app/about/AboutPageContent'
-import { generateMetadata as generateBlogMetadata } from '@/app/blog/page'
-import BlogPageContent from '@/app/blog/BlogPageContent'
 import ContactsPageContent from '@/app/contacts/ContactsPageContent'
 import ApproachPageContent from '@/app/approach/ApproachPageContent'
 import ServiceDetailContent from '@/components/ServiceDetailContent'
@@ -57,7 +55,6 @@ const routeMap: Record<string, RouteEntry> = {
   services: { render: () => <ServicesPageContent />, getMetadata: generateServicesMetadata },
   cases: { render: () => <CasesPageContent />, getMetadata: generateCasesMetadata },
   about: { render: () => <AboutPageContent />, getMetadata: generateAboutMetadata },
-  blog: { render: () => <BlogPageContent />, getMetadata: generateBlogMetadata },
   news: { render: () => <NewsListingContent /> },
   contacts: { render: () => <ContactsPageContent /> },
   contact: { render: () => <ContactsPageContent /> },
@@ -110,7 +107,7 @@ function getLocalizedMeta(locale: 'en' | 'uk', key: string): Pick<Metadata, 'tit
 
   if (map[key]) return map[key]
   return {
-    title: locale === 'uk' ? 'Блог STEPS LAB' : 'STEPS LAB Blog',
+    title: locale === 'uk' ? 'Новини STEPS LAB' : 'STEPS LAB News',
     description:
       locale === 'uk'
         ? 'Матеріали про AI-supported development і Next.js performance.'

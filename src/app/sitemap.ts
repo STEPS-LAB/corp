@@ -14,7 +14,6 @@ const STATIC_ROUTES = [
   '/cases/corporate',
   '/cases/saas',
   '/cases/ecommerce',
-  '/blog',
   '/news',
   '/about',
   '/approach',

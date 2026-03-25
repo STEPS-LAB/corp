@@ -169,6 +169,24 @@ export type ProjectLink = {
   url: string
 }
 
+/** Service detail — “Project types” (Типи проєктів): card title + body per item. */
+export type ServiceProjectTypeCard = {
+  title: BilingualText
+  description: BilingualText
+}
+
+/** Service detail — “Work process” (Процес роботи): numbered step with title + description. */
+export type ServiceProcessStep = {
+  title: BilingualText
+  description: BilingualText
+}
+
+/** Service detail — “Results” (Результати): metric label + value. */
+export type ServiceResultMetric = {
+  label: BilingualText
+  value: string
+}
+
 export type ServiceCMS = {
   id: string
   href: string
@@ -179,11 +197,14 @@ export type ServiceCMS = {
   /** Long body for service detail views / admin. */
   longDescription: BilingualText
   price: BilingualText
-  /** Bullet benefits per locale (one string per line in admin). */
-  benefits: { en: string[]; uk: string[] }
-  /** Optional pricing / process note blocks. */
+  /** Project types section (cards on the public page). */
+  projectTypes: ServiceProjectTypeCard[]
+  /** Optional sidebar / summary note (not the metrics grid). */
   pricingNote: BilingualText
-  processSteps: { en: string[]; uk: string[] }
+  /** Work process — numbered steps on the public page. */
+  workProcess: ServiceProcessStep[]
+  /** Results metrics (e.g. “Conversion”, “340%”). */
+  resultsMetrics: ServiceResultMetric[]
   /** Hero / cover image (Vercel Blob URL). */
   coverImageUrl: string
   /** Extra images for the detail page gallery. */
@@ -569,9 +590,10 @@ export const DEFAULT_PAGES_CONTENT: PagesContent = {
 
 const defaultServiceExtras = () => ({
   longDescription: b('', ''),
-  benefits: { en: [] as string[], uk: [] as string[] },
+  projectTypes: [] as ServiceProjectTypeCard[],
   pricingNote: b('', ''),
-  processSteps: { en: [] as string[], uk: [] as string[] },
+  workProcess: [] as ServiceProcessStep[],
+  resultsMetrics: [] as ServiceResultMetric[],
   coverImageUrl: '',
   galleryImages: [] as string[],
   techStackLines: { en: [] as string[], uk: [] as string[] },
@@ -894,7 +916,7 @@ export const DEFAULT_SITE_HEADER_CMS: SiteHeaderCMS = {
     { href: '/services', label: b('Services', 'Послуги') },
     { href: '/cases', label: b('Cases', 'Кейси') },
     { href: '/concepts', label: b('Concepts', 'Концепти') },
-    { href: '/blog', label: b('Blog', 'Блог') },
+    { href: '/news', label: b('News', 'Новини') },
     { href: '/about', label: b('About', 'Про нас') },
     { href: '/contacts', label: b('Contact', 'Контакти') },
   ],
@@ -919,7 +941,7 @@ export const DEFAULT_SITE_FOOTER_CMS: SiteFooterCMS = {
         { href: '/approach', label: b('Approach', 'Підхід') },
         { href: '/cases', label: b('Cases', 'Кейси') },
         { href: '/concepts', label: b('Concepts', 'Концепти') },
-        { href: '/blog', label: b('Blog', 'Блог') },
+        { href: '/news', label: b('News', 'Новини') },
         { href: '/about', label: b('About', 'Про нас') },
         { href: '/contacts', label: b('Contact', 'Контакти') },
       ],

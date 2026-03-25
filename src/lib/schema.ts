@@ -26,7 +26,7 @@ export function getWebsiteSchema() {
     publisher: { '@id': SCHEMA_IDS.organization },
     potentialAction: {
       '@type': 'SearchAction',
-      target: `${SITE_URL}/blog?q={search_term_string}`,
+      target: `${SITE_URL}/en/news?q={search_term_string}`,
       'query-input': 'required name=search_term_string',
     },
   }

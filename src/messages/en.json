@@ -5,9 +5,12 @@
     "approach": "Approach",
     "cases": "Cases",
     "concepts": "Concepts",
-    "blog": "Blog",
+    "news": "News",
     "about": "About",
     "contact": "Contact"
+  },
+  "common": {
+    "loadMore": "Load more"
   },
   "header": {
     "consultation": "Consultation"

@@ -4,6 +4,7 @@ import { useLocale } from '@/context/LocaleContext'
 import { useSiteContent } from '@/context/SiteContentContext'
 import LocalizedLink from '@/components/LocalizedLink'
 import { pickLang, type ConceptCMS } from '@/lib/cms-types'
+import { useLoadMoreList } from '@/hooks/useLoadMoreList'
 
 type ConceptsSectionProps = {
   variant?: 'home' | 'page'
@@ -14,7 +15,7 @@ function sortConceptsByLatest(items: ConceptCMS[]): ConceptCMS[] {
 }
 
 export default function ConceptsSection({ variant = 'home' }: ConceptsSectionProps) {
-  const { locale } = useLocale()
+  const { locale, t } = useLocale()
   const { payload } = useSiteContent()
   const publishedConcepts = payload.concepts.filter((c) => c.status === 'published')
   const sorted = sortConceptsByLatest(publishedConcepts)
@@ -27,6 +28,7 @@ export default function ConceptsSection({ variant = 'home' }: ConceptsSectionPro
       : []
 
   const concepts = variant === 'page' && featured.length ? featured : sorted
+  const { visible, hasMore, loadMore } = useLoadMoreList(concepts)
 
   const heading =
     variant === 'page' ? pickLang(payload.labIndex.sectionTitle, locale) : pickLang(payload.pages.labels.conceptsHeading, locale)
@@ -37,7 +39,7 @@ export default function ConceptsSection({ variant = 'home' }: ConceptsSectionPro
       <div className="container-custom">
         <h2 className="section-title-alt">{heading}</h2>
         <div className="services-alt-list">
-          {concepts.map((concept) => (
+          {visible.map((concept) => (
             <LocalizedLink key={concept.id} href={`/concepts/${concept.slug}`} className="service-alt-item">
               <div className="service-alt-header">
                 <h3 className="service-alt-title">{pickLang(concept.title, locale)}</h3>
@@ -47,6 +49,13 @@ export default function ConceptsSection({ variant = 'home' }: ConceptsSectionPro
             </LocalizedLink>
           ))}
         </div>
+        {hasMore ? (
+          <div className="mt-10 flex justify-center">
+            <button type="button" onClick={loadMore} className="btn btn-secondary">
+              {t('common.loadMore')}
+            </button>
+          </div>
+        ) : null}
         {variant === 'home' ? (
           <div className="mt-10">
             <LocalizedLink href="/concepts" className="btn btn-secondary" aria-label="View all concepts">

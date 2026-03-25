@@ -5,6 +5,7 @@ import { useSiteContent } from '@/context/SiteContentContext'
 import LocalizedLink from '@/components/LocalizedLink'
 import { pickLang } from '@/lib/cms-types'
 import type { CaseCMS } from '@/lib/cms-types'
+import { useLoadMoreList } from '@/hooks/useLoadMoreList'
 
 type CasesSectionProps = {
   variant?: 'home' | 'page'
@@ -29,7 +30,7 @@ function caseCardImageUrl(c: CaseCMS): string {
 }
 
 export default function CasesSection({ variant = 'home' }: CasesSectionProps) {
-  const { locale } = useLocale()
+  const { locale, t } = useLocale()
   const { payload } = useSiteContent()
   const publishedCases = payload.cases.filter((c) => c.status === 'published')
   const sorted = sortCasesByLatest(publishedCases)
@@ -42,6 +43,7 @@ export default function CasesSection({ variant = 'home' }: CasesSectionProps) {
       : []
 
   const cases = variant === 'page' && featured.length ? featured : sorted
+  const { visible, hasMore, loadMore } = useLoadMoreList(cases)
 
   const sectionTitle =
     variant === 'page'
@@ -55,7 +57,7 @@ export default function CasesSection({ variant = 'home' }: CasesSectionProps) {
         <h2 className="section-title-alt">{sectionTitle}</h2>
       </div>
       <div className="cases-alt-list">
-        {cases.map((caseItem) => (
+        {visible.map((caseItem) => (
           <LocalizedLink key={caseItem.id} href={caseItem.href} className="case-alt-item">
             {caseCardImageUrl(caseItem) ? (
               <div
@@ -78,6 +80,17 @@ export default function CasesSection({ variant = 'home' }: CasesSectionProps) {
           </LocalizedLink>
         ))}
       </div>
+      {hasMore ? (
+        <div className="container-custom mt-10 flex justify-center">
+          <button
+            type="button"
+            onClick={loadMore}
+            className="rounded-full border border-white/20 px-6 py-2.5 text-sm font-medium text-text-light transition hover:border-accent/50 hover:text-accent"
+          >
+            {t('common.loadMore')}
+          </button>
+        </div>
+      ) : null}
     </section>
   )
 }

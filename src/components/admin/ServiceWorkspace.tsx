@@ -2,12 +2,13 @@
 
 import { useRouter } from 'next/navigation'
 import { useCallback, useState, useTransition } from 'react'
-import { ExternalLink, Loader2, Trash2 } from 'lucide-react'
+import { ExternalLink, Loader2, Plus, Trash2 } from 'lucide-react'
 import type { ServiceCMS } from '@/lib/cms-types'
-import { pickLang } from '@/lib/cms-types'
+import { b, pickLang } from '@/lib/cms-types'
 import type { Locale } from '@/lib/i18n'
 import { deleteServiceAction, loadCmsPayloadAction, saveCmsItemAction } from '@/lib/actions/admin-actions'
 import { notifyPublicCmsUpdated } from '@/lib/cms-client-sync'
+import { localizePath } from '@/lib/locale-path'
 import { AdminBreadcrumbs } from '@/components/admin/AdminBreadcrumbs'
 import { CmsLocaleBar } from '@/components/admin/CmsLocaleBar'
 import ImageUploader from '@/components/admin/ImageUploader'
@@ -32,7 +33,7 @@ export function ServiceWorkspace({ initialService }: { initialService: ServiceCM
   const [L, setL] = useState<Locale>('en')
   const [msg, setMsg] = useState<string | null>(null)
   const [pending, startTransition] = useTransition()
-  const previewUrl = `/${L}${s.href.startsWith('/') ? s.href : `/${s.href}`}`
+  const previewUrl = localizePath(s.href.startsWith('/') ? s.href : `/${s.href}`, L)
 
   const save = useCallback(() => {
     setMsg(null)
@@ -59,8 +60,6 @@ export function ServiceWorkspace({ initialService }: { initialService: ServiceCM
     })
   }, [router, s.id])
 
-  const benefitsText = s.benefits[L].join('\n')
-  const processText = s.processSteps[L].join('\n')
   const galleryText = (s.galleryImages ?? []).join('\n')
   const techStackText = (s.techStackLines[L] ?? []).join('\n')
 
@@ -224,28 +223,233 @@ export function ServiceWorkspace({ initialService }: { initialService: ServiceCM
               />
             </AdminField>
           </div>
-          <div className="space-y-4">
-            <h2 className="text-sm font-medium text-neutral-400">Benefits, process, SEO</h2>
-            <AdminField label={`Benefits (${L}) one per line`}>
-              <textarea
-                className={adminInputClass + ' min-h-28'}
-                value={benefitsText}
-                onChange={(e) =>
-                  setS((p) => ({
-                    ...p,
-                    benefits: {
-                      ...p.benefits,
-                      [L]: e.target.value
-                        .split('\n')
-                        .map((x) => x.trim())
-                        .filter(Boolean),
-                    },
-                    updatedAt: new Date().toISOString(),
-                  }))
-                }
-              />
-            </AdminField>
-            <AdminField label={`Pricing note (${L})`}>
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-sm font-medium text-neutral-400">Detail page sections</h2>
+              <p className="mt-1 text-xs leading-relaxed text-neutral-500">
+                <strong className="text-neutral-400">Типи проєктів</strong> / Project types ·{' '}
+                <strong className="text-neutral-400">Процес роботи</strong> / Work process ·{' '}
+                <strong className="text-neutral-400">Результати</strong> / Results — use the language toggle for EN/UK
+                copy.
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-neutral-800 bg-neutral-950/50 p-4">
+              <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                <span className="text-sm font-medium text-neutral-200">Типи проєктів · Project types</span>
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-1 rounded-lg border border-neutral-600 px-2 py-1 text-xs text-neutral-200 hover:bg-neutral-900"
+                  onClick={() =>
+                    setS((p) => ({
+                      ...p,
+                      projectTypes: [...p.projectTypes, { title: b('', ''), description: b('', '') }],
+                      updatedAt: new Date().toISOString(),
+                    }))
+                  }
+                >
+                  <Plus className="h-3.5 w-3.5" /> Add card
+                </button>
+              </div>
+              {s.projectTypes.length === 0 ? (
+                <p className="text-xs text-neutral-500">No cards — add one or leave empty to use built-in copy for legacy URLs.</p>
+              ) : null}
+              {s.projectTypes.map((card, i) => (
+                <div key={i} className="mb-4 border-b border-neutral-800 pb-4 last:mb-0 last:border-0">
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="text-xs text-neutral-500">Card {i + 1}</span>
+                    <button
+                      type="button"
+                      className="text-xs text-red-400 hover:text-red-300"
+                      onClick={() =>
+                        setS((p) => ({
+                          ...p,
+                          projectTypes: p.projectTypes.filter((_, j) => j !== i),
+                          updatedAt: new Date().toISOString(),
+                        }))
+                      }
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  <AdminField label={`Title (${L})`}>
+                    <input
+                      className={adminInputClass}
+                      value={card.title[L]}
+                      onChange={(e) =>
+                        setS((p) => ({
+                          ...p,
+                          projectTypes: p.projectTypes.map((c, j) =>
+                            j === i
+                              ? { ...c, title: { ...c.title, [L]: e.target.value } }
+                              : c
+                          ),
+                          updatedAt: new Date().toISOString(),
+                        }))
+                      }
+                    />
+                  </AdminField>
+                  <AdminField label={`Description (${L})`}>
+                    <textarea
+                      className={adminInputClass + ' min-h-20'}
+                      value={card.description[L]}
+                      onChange={(e) =>
+                        setS((p) => ({
+                          ...p,
+                          projectTypes: p.projectTypes.map((c, j) =>
+                            j === i
+                              ? { ...c, description: { ...c.description, [L]: e.target.value } }
+                              : c
+                          ),
+                          updatedAt: new Date().toISOString(),
+                        }))
+                      }
+                    />
+                  </AdminField>
+                </div>
+              ))}
+            </div>
+
+            <div className="rounded-xl border border-neutral-800 bg-neutral-950/50 p-4">
+              <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                <span className="text-sm font-medium text-neutral-200">Процес роботи · Work process</span>
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-1 rounded-lg border border-neutral-600 px-2 py-1 text-xs text-neutral-200 hover:bg-neutral-900"
+                  onClick={() =>
+                    setS((p) => ({
+                      ...p,
+                      workProcess: [...p.workProcess, { title: b('', ''), description: b('', '') }],
+                      updatedAt: new Date().toISOString(),
+                    }))
+                  }
+                >
+                  <Plus className="h-3.5 w-3.5" /> Add step
+                </button>
+              </div>
+              {s.workProcess.map((step, i) => (
+                <div key={i} className="mb-4 border-b border-neutral-800 pb-4 last:mb-0 last:border-0">
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="text-xs text-neutral-500">Step {i + 1} (displays as {String(i + 1).padStart(2, '0')})</span>
+                    <button
+                      type="button"
+                      className="text-xs text-red-400 hover:text-red-300"
+                      onClick={() =>
+                        setS((p) => ({
+                          ...p,
+                          workProcess: p.workProcess.filter((_, j) => j !== i),
+                          updatedAt: new Date().toISOString(),
+                        }))
+                      }
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  <AdminField label={`Step title (${L})`}>
+                    <input
+                      className={adminInputClass}
+                      value={step.title[L]}
+                      onChange={(e) =>
+                        setS((p) => ({
+                          ...p,
+                          workProcess: p.workProcess.map((st, j) =>
+                            j === i ? { ...st, title: { ...st.title, [L]: e.target.value } } : st
+                          ),
+                          updatedAt: new Date().toISOString(),
+                        }))
+                      }
+                    />
+                  </AdminField>
+                  <AdminField label={`Step description (${L})`}>
+                    <textarea
+                      className={adminInputClass + ' min-h-16'}
+                      value={step.description[L]}
+                      onChange={(e) =>
+                        setS((p) => ({
+                          ...p,
+                          workProcess: p.workProcess.map((st, j) =>
+                            j === i ? { ...st, description: { ...st.description, [L]: e.target.value } } : st
+                          ),
+                          updatedAt: new Date().toISOString(),
+                        }))
+                      }
+                    />
+                  </AdminField>
+                </div>
+              ))}
+            </div>
+
+            <div className="rounded-xl border border-neutral-800 bg-neutral-950/50 p-4">
+              <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                <span className="text-sm font-medium text-neutral-200">Результати · Results (metrics)</span>
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-1 rounded-lg border border-neutral-600 px-2 py-1 text-xs text-neutral-200 hover:bg-neutral-900"
+                  onClick={() =>
+                    setS((p) => ({
+                      ...p,
+                      resultsMetrics: [...p.resultsMetrics, { label: b('', ''), value: '' }],
+                      updatedAt: new Date().toISOString(),
+                    }))
+                  }
+                >
+                  <Plus className="h-3.5 w-3.5" /> Add metric
+                </button>
+              </div>
+              {s.resultsMetrics.map((m, i) => (
+                <div key={i} className="mb-4 flex flex-col gap-2 border-b border-neutral-800 pb-4 last:mb-0 last:border-0 sm:flex-row sm:items-end">
+                  <div className="min-w-0 flex-1">
+                    <AdminField label={`Metric label (${L})`}>
+                      <input
+                        className={adminInputClass}
+                        value={m.label[L]}
+                        onChange={(e) =>
+                          setS((p) => ({
+                            ...p,
+                            resultsMetrics: p.resultsMetrics.map((row, j) =>
+                              j === i ? { ...row, label: { ...row.label, [L]: e.target.value } } : row
+                            ),
+                            updatedAt: new Date().toISOString(),
+                          }))
+                        }
+                      />
+                    </AdminField>
+                  </div>
+                  <div className="w-full sm:w-40">
+                    <AdminField label="Value (e.g. 340%, 2×)">
+                      <input
+                        className={adminInputClass}
+                        value={m.value}
+                        onChange={(e) =>
+                          setS((p) => ({
+                            ...p,
+                            resultsMetrics: p.resultsMetrics.map((row, j) =>
+                              j === i ? { ...row, value: e.target.value } : row
+                            ),
+                            updatedAt: new Date().toISOString(),
+                          }))
+                        }
+                      />
+                    </AdminField>
+                  </div>
+                  <button
+                    type="button"
+                    className="shrink-0 text-xs text-red-400 hover:text-red-300 sm:mb-2"
+                    onClick={() =>
+                      setS((p) => ({
+                        ...p,
+                        resultsMetrics: p.resultsMetrics.filter((_, j) => j !== i),
+                        updatedAt: new Date().toISOString(),
+                      }))
+                    }
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            <AdminField label={`Pricing / summary note (${L}) — optional sidebar text`}>
               <textarea
                 className={adminInputClass + ' min-h-20'}
                 value={s.pricingNote[L]}
@@ -258,25 +462,8 @@ export function ServiceWorkspace({ initialService }: { initialService: ServiceCM
                 }
               />
             </AdminField>
-            <AdminField label={`Process steps (${L}) one per line`}>
-              <textarea
-                className={adminInputClass + ' min-h-28'}
-                value={processText}
-                onChange={(e) =>
-                  setS((p) => ({
-                    ...p,
-                    processSteps: {
-                      ...p.processSteps,
-                      [L]: e.target.value
-                        .split('\n')
-                        .map((x) => x.trim())
-                        .filter(Boolean),
-                    },
-                    updatedAt: new Date().toISOString(),
-                  }))
-                }
-              />
-            </AdminField>
+
+            <h2 className="text-sm font-medium text-neutral-400">SEO</h2>
             <AdminField label={`Meta title (${L})`}>
               <input
                 className={adminInputClass}

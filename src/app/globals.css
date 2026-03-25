@@ -94,10 +94,12 @@
     box-shadow: 0 4px 16px rgba(58, 91, 255, 0.3);
   }
 
-  .btn-primary:hover {
-    background-color: #2d4ae6;
-    box-shadow: 0 6px 24px rgba(58, 91, 255, 0.4);
-    transform: translateY(-2px);
+  @media (hover: hover) and (pointer: fine) {
+    .btn-primary:hover {
+      background-color: #2d4ae6;
+      box-shadow: 0 6px 24px rgba(58, 91, 255, 0.4);
+      transform: translateY(-2px);
+    }
   }
 
   .btn-small {
@@ -119,10 +121,12 @@
     border-radius: 8px;
   }
 
-  .btn-link:hover {
-    opacity: 0.8;
-    background-color: rgba(245, 246, 248, 0.05);
-    transform: translateX(4px);
+  @media (hover: hover) and (pointer: fine) {
+    .btn-link:hover {
+      opacity: 0.8;
+      background-color: rgba(245, 246, 248, 0.05);
+      transform: translateX(4px);
+    }
   }
 
   /* Preloader - Alternative */
@@ -2361,16 +2365,17 @@
   padding-bottom: 120px;
   position: relative;
   overflow: hidden;
+  overflow-x: clip;
 }
 
 .hero-alt-bg {
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
   z-index: 0;
   pointer-events: none;
+  overflow: hidden;
 }
 
 .hero-alt-line {
@@ -2524,6 +2529,8 @@
   margin-bottom: 32px;
   letter-spacing: -3px;
   font-family: var(--font-manrope), 'Manrope', sans-serif;
+  text-wrap: balance;
+  max-width: 100%;
 }
 
 .hero-alt-description {
@@ -2532,6 +2539,7 @@
   margin-bottom: 48px;
   opacity: 0.8;
   max-width: 600px;
+  text-wrap: pretty;
 }
 
 .hero-alt-cta {
@@ -2557,9 +2565,11 @@
   transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-.stat-item:hover {
-  background-color: rgba(245, 246, 248, 0.05);
-  transform: translateY(-4px);
+@media (hover: hover) and (pointer: fine) {
+  .stat-item:hover {
+    background-color: rgba(245, 246, 248, 0.05);
+    transform: translateY(-4px);
+  }
 }
 
 .stat-number {
@@ -4281,15 +4291,15 @@
 
 @media (max-width: 768px) {
   .hero-alt-title {
-    font-size: 38px;
-    line-height: 1.15;
+    line-height: 1.12;
     margin-bottom: 20px;
+    letter-spacing: -0.03em;
   }
-  
+
   .hero-alt-title-line {
-    white-space: nowrap;
+    white-space: normal;
   }
-  
+
   .section-title-alt {
     font-size: 36px;
   }
@@ -4546,20 +4556,12 @@
 }
 
 @media (max-width: 380px) {
-  .hero-alt-title {
-    font-size: 24px;
-  }
-  
   .hero-alt-title-line {
     white-space: normal;
   }
 }
 
 @media (max-width: 375px) {
-  .hero-alt-title {
-    font-size: 24px;
-  }
-
   .btn-consultation {
     padding-top: 1rem;
     padding-bottom: 1rem;
@@ -4582,5 +4584,72 @@
     grid-template-columns: 1fr;
     gap: 40px;
     justify-items: center;
+  }
+}
+
+/* -----------------------------------------------------------------
+   Homepage hero — fluid typography & wrapping (loads last; fixes
+   mobile overflow from nowrap / fixed px sizes above).
+   ----------------------------------------------------------------- */
+@media (max-width: 1023.98px) {
+  .hero-alt-title {
+    font-size: clamp(1.35rem, 5.2vw + 0.45rem, 3.4375rem);
+    line-height: 1.1;
+    letter-spacing: -0.028em;
+    text-wrap: balance;
+    max-width: 100%;
+  }
+
+  .hero-alt-title-line {
+    white-space: normal;
+  }
+
+  .hero-alt-description {
+    font-size: clamp(0.9375rem, 0.85vw + 0.8rem, 1.25rem);
+    line-height: 1.56;
+    letter-spacing: -0.01em;
+    text-wrap: pretty;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .hero-alt-title {
+    font-size: clamp(1.28rem, 5.5vw + 0.38rem, 2.125rem);
+    line-height: 1.11;
+    letter-spacing: -0.034em;
+  }
+
+  .hero-alt-description {
+    font-size: clamp(0.9375rem, 1.05vw + 0.74rem, 1.125rem);
+    line-height: 1.58;
+  }
+
+  .hero-alt-grid-pattern {
+    opacity: 0.28;
+  }
+
+  .hero-alt-gradient-1,
+  .hero-alt-gradient-2 {
+    opacity: 0.1;
+  }
+
+  @media (hover: none), (pointer: coarse) {
+    .hero-alt-cta .btn-primary:active,
+    .hero-alt-cta .btn-link:active {
+      transform: scale(0.98);
+      transition: transform 0.12s ease;
+    }
+  }
+}
+
+@media (max-width: 359.98px) {
+  .hero-alt-title {
+    font-size: clamp(1.22rem, 5vw + 0.35rem, 2rem);
+  }
+
+  .hero-alt .container-custom {
+    padding-left: max(0.75rem, env(safe-area-inset-left, 0px));
+    padding-right: max(0.75rem, env(safe-area-inset-right, 0px));
   }
 }

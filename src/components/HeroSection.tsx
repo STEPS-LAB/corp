@@ -22,8 +22,8 @@ export default function HeroSection() {
         ]
 
   return (
-    <section className="hero-alt">
-      <div className="hero-alt-bg">
+    <section className="hero-alt overflow-x-clip">
+      <div className="hero-alt-bg" aria-hidden>
         <div className="hero-alt-line hero-alt-line-1"></div>
         <div className="hero-alt-line hero-alt-line-2"></div>
         <div className="hero-alt-line hero-alt-line-3"></div>
@@ -38,16 +38,17 @@ export default function HeroSection() {
         <div className="hero-alt-dot hero-alt-dot-4"></div>
         <div className="hero-alt-grid-pattern"></div>
       </div>
-      <div className="container-custom">
-        <div className="hero-alt-content">
-          <h1 className="hero-alt-title">
+      <div className="container-custom w-full min-w-0 max-w-full px-4 sm:px-6 md:px-gutter">
+        <div className="hero-alt-content w-full min-w-0 max-w-full">
+          <h1 className="hero-alt-title text-balance">
             <span className="hero-alt-title-line">{content.hero.title}</span>
           </h1>
-          <p className="hero-alt-description">
+          <p className="hero-alt-description [text-wrap:pretty]">
             {content.hero.subtitle}
           </p>
           <div className="hero-alt-cta">
             <button
+              type="button"
               onClick={openModal}
               className="btn btn-primary btn-large"
             >

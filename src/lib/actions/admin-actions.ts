@@ -4,14 +4,22 @@ import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 import {
   type CaseCMS,
+  type CollectionLandingPage,
   type ConceptCMS,
   type PagesContent,
   type PublicCmsPayload,
   type ServiceCMS,
+  DEFAULT_CASES_CMS,
+  DEFAULT_CONCEPTS_CMS,
+  DEFAULT_SERVICES_CMS,
   emptyCasePageDetail,
 } from '@/lib/cms-types'
+import { COLLECTION_PAGE_SLUGS } from '@/lib/cms-granular-keys'
 import { getAdminCookieName, verifyAdminToken } from '@/lib/admin-auth'
 import {
+  deleteCaseItem,
+  deleteConceptItem,
+  deleteServiceItem,
   getCasesFromKv,
   getConceptsFromKv,
   getFullCmsPayload,
@@ -20,9 +28,13 @@ import {
   mergePagesOnto,
   seedCmsIfEmpty,
   setCasesToKv,
+  setCollectionLandingPageKv,
   setConceptsToKv,
   setPagesToKv,
   setServicesToKv,
+  writeCaseItem,
+  writeConceptItem,
+  writeServiceItem,
 } from '@/lib/kv'
 
 export type ActionResult<T = void> =
@@ -119,6 +131,9 @@ export async function saveFullCmsPayloadAction(payload: PublicCmsPayload): Promi
       setServicesToKv(payload.services),
       setCasesToKv(payload.cases),
       setConceptsToKv(payload.concepts),
+      setCollectionLandingPageKv(COLLECTION_PAGE_SLUGS.portfolioIndex, payload.portfolioIndex),
+      setCollectionLandingPageKv(COLLECTION_PAGE_SLUGS.servicesIndex, payload.servicesIndex),
+      setCollectionLandingPageKv(COLLECTION_PAGE_SLUGS.labIndex, payload.labIndex),
     ])
     revalidateCmsPaths()
     revalidateAllCaseDetails(payload.cases)
@@ -179,14 +194,20 @@ export async function addServiceAction(): Promise<ActionResult<PublicCmsPayload>
   const list = await getServicesFromKv()
   const id = `svc-${crypto.randomUUID().slice(0, 8)}`
   const next: ServiceCMS = {
+    ...DEFAULT_SERVICES_CMS[0],
     id,
-    href: '/services',
+    href: '/services/new-item',
     icon_name: 'circle',
     title: { en: 'New service', uk: 'Нова послуга' },
     description: { en: '', uk: '' },
+    longDescription: { en: '', uk: '' },
     price: { en: '', uk: '' },
+    benefits: { en: [], uk: [] },
+    pricingNote: { en: '', uk: '' },
+    processSteps: { en: [], uk: [] },
     order: list.length,
     updatedAt: new Date().toISOString(),
+    status: 'draft',
   }
   const merged = [...list, next]
   await setServicesToKv(merged)
@@ -197,10 +218,13 @@ export async function addServiceAction(): Promise<ActionResult<PublicCmsPayload>
 export async function deleteServiceAction(id: string): Promise<ActionResult<PublicCmsPayload>> {
   const auth = await assertAdmin()
   if (!auth.ok) return auth
-  const list = (await getServicesFromKv()).filter((s) => s.id !== id)
-  await setServicesToKv(list)
-  revalidateCmsPaths()
-  return okWithFreshPayload()
+  try {
+    await deleteServiceItem(id)
+    revalidateCmsPaths()
+    return okWithFreshPayload()
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'Delete failed' }
+  }
 }
 
 export async function addCaseAction(): Promise<ActionResult<PublicCmsPayload>> {
@@ -208,16 +232,23 @@ export async function addCaseAction(): Promise<ActionResult<PublicCmsPayload>> {
   if (!auth.ok) return auth
   const list = await getCasesFromKv()
   const id = `case-${crypto.randomUUID().slice(0, 8)}`
+  const slug = `new-${id.slice(-8)}`
   const next: CaseCMS = {
+    ...DEFAULT_CASES_CMS[0],
     id,
-    href: '/cases',
+    slug,
+    href: `/cases/${slug}`,
     title: { en: 'New case', uk: 'Новий кейс' },
     description: { en: '', uk: '' },
     result: { en: '', uk: '' },
     previewImageUrl: '',
+    thumbnailUrl: '',
+    galleryImages: [],
+    techStackTags: [],
     detail: emptyCasePageDetail(),
     order: list.length,
     updatedAt: new Date().toISOString(),
+    status: 'draft',
   }
   const merged = [...list, next]
   await setCasesToKv(merged)
@@ -229,14 +260,18 @@ export async function addCaseAction(): Promise<ActionResult<PublicCmsPayload>> {
 export async function deleteCaseAction(id: string): Promise<ActionResult<PublicCmsPayload>> {
   const auth = await assertAdmin()
   if (!auth.ok) return auth
-  const prev = await getCasesFromKv()
-  const victim = prev.find((c) => c.id === id)
-  const list = prev.filter((c) => c.id !== id)
-  await setCasesToKv(list)
-  revalidateCmsPaths()
-  if (victim?.href) revalidateCaseDetailByHref(victim.href)
-  revalidateAllCaseDetails(list)
-  return okWithFreshPayload()
+  try {
+    const prev = await getCasesFromKv()
+    const victim = prev.find((c) => c.id === id)
+    await deleteCaseItem(id)
+    revalidateCmsPaths()
+    if (victim?.href) revalidateCaseDetailByHref(victim.href)
+    const list = prev.filter((c) => c.id !== id)
+    revalidateAllCaseDetails(list)
+    return okWithFreshPayload()
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'Delete failed' }
+  }
 }
 
 export async function addConceptAction(): Promise<ActionResult<PublicCmsPayload>> {
@@ -246,6 +281,7 @@ export async function addConceptAction(): Promise<ActionResult<PublicCmsPayload>
   const slug = `concept-${crypto.randomUUID().slice(0, 8)}`
   const id = `concept-${crypto.randomUUID().slice(0, 8)}`
   const next: ConceptCMS = {
+    ...DEFAULT_CONCEPTS_CMS[0],
     id,
     slug,
     title: { en: 'New concept', uk: 'Новий концепт' },
@@ -257,8 +293,10 @@ export async function addConceptAction(): Promise<ActionResult<PublicCmsPayload>
     mobileImage: '',
     oldDesktopImage: '',
     oldMobileImage: '',
+    galleryImages: [],
     order: list.length,
     updatedAt: new Date().toISOString(),
+    status: 'draft',
   }
   const merged = [...list, next]
   await setConceptsToKv(merged)
@@ -271,16 +309,178 @@ export async function addConceptAction(): Promise<ActionResult<PublicCmsPayload>
 export async function deleteConceptAction(id: string): Promise<ActionResult<PublicCmsPayload>> {
   const auth = await assertAdmin()
   if (!auth.ok) return auth
-  const list = await getConceptsFromKv()
-  const victim = list.find((c) => c.id === id)
-  const filtered = list.filter((c) => c.id !== id)
-  await setConceptsToKv(filtered)
-  revalidateCmsPaths()
-  if (victim) {
-    revalidatePath(`/en/concepts/${victim.slug}`, 'page')
-    revalidatePath(`/uk/concepts/${victim.slug}`, 'page')
+  try {
+    const list = await getConceptsFromKv()
+    const victim = list.find((c) => c.id === id)
+    await deleteConceptItem(id)
+    revalidateCmsPaths()
+    if (victim) {
+      revalidatePath(`/en/concepts/${victim.slug}`, 'page')
+      revalidatePath(`/uk/concepts/${victim.slug}`, 'page')
+    }
+    return okWithFreshPayload()
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'Delete failed' }
   }
-  return okWithFreshPayload()
+}
+
+export type CmsItemCollection = 'cases' | 'services' | 'concepts'
+
+export async function saveCmsItemAction(
+  collection: CmsItemCollection,
+  item: CaseCMS | ServiceCMS | ConceptCMS
+): Promise<ActionResult<PublicCmsPayload>> {
+  const auth = await assertAdmin()
+  if (!auth.ok) return auth
+  try {
+    if (collection === 'cases') {
+      const c = item as CaseCMS
+      await writeCaseItem(c)
+      revalidateCmsPaths()
+      revalidateCaseDetailByHref(c.href)
+      return okWithFreshPayload()
+    }
+    if (collection === 'services') {
+      await writeServiceItem(item as ServiceCMS)
+      revalidateCmsPaths()
+      return okWithFreshPayload()
+    }
+    const con = item as ConceptCMS
+    await writeConceptItem(con)
+    revalidateCmsPaths()
+    revalidatePath(`/en/concepts/${con.slug}`, 'page')
+    revalidatePath(`/uk/concepts/${con.slug}`, 'page')
+    return okWithFreshPayload()
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'Save failed' }
+  }
+}
+
+export type CollectionLandingSlug = (typeof COLLECTION_PAGE_SLUGS)[keyof typeof COLLECTION_PAGE_SLUGS]
+
+export async function createCaseDraftAction(): Promise<ActionResult<{ id: string }>> {
+  const auth = await assertAdmin()
+  if (!auth.ok) return auth
+  try {
+    const list = await getCasesFromKv()
+    const id = `case-${crypto.randomUUID().slice(0, 8)}`
+    const slug = `new-${id.slice(-8)}`
+    const next: CaseCMS = {
+      ...DEFAULT_CASES_CMS[0],
+      id,
+      slug,
+      href: `/cases/${slug}`,
+      title: { en: 'New case', uk: 'Новий кейс' },
+      description: { en: '', uk: '' },
+      result: { en: '', uk: '' },
+      previewImageUrl: '',
+      thumbnailUrl: '',
+      galleryImages: [],
+      techStackTags: [],
+      detail: emptyCasePageDetail(),
+      order: list.length,
+      updatedAt: new Date().toISOString(),
+      status: 'draft',
+    }
+    await writeCaseItem(next)
+    revalidateCmsPaths()
+    revalidateAllCaseDetails([...list, next])
+    return { ok: true, data: { id } }
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'Create failed' }
+  }
+}
+
+export async function createServiceDraftAction(): Promise<ActionResult<{ id: string }>> {
+  const auth = await assertAdmin()
+  if (!auth.ok) return auth
+  try {
+    const list = await getServicesFromKv()
+    const id = `svc-${crypto.randomUUID().slice(0, 8)}`
+    const next: ServiceCMS = {
+      ...DEFAULT_SERVICES_CMS[0],
+      id,
+      href: '/services/new-item',
+      icon_name: 'circle',
+      title: { en: 'New service', uk: 'Нова послуга' },
+      description: { en: '', uk: '' },
+      longDescription: { en: '', uk: '' },
+      price: { en: '', uk: '' },
+      benefits: { en: [], uk: [] },
+      pricingNote: { en: '', uk: '' },
+      processSteps: { en: [], uk: [] },
+      order: list.length,
+      updatedAt: new Date().toISOString(),
+      status: 'draft',
+    }
+    await writeServiceItem(next)
+    revalidateCmsPaths()
+    return { ok: true, data: { id } }
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'Create failed' }
+  }
+}
+
+export async function createConceptDraftAction(): Promise<ActionResult<{ id: string }>> {
+  const auth = await assertAdmin()
+  if (!auth.ok) return auth
+  try {
+    const list = await getConceptsFromKv()
+    const slug = `new-${crypto.randomUUID().slice(0, 8)}`
+    const id = `concept-${slug}`
+    const next: ConceptCMS = {
+      ...DEFAULT_CONCEPTS_CMS[0],
+      id,
+      slug,
+      title: { en: 'New concept', uk: 'Новий концепт' },
+      shortDescription: { en: '', uk: '' },
+      description: { en: '', uk: '' },
+      improvements: { en: [], uk: [] },
+      technologies: { en: [], uk: [] },
+      desktopImage: '',
+      mobileImage: '',
+      oldDesktopImage: '',
+      oldMobileImage: '',
+      galleryImages: [],
+      order: list.length,
+      updatedAt: new Date().toISOString(),
+      status: 'draft',
+    }
+    await writeConceptItem(next)
+    revalidateCmsPaths()
+    revalidatePath(`/en/concepts/${slug}`, 'page')
+    revalidatePath(`/uk/concepts/${slug}`, 'page')
+    return { ok: true, data: { id } }
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'Create failed' }
+  }
+}
+
+export async function saveCollectionLandingAction(
+  slug: CollectionLandingSlug,
+  data: CollectionLandingPage
+): Promise<ActionResult<PublicCmsPayload>> {
+  const auth = await assertAdmin()
+  if (!auth.ok) return auth
+  try {
+    await setCollectionLandingPageKv(slug, data)
+    revalidateCmsPaths()
+    if (slug === COLLECTION_PAGE_SLUGS.portfolioIndex) {
+      revalidatePath('/en/cases', 'layout')
+      revalidatePath('/uk/cases', 'layout')
+    }
+    if (slug === COLLECTION_PAGE_SLUGS.servicesIndex) {
+      revalidatePath('/en/services', 'page')
+      revalidatePath('/uk/services', 'page')
+    }
+    if (slug === COLLECTION_PAGE_SLUGS.labIndex) {
+      revalidatePath('/en/concepts', 'layout')
+      revalidatePath('/uk/concepts', 'layout')
+    }
+    return okWithFreshPayload()
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : 'Save failed' }
+  }
 }
 
 export async function loadCmsPayloadAction(): Promise<ActionResult<Awaited<ReturnType<typeof getFullCmsPayload>>>> {

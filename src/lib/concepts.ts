@@ -2,6 +2,7 @@ import en from '@/messages/en.json'
 import uk from '@/messages/uk.json'
 import type { ConceptCMS } from '@/lib/cms-types'
 import { pickLang } from '@/lib/cms-types'
+import { isCmsPublished } from '@/lib/cms-types'
 import { getConceptsFromKv } from '@/lib/kv'
 
 export type ConceptItem = {
@@ -131,6 +132,7 @@ export async function getConceptsForLocale(locale: 'en' | 'uk'): Promise<Concept
     const cms = await getConceptsFromKv()
     if (cms.length > 0) {
       return cms
+        .filter(isCmsPublished)
         .slice()
         .sort((a, b) => a.order - b.order)
         .map((c) => conceptCmsToItem(c, locale))
@@ -144,7 +146,7 @@ export async function getConceptsForLocale(locale: 'en' | 'uk'): Promise<Concept
 export async function getConceptBySlug(locale: 'en' | 'uk', slug: string): Promise<ConceptItem | undefined> {
   try {
     const cms = await getConceptsFromKv()
-    const row = cms.find((c) => c.slug === slug)
+    const row = cms.filter(isCmsPublished).find((c) => c.slug === slug)
     if (row) return conceptCmsToItem(row, locale)
   } catch {
     /* fallback */

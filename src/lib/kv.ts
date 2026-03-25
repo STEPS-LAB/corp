@@ -5,6 +5,7 @@ import type {
   BilingualText,
   CaseCMS,
   CasePageDetail,
+  CollectionLandingPage,
   ConceptCMS,
   HeroStatItem,
   PagesContent,
@@ -14,11 +15,16 @@ import type {
 import {
   DEFAULT_CASES_CMS,
   DEFAULT_CONCEPTS_CMS,
+  DEFAULT_LAB_INDEX,
   DEFAULT_PAGES_CONTENT,
+  DEFAULT_PORTFOLIO_INDEX,
   DEFAULT_SERVICES_CMS,
+  DEFAULT_SERVICES_INDEX,
   KV_KEYS,
   defaultCmsPayload,
+  slugFromCaseHref,
 } from '@/lib/cms-types'
+import { COLLECTION_PAGE_SLUGS, GRANULAR, type CmsCollection } from '@/lib/cms-granular-keys'
 import { builtInCaseDetail } from '@/lib/cms-case-defaults'
 
 function hasRedisUrl(): boolean {
@@ -145,6 +151,94 @@ async function setJson<T>(key: string, value: T): Promise<void> {
   await kv.set(key, value)
 }
 
+export async function deleteKvKey(key: string): Promise<void> {
+  const mode = storageMode()
+  if (mode === 'none') return
+  if (mode === 'redis') {
+    const redis = await getRedis()
+    await redis.del(key)
+    return
+  }
+  await kv.del(key)
+}
+
+function mergeCollectionLanding(partial: unknown, def: CollectionLandingPage): CollectionLandingPage {
+  if (!partial || typeof partial !== 'object') return def
+  const p = partial as Partial<CollectionLandingPage>
+  return {
+    badge: mb(def.badge, p.badge),
+    heroTitleLine1: mb(def.heroTitleLine1, p.heroTitleLine1),
+    heroTitleLine2: mb(def.heroTitleLine2, p.heroTitleLine2),
+    heroDescription: mb(def.heroDescription, p.heroDescription),
+    sectionTitle: mb(def.sectionTitle, p.sectionTitle),
+    seo: {
+      metaTitle: mb(def.seo.metaTitle, p.seo?.metaTitle),
+      metaDescription: mb(def.seo.metaDescription, p.seo?.metaDescription),
+    },
+    featuredIds: Array.isArray(p.featuredIds) ? p.featuredIds : def.featuredIds,
+  }
+}
+
+export async function getCollectionLandingPageKv(slug: string, fallback: CollectionLandingPage): Promise<CollectionLandingPage> {
+  const raw = await getJson<unknown>(GRANULAR.page(slug))
+  return mergeCollectionLanding(raw, fallback)
+}
+
+export async function setCollectionLandingPageKv(slug: string, data: CollectionLandingPage): Promise<void> {
+  await setJson(GRANULAR.page(slug), data)
+}
+
+async function ensureGranularMigrated(collection: CmsCollection, legacyKey: string): Promise<void> {
+  const idx = await getJson<string[]>(GRANULAR.index(collection))
+  if (idx !== null) return
+  const raw = await getJson<unknown>(legacyKey)
+  if (raw == null || !Array.isArray(raw) || raw.length === 0) return
+
+  if (collection === 'cases') {
+    const list = raw.map((item, i) => sanitizeCaseItem(item, i))
+    await setJson(
+      GRANULAR.index('cases'),
+      list.slice().sort((a, b) => a.order - b.order).map((c) => c.id)
+    )
+    for (const c of list) await setJson(GRANULAR.item('cases', c.id), c)
+    return
+  }
+  if (collection === 'services') {
+    const list = raw.map((item, i) => sanitizeServiceItem(item, i))
+    await setJson(
+      GRANULAR.index('services'),
+      list.slice().sort((a, b) => a.order - b.order).map((s) => s.id)
+    )
+    for (const s of list) await setJson(GRANULAR.item('services', s.id), s)
+    return
+  }
+  const list = raw.map((item, i) => sanitizeConceptItem(item, i))
+  await setJson(
+    GRANULAR.index('concepts'),
+    list.slice().sort((a, b) => a.order - b.order).map((c) => c.id)
+  )
+  for (const c of list) await setJson(GRANULAR.item('concepts', c.id), c)
+}
+
+async function syncLegacyBlobFromGranular(
+  collection: CmsCollection,
+  legacyKey: string,
+  sanitizeOne: (raw: unknown) => CaseCMS | ServiceCMS | ConceptCMS
+): Promise<void> {
+  const idx = await getJson<string[]>(GRANULAR.index(collection))
+  if (!idx || idx.length === 0) {
+    await setJson(legacyKey, [])
+    return
+  }
+  const items: (CaseCMS | ServiceCMS | ConceptCMS)[] = []
+  for (const id of idx) {
+    const raw = await getJson<unknown>(GRANULAR.item(collection, id))
+    if (raw) items.push(sanitizeOne(raw))
+  }
+  items.sort((a, b) => a.order - b.order)
+  await setJson(legacyKey, items)
+}
+
 function mergeHeroStats(patch: unknown, base: HeroStatItem[]): HeroStatItem[] {
   if (!Array.isArray(patch)) return base
   return patch.map((row, i) => {
@@ -266,13 +360,29 @@ function sanitizeServiceItem(s: unknown, index: number): ServiceCMS {
   if (!s || typeof s !== 'object') return { ...d, id: d?.id ?? `svc-${index}` }
   const x = s as Partial<ServiceCMS>
   const def = d ?? DEFAULT_SERVICES_CMS[0]
+  const seo = x.seo ?? def.seo
   return {
     id: x.id ?? def.id,
     href: x.href ?? def.href,
     icon_name: x.icon_name ?? def.icon_name,
     title: { ...def.title, ...(x.title ?? {}) },
     description: { ...def.description, ...(x.description ?? {}) },
+    longDescription: mb(def.longDescription, x.longDescription),
     price: { ...def.price, ...(x.price ?? {}) },
+    benefits: {
+      en: Array.isArray(x.benefits?.en) ? x.benefits.en : def.benefits.en,
+      uk: Array.isArray(x.benefits?.uk) ? x.benefits.uk : def.benefits.uk,
+    },
+    pricingNote: mb(def.pricingNote, x.pricingNote),
+    processSteps: {
+      en: Array.isArray(x.processSteps?.en) ? x.processSteps.en : def.processSteps.en,
+      uk: Array.isArray(x.processSteps?.uk) ? x.processSteps.uk : def.processSteps.uk,
+    },
+    seo: {
+      metaTitle: mb(def.seo.metaTitle, seo?.metaTitle),
+      metaDescription: mb(def.seo.metaDescription, seo?.metaDescription),
+    },
+    status: x.status === 'draft' || x.status === 'published' ? x.status : def.status,
     order: typeof x.order === 'number' ? x.order : def.order,
     updatedAt: typeof x.updatedAt === 'string' ? x.updatedAt : def.updatedAt,
   }
@@ -284,21 +394,56 @@ function sanitizeServices(arr: unknown): ServiceCMS[] {
   return arr.map((item, i) => sanitizeServiceItem(item, i))
 }
 
+function parseProjectLinks(raw: unknown): CaseCMS['projectLinks'] {
+  if (!Array.isArray(raw)) return []
+  return raw
+    .map((p) => {
+      if (!p || typeof p !== 'object') return null
+      const o = p as { label?: Partial<BilingualText>; url?: string }
+      return {
+        label: { en: o.label?.en ?? '', uk: o.label?.uk ?? '' },
+        url: typeof o.url === 'string' ? o.url : '',
+      }
+    })
+    .filter(Boolean) as CaseCMS['projectLinks']
+}
+
 function sanitizeCaseItem(c: unknown, index: number): CaseCMS {
   const fallback = DEFAULT_CASES_CMS[index] ?? DEFAULT_CASES_CMS[0]
   if (!c || typeof c !== 'object') return fallback
   const x = c as Partial<CaseCMS>
   const id = typeof x.id === 'string' && x.id.length > 0 ? x.id : fallback.id
   const def = DEFAULT_CASES_CMS.find((dc) => dc.id === id) ?? fallback
+  const href = x.href ?? def.href
+  const slug =
+    typeof x.slug === 'string' && x.slug.length > 0 ? x.slug : slugFromCaseHref(href) || def.slug
   const baseDetail = builtInCaseDetail(id)
   const mergedDetail = mergeCasePageDetail(baseDetail, x.detail)
+  const t = x.testimonial ?? def.testimonial
+  const seo = x.seo ?? def.seo
   return {
     id,
-    href: x.href ?? def.href,
+    slug,
+    href,
+    category: mb(def.category, x.category),
     title: { ...def.title, ...(x.title ?? {}) },
     description: { ...def.description, ...(x.description ?? {}) },
     result: { ...def.result, ...(x.result ?? {}) },
     previewImageUrl: x.previewImageUrl ?? def.previewImageUrl,
+    thumbnailUrl: x.thumbnailUrl ?? def.thumbnailUrl,
+    galleryImages: Array.isArray(x.galleryImages) ? x.galleryImages : def.galleryImages,
+    techStackTags: Array.isArray(x.techStackTags) ? x.techStackTags : def.techStackTags,
+    testimonial: {
+      quote: mb(def.testimonial.quote, t?.quote),
+      author: mb(def.testimonial.author, t?.author),
+      role: mb(def.testimonial.role, t?.role),
+    },
+    projectLinks: x.projectLinks != null ? parseProjectLinks(x.projectLinks) : def.projectLinks,
+    seo: {
+      metaTitle: mb(def.seo.metaTitle, seo?.metaTitle),
+      metaDescription: mb(def.seo.metaDescription, seo?.metaDescription),
+    },
+    status: x.status === 'draft' || x.status === 'published' ? x.status : def.status,
     detail: mergedDetail,
     order: typeof x.order === 'number' ? x.order : def.order,
     updatedAt: typeof x.updatedAt === 'string' ? x.updatedAt : def.updatedAt,
@@ -316,9 +461,12 @@ function sanitizeConceptItem(c: unknown, index: number): ConceptCMS {
   if (!c || typeof c !== 'object') return { ...d, id: d?.id ?? `concept-${index}` }
   const x = c as Partial<ConceptCMS>
   const def = d ?? DEFAULT_CONCEPTS_CMS[0]
+  const t = x.testimonial ?? def.testimonial
+  const seo = x.seo ?? def.seo
   return {
     id: x.id ?? def.id,
     slug: x.slug ?? def.slug,
+    category: mb(def.category, x.category),
     title: { ...def.title, ...(x.title ?? {}) },
     shortDescription: { ...def.shortDescription, ...(x.shortDescription ?? {}) },
     description: { ...def.description, ...(x.description ?? {}) },
@@ -334,6 +482,19 @@ function sanitizeConceptItem(c: unknown, index: number): ConceptCMS {
     mobileImage: x.mobileImage ?? def.mobileImage,
     oldDesktopImage: x.oldDesktopImage ?? def.oldDesktopImage,
     oldMobileImage: x.oldMobileImage ?? def.oldMobileImage,
+    thumbnailUrl: x.thumbnailUrl ?? def.thumbnailUrl,
+    galleryImages: Array.isArray(x.galleryImages) ? x.galleryImages : def.galleryImages,
+    testimonial: {
+      quote: mb(def.testimonial.quote, t?.quote),
+      author: mb(def.testimonial.author, t?.author),
+      role: mb(def.testimonial.role, t?.role),
+    },
+    projectLinks: x.projectLinks != null ? parseProjectLinks(x.projectLinks) : def.projectLinks,
+    seo: {
+      metaTitle: mb(def.seo.metaTitle, seo?.metaTitle),
+      metaDescription: mb(def.seo.metaDescription, seo?.metaDescription),
+    },
+    status: x.status === 'draft' || x.status === 'published' ? x.status : def.status,
     order: typeof x.order === 'number' ? x.order : def.order,
     updatedAt: typeof x.updatedAt === 'string' ? x.updatedAt : def.updatedAt,
   }
@@ -355,42 +516,171 @@ export async function setPagesToKv(pages: PagesContent): Promise<void> {
 }
 
 export async function getServicesFromKv(): Promise<ServiceCMS[]> {
+  await ensureGranularMigrated('services', KV_KEYS.services)
+  const idx = await getJson<string[]>(GRANULAR.index('services'))
+  if (idx && idx.length > 0) {
+    const out: ServiceCMS[] = []
+    for (const id of idx) {
+      const raw = await getJson<unknown>(GRANULAR.item('services', id))
+      if (raw) out.push(sanitizeServiceItem(raw, 0))
+    }
+    return out.sort((a, b) => a.order - b.order)
+  }
   const raw = await getJson<unknown>(KV_KEYS.services)
-  return sanitizeServices(raw)
+  if (!Array.isArray(raw) || raw.length === 0) return []
+  return raw.map((item, i) => sanitizeServiceItem(item, i))
 }
 
 export async function setServicesToKv(services: ServiceCMS[]): Promise<void> {
   await setJson(KV_KEYS.services, services)
+  const ids = services.slice().sort((a, b) => a.order - b.order).map((s) => s.id)
+  await setJson(GRANULAR.index('services'), ids)
+  for (const s of services) {
+    await setJson(GRANULAR.item('services', s.id), s)
+  }
 }
 
 export async function getCasesFromKv(): Promise<CaseCMS[]> {
+  await ensureGranularMigrated('cases', KV_KEYS.cases)
+  const idx = await getJson<string[]>(GRANULAR.index('cases'))
+  if (idx && idx.length > 0) {
+    const out: CaseCMS[] = []
+    for (const id of idx) {
+      const raw = await getJson<unknown>(GRANULAR.item('cases', id))
+      if (raw) out.push(sanitizeCaseItem(raw, 0))
+    }
+    return out.sort((a, b) => a.order - b.order)
+  }
   const raw = await getJson<unknown>(KV_KEYS.cases)
-  return sanitizeCases(raw)
+  if (!Array.isArray(raw) || raw.length === 0) return []
+  return raw.map((item, i) => sanitizeCaseItem(item, i))
 }
 
 export async function setCasesToKv(cases: CaseCMS[]): Promise<void> {
   await setJson(KV_KEYS.cases, cases)
+  const ids = cases.slice().sort((a, b) => a.order - b.order).map((c) => c.id)
+  await setJson(GRANULAR.index('cases'), ids)
+  for (const c of cases) {
+    await setJson(GRANULAR.item('cases', c.id), c)
+  }
 }
 
 export async function getConceptsFromKv(): Promise<ConceptCMS[]> {
+  await ensureGranularMigrated('concepts', KV_KEYS.concepts)
+  const idx = await getJson<string[]>(GRANULAR.index('concepts'))
+  if (idx && idx.length > 0) {
+    const out: ConceptCMS[] = []
+    for (const id of idx) {
+      const raw = await getJson<unknown>(GRANULAR.item('concepts', id))
+      if (raw) out.push(sanitizeConceptItem(raw, 0))
+    }
+    return out.sort((a, b) => a.order - b.order)
+  }
   const raw = await getJson<unknown>(KV_KEYS.concepts)
-  return sanitizeConcepts(raw)
+  if (!Array.isArray(raw) || raw.length === 0) return []
+  return raw.map((item, i) => sanitizeConceptItem(item, i))
 }
 
 export async function setConceptsToKv(concepts: ConceptCMS[]): Promise<void> {
   await setJson(KV_KEYS.concepts, concepts)
+  const ids = concepts.slice().sort((a, b) => a.order - b.order).map((c) => c.id)
+  await setJson(GRANULAR.index('concepts'), ids)
+  for (const c of concepts) {
+    await setJson(GRANULAR.item('concepts', c.id), c)
+  }
+}
+
+export async function getCaseById(caseId: string): Promise<CaseCMS | null> {
+  await ensureGranularMigrated('cases', KV_KEYS.cases)
+  const raw = await getJson<unknown>(GRANULAR.item('cases', caseId))
+  if (raw) return sanitizeCaseItem(raw, 0)
+  const legacy = await getJson<unknown>(KV_KEYS.cases)
+  if (!Array.isArray(legacy)) return null
+  const found = legacy.find((row) => row && typeof row === 'object' && (row as { id?: string }).id === caseId)
+  return found ? sanitizeCaseItem(found, 0) : null
+}
+
+export async function getServiceById(serviceId: string): Promise<ServiceCMS | null> {
+  await ensureGranularMigrated('services', KV_KEYS.services)
+  const raw = await getJson<unknown>(GRANULAR.item('services', serviceId))
+  if (raw) return sanitizeServiceItem(raw, 0)
+  const legacy = await getJson<unknown>(KV_KEYS.services)
+  if (!Array.isArray(legacy)) return null
+  const found = legacy.find((row) => row && typeof row === 'object' && (row as { id?: string }).id === serviceId)
+  return found ? sanitizeServiceItem(found, 0) : null
+}
+
+export async function getConceptById(conceptId: string): Promise<ConceptCMS | null> {
+  await ensureGranularMigrated('concepts', KV_KEYS.concepts)
+  const raw = await getJson<unknown>(GRANULAR.item('concepts', conceptId))
+  if (raw) return sanitizeConceptItem(raw, 0)
+  const legacy = await getJson<unknown>(KV_KEYS.concepts)
+  if (!Array.isArray(legacy)) return null
+  const found = legacy.find((row) => row && typeof row === 'object' && (row as { id?: string }).id === conceptId)
+  return found ? sanitizeConceptItem(found, 0) : null
+}
+
+export async function writeCaseItem(item: CaseCMS): Promise<void> {
+  await setJson(GRANULAR.item('cases', item.id), item)
+  let idx = (await getJson<string[]>(GRANULAR.index('cases'))) ?? []
+  if (!idx.includes(item.id)) idx = [...idx, item.id]
+  await setJson(GRANULAR.index('cases'), idx)
+  await syncLegacyBlobFromGranular('cases', KV_KEYS.cases, (raw) => sanitizeCaseItem(raw, 0))
+}
+
+export async function deleteCaseItem(caseId: string): Promise<void> {
+  await deleteKvKey(GRANULAR.item('cases', caseId))
+  let idx = (await getJson<string[]>(GRANULAR.index('cases'))) ?? []
+  idx = idx.filter((x) => x !== caseId)
+  await setJson(GRANULAR.index('cases'), idx)
+  await syncLegacyBlobFromGranular('cases', KV_KEYS.cases, (raw) => sanitizeCaseItem(raw, 0))
+}
+
+export async function writeServiceItem(item: ServiceCMS): Promise<void> {
+  await setJson(GRANULAR.item('services', item.id), item)
+  let idx = (await getJson<string[]>(GRANULAR.index('services'))) ?? []
+  if (!idx.includes(item.id)) idx = [...idx, item.id]
+  await setJson(GRANULAR.index('services'), idx)
+  await syncLegacyBlobFromGranular('services', KV_KEYS.services, (raw) => sanitizeServiceItem(raw, 0))
+}
+
+export async function deleteServiceItem(serviceId: string): Promise<void> {
+  await deleteKvKey(GRANULAR.item('services', serviceId))
+  let idx = (await getJson<string[]>(GRANULAR.index('services'))) ?? []
+  idx = idx.filter((x) => x !== serviceId)
+  await setJson(GRANULAR.index('services'), idx)
+  await syncLegacyBlobFromGranular('services', KV_KEYS.services, (raw) => sanitizeServiceItem(raw, 0))
+}
+
+export async function writeConceptItem(item: ConceptCMS): Promise<void> {
+  await setJson(GRANULAR.item('concepts', item.id), item)
+  let idx = (await getJson<string[]>(GRANULAR.index('concepts'))) ?? []
+  if (!idx.includes(item.id)) idx = [...idx, item.id]
+  await setJson(GRANULAR.index('concepts'), idx)
+  await syncLegacyBlobFromGranular('concepts', KV_KEYS.concepts, (raw) => sanitizeConceptItem(raw, 0))
+}
+
+export async function deleteConceptItem(conceptId: string): Promise<void> {
+  await deleteKvKey(GRANULAR.item('concepts', conceptId))
+  let idx = (await getJson<string[]>(GRANULAR.index('concepts'))) ?? []
+  idx = idx.filter((x) => x !== conceptId)
+  await setJson(GRANULAR.index('concepts'), idx)
+  await syncLegacyBlobFromGranular('concepts', KV_KEYS.concepts, (raw) => sanitizeConceptItem(raw, 0))
 }
 
 export async function getFullCmsPayload(): Promise<PublicCmsPayload> {
   noStore()
   try {
-    const [pages, services, cases, concepts] = await Promise.all([
+    const [pages, services, cases, concepts, portfolioIndex, servicesIndex, labIndex] = await Promise.all([
       getPagesFromKv(),
       getServicesFromKv(),
       getCasesFromKv(),
       getConceptsFromKv(),
+      getCollectionLandingPageKv(COLLECTION_PAGE_SLUGS.portfolioIndex, DEFAULT_PORTFOLIO_INDEX),
+      getCollectionLandingPageKv(COLLECTION_PAGE_SLUGS.servicesIndex, DEFAULT_SERVICES_INDEX),
+      getCollectionLandingPageKv(COLLECTION_PAGE_SLUGS.labIndex, DEFAULT_LAB_INDEX),
     ])
-    return { pages, services, cases, concepts }
+    return { pages, services, cases, concepts, portfolioIndex, servicesIndex, labIndex }
   } catch (e) {
     console.error('[kv] getFullCmsPayload', e)
     return defaultCmsPayload()
@@ -407,6 +697,24 @@ export async function seedCmsIfEmpty(): Promise<{ seeded: boolean }> {
     setJson(KV_KEYS.services, payload.services),
     setJson(KV_KEYS.cases, payload.cases),
     setJson(KV_KEYS.concepts, payload.concepts),
+    setJson(GRANULAR.page(COLLECTION_PAGE_SLUGS.portfolioIndex), payload.portfolioIndex),
+    setJson(GRANULAR.page(COLLECTION_PAGE_SLUGS.servicesIndex), payload.servicesIndex),
+    setJson(GRANULAR.page(COLLECTION_PAGE_SLUGS.labIndex), payload.labIndex),
+    setJson(
+      GRANULAR.index('cases'),
+      payload.cases.map((c) => c.id)
+    ),
+    setJson(
+      GRANULAR.index('services'),
+      payload.services.map((s) => s.id)
+    ),
+    setJson(
+      GRANULAR.index('concepts'),
+      payload.concepts.map((c) => c.id)
+    ),
+    ...payload.cases.map((c) => setJson(GRANULAR.item('cases', c.id), c)),
+    ...payload.services.map((s) => setJson(GRANULAR.item('services', s.id), s)),
+    ...payload.concepts.map((c) => setJson(GRANULAR.item('concepts', c.id), c)),
   ])
   return { seeded: true }
 }

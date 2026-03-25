@@ -33,6 +33,9 @@ function mergePayloadPatch(server: unknown): PublicCmsPayload {
     services: Array.isArray(s.services) ? s.services : d.services,
     cases: Array.isArray(s.cases) ? s.cases : d.cases,
     concepts: Array.isArray(s.concepts) ? s.concepts : d.concepts,
+    portfolioIndex: s.portfolioIndex ?? d.portfolioIndex,
+    servicesIndex: s.servicesIndex ?? d.servicesIndex,
+    labIndex: s.labIndex ?? d.labIndex,
   }
 }
 

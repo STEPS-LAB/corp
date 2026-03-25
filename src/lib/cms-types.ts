@@ -151,24 +151,65 @@ export type CasePageDetail = {
   images: CasePageImages
 }
 
+export type PublishStatus = 'draft' | 'published'
+
+export type BilingualSEO = {
+  metaTitle: BilingualText
+  metaDescription: BilingualText
+}
+
+export type TestimonialBlock = {
+  quote: BilingualText
+  author: BilingualText
+  role: BilingualText
+}
+
+export type ProjectLink = {
+  label: BilingualText
+  url: string
+}
+
 export type ServiceCMS = {
   id: string
   href: string
   icon_name: string
   title: BilingualText
+  /** Short card blurb on listings. */
   description: BilingualText
+  /** Long body for service detail views / admin. */
+  longDescription: BilingualText
   price: BilingualText
+  /** Bullet benefits per locale (one string per line in admin). */
+  benefits: { en: string[]; uk: string[] }
+  /** Optional pricing / process note blocks. */
+  pricingNote: BilingualText
+  processSteps: { en: string[]; uk: string[] }
+  seo: BilingualSEO
+  status: PublishStatus
   order: number
   updatedAt: string
 }
 
 export type CaseCMS = {
   id: string
+  /** URL segment after /cases/ (e.g. ecommerce). */
+  slug: string
   href: string
+  category: BilingualText
   title: BilingualText
   description: BilingualText
   result: BilingualText
+  /** Card / listing thumbnail (Blob URL). */
   previewImageUrl: string
+  /** Alias for featured layouts; falls back to preview when empty. */
+  thumbnailUrl: string
+  galleryImages: string[]
+  /** Quick tags for cards; inner page still uses detail.technologies. */
+  techStackTags: string[]
+  testimonial: TestimonialBlock
+  projectLinks: ProjectLink[]
+  seo: BilingualSEO
+  status: PublishStatus
   /** Inner /cases/... page copy and images. */
   detail: CasePageDetail
   order: number
@@ -178,6 +219,7 @@ export type CaseCMS = {
 export type ConceptCMS = {
   id: string
   slug: string
+  category: BilingualText
   title: BilingualText
   shortDescription: BilingualText
   description: BilingualText
@@ -187,8 +229,26 @@ export type ConceptCMS = {
   mobileImage: string
   oldDesktopImage: string
   oldMobileImage: string
+  thumbnailUrl: string
+  galleryImages: string[]
+  testimonial: TestimonialBlock
+  projectLinks: ProjectLink[]
+  seo: BilingualSEO
+  status: PublishStatus
   order: number
   updatedAt: string
+}
+
+/** Hero + SEO wrapper for /cases, /services, /concepts index routes. */
+export type CollectionLandingPage = {
+  badge: BilingualText
+  heroTitleLine1: BilingualText
+  heroTitleLine2: BilingualText
+  heroDescription: BilingualText
+  sectionTitle: BilingualText
+  seo: BilingualSEO
+  /** Ordered ids to feature on the listing (cases, services, or concepts). */
+  featuredIds: string[]
 }
 
 export type PublicCmsPayload = {
@@ -196,6 +256,9 @@ export type PublicCmsPayload = {
   services: ServiceCMS[]
   cases: CaseCMS[]
   concepts: ConceptCMS[]
+  portfolioIndex: CollectionLandingPage
+  servicesIndex: CollectionLandingPage
+  labIndex: CollectionLandingPage
 }
 
 /** API + KV shape */
@@ -207,6 +270,86 @@ export const KV_KEYS = {
 } as const
 
 const iso = () => new Date().toISOString()
+
+export function emptySeo(): BilingualSEO {
+  return { metaTitle: b('', ''), metaDescription: b('', '') }
+}
+
+export function emptyTestimonial(): TestimonialBlock {
+  return {
+    quote: b('', ''),
+    author: b('', ''),
+    role: b('', ''),
+  }
+}
+
+export function slugFromCaseHref(href: string): string {
+  const h = href.replace(/^\/+/, '')
+  if (!h.startsWith('cases/')) return ''
+  const rest = h.slice('cases/'.length).split('/')[0]
+  return rest ?? ''
+}
+
+export function isCmsPublished(status?: PublishStatus): boolean {
+  return status !== 'draft'
+}
+
+export const DEFAULT_PORTFOLIO_INDEX: CollectionLandingPage = {
+  badge: b('Cases', 'Кейси'),
+  heroTitleLine1: b('Selected', 'Обрані'),
+  heroTitleLine2: b('client work', 'роботи клієнтів'),
+  heroDescription: b(
+    'Production websites and platforms we engineered end-to-end.',
+    'Продакшн-сайти та платформи, які ми зібрали end-to-end.'
+  ),
+  sectionTitle: b('All cases', 'Усі кейси'),
+  seo: {
+    metaTitle: b('Cases — STEPS LAB', 'Кейси — STEPS LAB'),
+    metaDescription: b(
+      'Website development case studies: e-commerce, SaaS, corporate.',
+      'Кейси веб-розробки: e-commerce, SaaS, корпоративні сайти.'
+    ),
+  },
+  featuredIds: [],
+}
+
+export const DEFAULT_SERVICES_INDEX: CollectionLandingPage = {
+  badge: b('Services', 'Послуги'),
+  heroTitleLine1: b('Web studio', 'Веб-студія'),
+  heroTitleLine2: b('services', 'послуги'),
+  heroDescription: b(
+    'From product sites to AI automation — scoped, engineered, shipped.',
+    'Від продуктових сайтів до AI-автоматизації — під ключ.'
+  ),
+  sectionTitle: b('What we deliver', 'Що поставляємо'),
+  seo: {
+    metaTitle: b('Services — STEPS LAB', 'Послуги — STEPS LAB'),
+    metaDescription: b(
+      'Web development, AI automation, MVP delivery, support & scaling.',
+      'Розробка сайтів, AI-автоматизація, MVP, підтримка та масштабування.'
+    ),
+  },
+  featuredIds: [],
+}
+
+export const DEFAULT_LAB_INDEX: CollectionLandingPage = {
+  badge: b('Lab', 'Лабораторія'),
+  heroTitleLine1: b('Concept', 'Концепти'),
+  heroTitleLine2: b('explorations', 'та досліди'),
+  heroDescription: b(
+    'Rethinking industries with sharper UX, conversion, and craft.',
+    'Переосмислення індустрій через UX, конверсію та крафт.'
+  ),
+  sectionTitle: b('All concepts', 'Усі концепти'),
+  seo: {
+    metaTitle: b('Concepts — STEPS LAB', 'Концепти — STEPS LAB'),
+    metaDescription: b(
+      'Design concepts and product explorations from STEPS LAB.',
+      'Дизайн-концепти та продуктові досліди STEPS LAB.'
+    ),
+  },
+  featuredIds: [],
+}
 
 export const DEFAULT_PAGES_CONTENT: PagesContent = {
   hero: {
@@ -335,6 +478,15 @@ export const DEFAULT_PAGES_CONTENT: PagesContent = {
   },
 }
 
+const defaultServiceExtras = () => ({
+  longDescription: b('', ''),
+  benefits: { en: [] as string[], uk: [] as string[] },
+  pricingNote: b('', ''),
+  processSteps: { en: [] as string[], uk: [] as string[] },
+  seo: emptySeo(),
+  status: 'published' as PublishStatus,
+})
+
 export const DEFAULT_SERVICES_CMS: ServiceCMS[] = [
   {
     id: 'web-development',
@@ -348,6 +500,7 @@ export const DEFAULT_SERVICES_CMS: ServiceCMS[] = [
     price: b('From $1,200', 'Від $1,200'),
     order: 0,
     updatedAt: iso(),
+    ...defaultServiceExtras(),
   },
   {
     id: 'ai-automation',
@@ -361,6 +514,7 @@ export const DEFAULT_SERVICES_CMS: ServiceCMS[] = [
     price: b('From $1,500', 'Від $1,500'),
     order: 1,
     updatedAt: iso(),
+    ...defaultServiceExtras(),
   },
   {
     id: 'mvp-startups',
@@ -374,6 +528,7 @@ export const DEFAULT_SERVICES_CMS: ServiceCMS[] = [
     price: b('From $2,000', 'Від $2,000'),
     order: 2,
     updatedAt: iso(),
+    ...defaultServiceExtras(),
   },
   {
     id: 'support-scaling',
@@ -387,8 +542,21 @@ export const DEFAULT_SERVICES_CMS: ServiceCMS[] = [
     price: b('Custom', 'Індивідуально'),
     order: 3,
     updatedAt: iso(),
+    ...defaultServiceExtras(),
   },
 ]
+
+const defaultCaseExtras = (href: string) => ({
+  slug: slugFromCaseHref(href),
+  category: b('', ''),
+  thumbnailUrl: '',
+  galleryImages: [] as string[],
+  techStackTags: [] as string[],
+  testimonial: emptyTestimonial(),
+  projectLinks: [] as ProjectLink[],
+  seo: emptySeo(),
+  status: 'published' as PublishStatus,
+})
 
 export const DEFAULT_CASES_CMS: CaseCMS[] = [
   {
@@ -407,6 +575,7 @@ export const DEFAULT_CASES_CMS: CaseCMS[] = [
     detail: builtInCaseDetail('case-ecommerce'),
     order: 0,
     updatedAt: iso(),
+    ...defaultCaseExtras('/cases/ecommerce'),
   },
   {
     id: 'case-saas',
@@ -424,6 +593,7 @@ export const DEFAULT_CASES_CMS: CaseCMS[] = [
     detail: builtInCaseDetail('case-saas'),
     order: 1,
     updatedAt: iso(),
+    ...defaultCaseExtras('/cases/saas'),
   },
   {
     id: 'case-corporate',
@@ -441,10 +611,21 @@ export const DEFAULT_CASES_CMS: CaseCMS[] = [
     detail: builtInCaseDetail('case-corporate'),
     order: 2,
     updatedAt: iso(),
+    ...defaultCaseExtras('/cases/corporate'),
   },
 ]
 
 const techEn = ['Next.js', 'React', 'Node.js', 'Cursor', 'Claude', 'QWEN']
+
+const defaultConceptExtras = () => ({
+  category: b('', ''),
+  thumbnailUrl: '',
+  galleryImages: [] as string[],
+  testimonial: emptyTestimonial(),
+  projectLinks: [] as ProjectLink[],
+  seo: emptySeo(),
+  status: 'published' as PublishStatus,
+})
 
 export const DEFAULT_CONCEPTS_CMS: ConceptCMS[] = [
   {
@@ -478,6 +659,7 @@ export const DEFAULT_CONCEPTS_CMS: ConceptCMS[] = [
     oldMobileImage: '/concepts/ribas-karpaty-mobile.png',
     order: 0,
     updatedAt: iso(),
+    ...defaultConceptExtras(),
   },
   {
     id: 'concept-amstelski',
@@ -510,6 +692,7 @@ export const DEFAULT_CONCEPTS_CMS: ConceptCMS[] = [
     oldMobileImage: '/concepts/amstelski-mobile.png',
     order: 1,
     updatedAt: iso(),
+    ...defaultConceptExtras(),
   },
   {
     id: 'concept-chudodievo',
@@ -542,6 +725,7 @@ export const DEFAULT_CONCEPTS_CMS: ConceptCMS[] = [
     oldMobileImage: '/concepts/chudodievo-mobile.png',
     order: 2,
     updatedAt: iso(),
+    ...defaultConceptExtras(),
   },
   {
     id: 'concept-kosmodent',
@@ -574,6 +758,7 @@ export const DEFAULT_CONCEPTS_CMS: ConceptCMS[] = [
     oldMobileImage: '/concepts/kosmodent-mobile.png',
     order: 3,
     updatedAt: iso(),
+    ...defaultConceptExtras(),
   },
   {
     id: 'concept-asklepiy',
@@ -606,6 +791,7 @@ export const DEFAULT_CONCEPTS_CMS: ConceptCMS[] = [
     oldMobileImage: '/concepts/asklepiy-mobile.png',
     order: 4,
     updatedAt: iso(),
+    ...defaultConceptExtras(),
   },
 ]
 
@@ -615,6 +801,9 @@ export function defaultCmsPayload(): PublicCmsPayload {
     services: DEFAULT_SERVICES_CMS,
     cases: DEFAULT_CASES_CMS,
     concepts: DEFAULT_CONCEPTS_CMS,
+    portfolioIndex: DEFAULT_PORTFOLIO_INDEX,
+    servicesIndex: DEFAULT_SERVICES_INDEX,
+    labIndex: DEFAULT_LAB_INDEX,
   }
 }
 

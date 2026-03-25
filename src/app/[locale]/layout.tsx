@@ -75,7 +75,7 @@ export default async function LocaleLayout({
         <SiteContentProvider>
           <ModalProvider>
             <Header />
-            <main>{children}</main>
+            <main className="relative min-w-0 w-full max-w-full overflow-x-clip">{children}</main>
             <Footer />
             <Modal />
           </ModalProvider>

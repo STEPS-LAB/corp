@@ -19,11 +19,15 @@
   }
 
   html {
-    @apply scroll-smooth;
+    @apply scroll-smooth overflow-x-hidden;
+    position: relative;
+    max-width: 100%;
   }
 
   body {
     @apply text-text-dark bg-bg-dark overflow-x-hidden;
+    position: relative;
+    max-width: 100%;
     font-family: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-size: 16px;
     line-height: 1.6;
@@ -33,7 +37,7 @@
   }
 
   body.loaded {
-    @apply overflow-x-auto bg-bg-light;
+    @apply overflow-x-hidden bg-bg-light;
   }
 
   body.service-page header,
@@ -863,6 +867,15 @@
   background-color: var(--bg-dark);
   color: var(--text-light);
   padding: 96px 0 48px;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+  position: relative;
+}
+
+.pagespeed-block .container-custom {
+  min-width: 0;
+  max-width: 100%;
 }
 
 .pagespeed-head {
@@ -887,12 +900,17 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 80px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .pagespeed-group {
   opacity: 0;
   transform: translateX(24px);
   transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1), transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  min-width: 0;
+  max-width: 100%;
 }
 
 .pagespeed-group-mobile {
@@ -902,6 +920,18 @@
 .pagespeed-block.is-visible .pagespeed-group {
   opacity: 1;
   transform: translateX(0);
+}
+
+/* Stacked layout: horizontal translate bleeds past viewport (causes overflow-x) */
+@media (max-width: 1024px) {
+  .pagespeed-group,
+  .pagespeed-group-mobile {
+    transform: translateY(16px);
+  }
+
+  .pagespeed-block.is-visible .pagespeed-group {
+    transform: translateY(0);
+  }
 }
 
 .pagespeed-group-title {
@@ -917,6 +947,9 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px 18px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .pagespeed-item {
@@ -983,6 +1016,9 @@
   background-color: var(--bg-dark);
   color: var(--text-light);
   padding: 48px 0 var(--section-spacing);
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 .tech-stack-section .section-title-alt {
@@ -1765,6 +1801,9 @@
   border-top: 1px solid rgba(245, 246, 248, 0.1);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 .trust-strip-content {
@@ -1774,6 +1813,9 @@
   gap: 24px;
   flex-wrap: wrap;
   color: var(--text-light);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 @media (max-width: 500px) {

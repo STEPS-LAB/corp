@@ -99,7 +99,7 @@ export default function PageSpeedBlock() {
       className={`pagespeed-block ${isVisible ? 'is-visible' : ''}`}
       aria-label={isUk ? 'Метрики PageSpeed' : 'PageSpeed metrics'}
     >
-      <div className="container-custom">
+      <div className="container-custom w-full min-w-0 max-w-full">
         <div className="pagespeed-head">
           <h2 className="section-title-alt">PageSpeed Metrics</h2>
           <p className="pagespeed-tagline">

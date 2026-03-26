@@ -36,7 +36,7 @@ export default function NewsListingContent() {
 
   return (
     <>
-      <section className="relative flex min-h-screen items-center overflow-hidden bg-bg-dark pb-[120px] pt-20 text-text-light">
+      <section className="site-hero relative flex min-h-screen items-center overflow-hidden bg-bg-dark pb-[120px] pt-20 text-text-light">
         <HeroBackground />
         <div className="container-custom">
           <div className="max-w-[1200px]">

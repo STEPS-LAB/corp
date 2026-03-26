@@ -82,7 +82,7 @@ export default function ServiceDetailContent({ service }: Props) {
 
   return (
     <>
-      <section className="relative flex min-h-screen items-center overflow-hidden bg-bg-dark pb-20 pt-20 text-text-light md:pb-[120px]">
+      <section className="site-hero relative flex min-h-screen items-center overflow-hidden bg-bg-dark pb-20 pt-20 text-text-light md:pb-[120px]">
         <HeroBackground />
         <div className="container-custom">
           <div className="max-w-[900px]">

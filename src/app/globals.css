@@ -1645,7 +1645,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-alt-title-line {
+  .hero-alt-title-line,
+  .site-hero .hero-alt-title-line {
     animation: none;
     opacity: 1;
   }
@@ -4626,14 +4627,6 @@
   .hero-alt-gradient-2 {
     opacity: 0.1;
   }
-
-  @media (hover: none), (pointer: coarse) {
-    .hero-alt-cta .btn-primary:active,
-    .hero-alt-cta .btn-link:active {
-      transform: scale(0.98);
-      transition: transform 0.12s ease;
-    }
-  }
 }
 
 @media (max-width: 359.98px) {
@@ -4644,5 +4637,26 @@
   .hero-alt .container-custom {
     padding-left: max(0.75rem, env(safe-area-inset-left, 0px));
     padding-right: max(0.75rem, env(safe-area-inset-right, 0px));
+  }
+}
+
+/* Mobile: strip all hero animations/transitions (PageSpeed / main-thread cost) */
+@media (max-width: 767.98px) {
+  .hero-alt,
+  .hero-alt *,
+  .site-hero,
+  .site-hero * {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .hero-alt .hero-alt-title-line,
+  .site-hero .hero-alt-title-line {
+    opacity: 1 !important;
+  }
+
+  .hero-alt-cta .btn-primary:active,
+  .hero-alt-cta .btn-link:active {
+    transform: none !important;
   }
 }

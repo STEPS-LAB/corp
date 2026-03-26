@@ -21,7 +21,7 @@ export default function AboutPageContent() {
 
   return (
     <>
-      <section className="min-h-screen bg-bg-dark text-text-light flex items-center pt-24 md:pt-20 pb-20 sm:pb-[120px] relative overflow-hidden">
+      <section className="site-hero min-h-screen bg-bg-dark text-text-light flex items-center pt-24 md:pt-20 pb-20 sm:pb-[120px] relative overflow-hidden">
         <HeroBackground />
         <div className="container-custom">
           <div className="max-w-[1200px]">

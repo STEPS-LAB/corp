@@ -20,7 +20,7 @@ export default function NewsArticleContent({ post }: Props) {
   return (
     <>
       <article>
-        <section className="relative flex min-h-[70vh] items-end overflow-hidden bg-bg-dark pb-16 pt-28 text-text-light md:pb-24 md:pt-32">
+        <section className="site-hero relative flex min-h-[70vh] items-end overflow-hidden bg-bg-dark pb-16 pt-28 text-text-light md:pb-24 md:pt-32">
           <HeroBackground />
           <div className="container-custom relative z-[1]">
             <Link

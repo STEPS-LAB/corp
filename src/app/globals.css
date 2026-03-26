@@ -196,16 +196,41 @@
     opacity: 0;
   }
 
-  /* Hero Section - opacity-only to avoid CLS from translateY */
-  .hero-alt-title-line {
+  /* Hero title: fade-in only on larger viewports (nth-child beats .hero-alt * overrides on mobile) */
+  .hero-alt-title-line,
+  .site-hero .hero-alt-title-line {
     display: block;
-    animation: heroFadeIn 0.6s ease forwards;
-    opacity: 0;
   }
 
-  .hero-alt-title-line:nth-child(1) { animation-delay: 0.1s; }
-  .hero-alt-title-line:nth-child(2) { animation-delay: 0.2s; }
-  .hero-alt-title-line:nth-child(3) { animation-delay: 0.3s; }
+  @media (min-width: 769px) {
+    .hero-alt-title-line,
+    .site-hero .hero-alt-title-line {
+      animation: heroFadeIn 0.6s ease forwards;
+      opacity: 0;
+    }
+
+    .hero-alt-title-line:nth-child(1),
+    .site-hero .hero-alt-title-line:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+    .hero-alt-title-line:nth-child(2),
+    .site-hero .hero-alt-title-line:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    .hero-alt-title-line:nth-child(3),
+    .site-hero .hero-alt-title-line:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero-alt-title-line,
+    .site-hero .hero-alt-title-line {
+      animation: none;
+      animation-delay: 0s;
+      opacity: 1;
+    }
+  }
 
   /* Service/Case Page Styles */
   .service-hero-title,
@@ -1648,6 +1673,7 @@
   .hero-alt-title-line,
   .site-hero .hero-alt-title-line {
     animation: none;
+    animation-delay: 0s;
     opacity: 1;
   }
 }
@@ -4641,7 +4667,7 @@
 }
 
 /* Mobile: strip all hero animations/transitions (PageSpeed / main-thread cost) */
-@media (max-width: 767.98px) {
+@media (max-width: 768px) {
   .hero-alt,
   .hero-alt *,
   .site-hero,
@@ -4653,6 +4679,8 @@
   .hero-alt .hero-alt-title-line,
   .site-hero .hero-alt-title-line {
     opacity: 1 !important;
+    animation: none !important;
+    animation-delay: 0s !important;
   }
 
   .hero-alt-cta .btn-primary:active,

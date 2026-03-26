@@ -1123,56 +1123,6 @@
   }
 }
 
-/* Concept Device Mockups */
-.mockup-shell {
-  position: relative;
-  width: 100%;
-  background: transparent;
-}
-
-.mockup-shell-laptop {
-  aspect-ratio: 11/7;
-}
-
-.mockup-shell-phone {
-  aspect-ratio: 1/2;
-  max-width: 340px;
-  margin: 0 auto;
-}
-
-.mockup-frame {
-  object-fit: contain;
-  z-index: 2;
-}
-
-.mockup-screen {
-  position: absolute;
-  overflow: hidden;
-  border-radius: 8px;
-  z-index: 1;
-}
-
-.mockup-screen-laptop {
-  left: 19.1%;
-  top: 13.6%;
-  width: 61.8%;
-  height: 53.6%;
-  border-radius: 6px;
-}
-
-.mockup-screen-phone {
-  left: 24%;
-  top: 8.3%;
-  width: 52%;
-  height: 84.4%;
-  border-radius: 20px;
-}
-
-.mockup-image {
-  object-fit: contain;
-  object-position: center;
-}
-
 /* Responsive Service/Case Hero Titles */
 @media (max-width: 1920px) {
   .service-hero-title,

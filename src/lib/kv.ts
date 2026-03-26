@@ -789,7 +789,7 @@ function parseConceptImageSets(raw: unknown, legacy: { desktop?: string; mobile?
   const ld = legacy.desktop?.trim() || ''
   const lm = legacy.mobile?.trim() || ''
   if (ld || lm) {
-    return [{ desktopImageUrl: ld, mobileImageUrl: lm || ld, altText: { en: '', uk: '' } }]
+    return [{ desktopImageUrl: ld, mobileImageUrl: lm, altText: { en: '', uk: '' } }]
   }
   /** No sets and no legacy URLs — avoid injecting unrelated defaults when list order ≠ built-in seed order. */
   return []

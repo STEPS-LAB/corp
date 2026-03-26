@@ -11,8 +11,10 @@ export type ConceptLinkDisplay = {
 }
 
 export type ConceptPreviewSet = {
+  /** Empty when only a mobile image is configured for this set. */
   desktopUrl: string
-  mobileUrl: string
+  /** Set in CMS only; omit when no mobile image — phone mockup is hidden. */
+  mobileUrl?: string
   alt: string
 }
 
@@ -129,8 +131,8 @@ export function conceptCmsToItem(row: ConceptCMS, locale: 'en' | 'uk'): ConceptI
       if (!d && !m) return null
       const altRaw = pickLang(s.altText, locale).trim()
       return {
-        desktopUrl: d || m,
-        mobileUrl: m || d,
+        desktopUrl: d,
+        mobileUrl: m || undefined,
         alt: altRaw || title,
       }
     })

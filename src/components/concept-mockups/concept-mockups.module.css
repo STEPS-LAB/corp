@@ -1,0 +1,154 @@
+/* Concept detail — device chrome only (isolated from site theme tokens). */
+
+.set {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2.5rem, 5vw, 4rem);
+  width: 100%;
+}
+
+/* —— MacBook Pro–style laptop (dominant width) —— */
+.mbpWrap {
+  width: 100%;
+  max-width: min(100%, 68rem);
+  margin-inline: auto;
+}
+
+.mbp {
+  position: relative;
+  width: 100%;
+  border-radius: 0.35rem 0.35rem 0 0;
+  transform: perspective(1400px) rotateX(4deg);
+  transform-origin: 50% 100%;
+  filter: drop-shadow(0 28px 48px rgba(15, 23, 42, 0.22)) drop-shadow(0 8px 16px rgba(15, 23, 42, 0.12));
+}
+
+.mbpLid {
+  position: relative;
+  isolation: isolate;
+  border-radius: 0.45rem 0.45rem 0 0;
+  background: linear-gradient(145deg, #2a2a2e 0%, #0d0d0f 38%, #1c1c21 55%, #0a0a0c 100%);
+  padding: 0.55rem 0.55rem 0;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.45);
+}
+
+.mbpScreenOuter {
+  position: relative;
+  border-radius: 0.32rem 0.32rem 0 0;
+  background: #000;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+}
+
+.mbpScreenInner {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.mbpImg {
+  object-fit: cover;
+  object-position: center top;
+}
+
+.mbpBase {
+  height: clamp(0.55rem, 1.2vw, 0.75rem);
+  border-radius: 0 0 0.2rem 0.2rem;
+  background: linear-gradient(180deg, #1a1a1f 0%, #0e0e12 40%, #25252c 100%);
+  box-shadow:
+    0 0.15rem 0 rgba(255, 255, 255, 0.05) inset,
+    0 -1px 0 rgba(0, 0, 0, 0.5) inset;
+}
+
+.mbpFoot {
+  margin-top: -0.05rem;
+  height: 0.35rem;
+  border-radius: 0 0 2.5rem 2.5rem;
+  background: linear-gradient(180deg, #3a3a42 0%, #1f1f24 55%, #121216 100%);
+  opacity: 0.95;
+}
+
+/* —— iPhone 15 Pro–style (smaller, proportional) —— */
+.iphoneWrap {
+  width: 100%;
+  max-width: 13.5rem;
+  margin-inline: auto;
+}
+
+@media (min-width: 768px) {
+  .iphoneWrap {
+    max-width: 15rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .iphoneWrap {
+    max-width: 16.25rem;
+  }
+}
+
+.iphone {
+  position: relative;
+  width: 100%;
+  filter: drop-shadow(0 20px 36px rgba(15, 23, 42, 0.2)) drop-shadow(0 6px 12px rgba(15, 23, 42, 0.1));
+}
+
+.iphoneShell {
+  position: relative;
+  border-radius: 2.65rem;
+  padding: 0.2rem;
+  background: linear-gradient(160deg, #d4d2cd 0%, #8e8c88 22%, #c8c6c1 45%, #6e6c68 78%, #a8a6a1 100%);
+  box-shadow:
+    inset 0 2px 3px rgba(255, 255, 255, 0.35),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.25);
+}
+
+.iphoneInner {
+  position: relative;
+  isolation: isolate;
+  border-radius: 2.45rem;
+  background: #000;
+  overflow: hidden;
+  aspect-ratio: 393 / 852;
+}
+
+.iphoneScreen {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.iphoneImg {
+  object-fit: cover;
+  object-position: center top;
+}
+
+.island {
+  position: absolute;
+  top: 0.65rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32%;
+  min-width: 4.5rem;
+  max-width: 6.5rem;
+  height: 1.05rem;
+  background: #000;
+  border-radius: 1.5rem;
+  z-index: 5;
+  box-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.06);
+}
+
+.antenna {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+    inset 0 0 0 2px rgba(0, 0, 0, 0.35);
+  z-index: 3;
+}

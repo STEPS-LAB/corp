@@ -23,7 +23,9 @@ export default function ScrollIndicator() {
   }, [])
 
   return (
-    <div className={`absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-10 opacity-70 transition-opacity duration-500 pointer-events-none ${isHidden ? 'opacity-0 invisible' : ''}`}>
+    <div
+      className={`absolute bottom-10 left-1/2 z-10 hidden flex-col items-center gap-3 opacity-70 transition-opacity duration-500 pointer-events-none md:flex -translate-x-1/2 ${isHidden ? 'opacity-0 invisible' : ''}`}
+    >
       <div className="w-6 h-10 border-2 border-white/40 rounded-xl relative flex justify-center pt-2">
         <div className="w-1 h-2 bg-white/60 rounded-sm animate-scrollWheel" />
       </div>
